@@ -32,3 +32,8 @@
 *.out
 *.app
 
+# moc files
+moc_*
+Makefile
+*.pro.user
+MyAudioAnalyzerQtPi
