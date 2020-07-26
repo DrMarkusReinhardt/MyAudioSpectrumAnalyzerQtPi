@@ -37,3 +37,4 @@ moc_*
 Makefile
 *.pro.user
 MyAudioAnalyzerQtPi
+*.stash
