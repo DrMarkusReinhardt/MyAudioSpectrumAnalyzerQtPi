@@ -17,23 +17,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+INCLUDEPATH += /usr/include/arm-linux-gnueabihf/qt5
 
 SOURCES += \
     main.cpp \
     SimMainWindow.cpp \
-    SimPlotWidgets.cpp  \
-    plot2d.cpp \
-    SpectrumCalculator.cpp
+    SignalPlotView.cpp  \
+    SpectrumPlotView.cpp  \
+    plot2D.cpp \
+    SpectrumCalculator.cpp \
+    callout.cpp
 
 HEADERS += \
     SimMainWindow.h \
-    SimPlotWidgets.h  \
-    plot2d.h \
+    SignalPlotView.h  \
+    SpectrumPlotView.h  \
+    plot2D.h \
     PortaudioHandler.h \
     RandomGenerator.h \
     DefineDataSizes.h \
     SpectrumCalculator.h \
-    DTFT.h
+    DTFT.h \
+    callout.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include

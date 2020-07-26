@@ -1,3 +1,5 @@
+#ifndef PORTAUDIOHANDLER_H
+#define PORTAUDIOHANDLER_H
 /** @file PortaudioHandler.h
 	@ingroup examples_src
 	@brief Class to record audio
@@ -396,3 +398,5 @@ private:
   VectorXd            signalRight;
   VectorXd            timeSamples;
 };
+
+#endif

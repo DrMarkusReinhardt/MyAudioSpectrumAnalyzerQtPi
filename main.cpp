@@ -8,11 +8,11 @@ using namespace MR_SIM;
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+  QApplication a(argc, argv);
 
-    SimMainWindow w;
-    w.resize(1500, 1000);
-    w.show();
+  SimMainWindow w;
+  w.resize(1400, 1100);
+  w.show();
 
-    return a.exec();
+  return a.exec();
 }
