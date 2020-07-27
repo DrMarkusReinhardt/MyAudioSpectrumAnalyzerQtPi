@@ -56,7 +56,6 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1) : m_x1(x1), m_y
   m_chart->setMinimumSize(1200, 400);
   setChart(m_chart);
   m_chart->createDefaultAxes();
-  m_chart->axisY()->setRange(-140.0,0.0);
   setRenderHint(QPainter::Antialiasing);
 }
 
@@ -83,8 +82,7 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1,
   addData(*plotData2);
   m_chart->setAcceptHoverEvents(true);
   setChart(m_chart);
-  m_chart->createDefaultAxes();
-  m_chart->axisY()->setRange(-140.0,0.0);
+  // m_chart->createDefaultAxes();
   setRenderHint(QPainter::Antialiasing);
 }
 
@@ -117,8 +115,7 @@ void plot2D::updateData(const vector<double> x1, const vector<double> y1,
   plotData2 = new plotData(x2,y2);
   addData(*plotData2);
   setChart(m_chart);
-  m_chart->createDefaultAxes();
-  m_chart->axisY()->setRange(-140.0,0.0);
+  // m_chart->createDefaultAxes();
   m_chart->setAcceptHoverEvents(true);
   setRenderHint(QPainter::Antialiasing);
   m_chart->show();

@@ -10,7 +10,7 @@ using namespace MR_SIM;
 SpectrumPlotView::SpectrumPlotView(QWidget *parent)
   : QGraphicsView(new QGraphicsScene, parent)
 {
-  std::cout << "start SpectrumPlotView" << std::endl;
+  // std::cout << "start SpectrumPlotView" << std::endl;
 
   const uint16_t arraySizeSpectrum = 400;
   vector<double> spectrumFrequencyLeft(arraySizeSpectrum);
@@ -27,10 +27,16 @@ SpectrumPlotView::SpectrumPlotView(QWidget *parent)
   createRandomData(spectrumFrequencyLeft,spectrumMagnitudeLeft,spectrumFrequencyRight,spectrumMagnitudeRight);
 
   // setup spectrum plot widget
-  std::cout << "setup spectrum plot widget" << std::endl;
+  // std::cout << "setup spectrum plot widget" << std::endl;
   const QString initTitleStringSpectrumLeft = "Left and right channel magnitude spectrum";
   plotSpectrumChannelLeftRight = new plot2D(spectrumFrequencyLeft,spectrumMagnitudeLeft);
   plotSpectrumChannelLeftRight->setTitle(initTitleStringSpectrumLeft);
+  QChart* pChart = plotSpectrumChannelLeftRight->getChart();
+  pChart->createDefaultAxes();
+  pChart->axisY()->setRange(-140.0,0.0);
+
+  m_tooltip = new Callout(pChart);
+
   scene()->addItem(plotSpectrumChannelLeftRight->getChart());
 
   QChart* chart = plotSpectrumChannelLeftRight->getChart();
@@ -41,20 +47,8 @@ SpectrumPlotView::SpectrumPlotView(QWidget *parent)
   m_coordY->setPos(chart->size().width()/2 + 50, chart->size().height()-30);
   m_coordY->setText("Y: ");
 
-  // connect the slots:
-  // std::cout << "connect the slots" << std::endl;
-  // connect the hovering over the first data series of the spectrum chart with the tooltip display
-  // connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
-  // connect the hovering over the second data series of the spectrum chart with the tooltip display
-  // connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
-  // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
-  // connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
-  // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
-  // connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
-
   // create the spectrum calculator
   spectrumCalculator = new SpectrumCalculator(arraySizeSpectrum);
-  std::cout << "SpectrumPlotView created" << std::endl;
 }
 
 void SpectrumPlotView::getSignals(vector<double> x1,vector<double> y1,
@@ -76,8 +70,14 @@ void SpectrumPlotView::updateSpectra()
   spectrumCalculator->normalizeMagnitudeSpectrum();
   VectorXd magnitudeSpectrumRight = spectrumCalculator->returnMagnitudeSpectrum();
   plotSpectrumChannelLeftRight->updateData(frequencyRange,magnitudeSpectrumLeft,frequencyRange,magnitudeSpectrumRight);
+  // connect the hovering over the first data series of the spectrum chart with the tooltip display
   connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+  // connect the hovering over the second data series of the spectrum chart with the tooltip display
   connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+  // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
+  connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+  // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
+  connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
 }
 
 void SpectrumPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
@@ -139,21 +139,16 @@ void SpectrumPlotView::keepCallout()
 void SpectrumPlotView::tooltip(QPointF point, bool state)
 {
   // std::cout << "SpectrumPlotView: tooltip start" << std::endl;
-  if (m_tooltip == 0)
-    m_tooltip = new Callout(plotSpectrumChannelLeftRight->getChart());
-
   if (state)
   {
-    // std::cout << "SpectrumPlotView: tooltip true state" << std::endl;
-    m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
-    m_tooltip->setAnchor(point);
-    m_tooltip->setZValue(11);
-    m_tooltip->updateGeometry();
-    m_tooltip->show();
+      m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
+      m_tooltip->setAnchor(point);
+      m_tooltip->setZValue(11);
+      m_tooltip->updateGeometry();
+      m_tooltip->show();
   }
   else
   {
-    // std::cout << "SpectrumPlotView: tooltip false state" << std::endl;
-    m_tooltip->hide();
+      m_tooltip->hide();
   }
 }

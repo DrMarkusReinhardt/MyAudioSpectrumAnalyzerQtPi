@@ -20,14 +20,16 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   menu->addAction(tr("&Quit"), this, &QWidget::close);
 
   // setup the signal plot view
-  std::cout << "setup the signal plot view" << std::endl;
+  std::cout << "setup SignalPlotView" << std::endl;
   m_SignalPlotView = new SignalPlotView(this);
   // m_SignalPlotView->setMinimumSize(1000,400);
+  std::cout << "SignalPlotView created" << std::endl;
 
   // setup the spectrum plot view
-  std::cout << "setup the spectrum plot view" << std::endl;
+  std::cout << "setup SpectrumPlotView" << std::endl;
   m_SpectrumPlotView = new SpectrumPlotView(this);
   // m_SpectrumPlotView->setMinimumSize(1000,400);
+  std::cout << "SpectrumPlotView created" << std::endl;
 
   // setCentralWidget(m_SignalPlotView);
   // create layout

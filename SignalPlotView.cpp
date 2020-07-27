@@ -10,7 +10,7 @@ using namespace MR_SIM;
 SignalPlotView::SignalPlotView(QWidget *parent)
   : QGraphicsView(new QGraphicsScene, parent)
 {
-  std::cout << "start SignalPlotView" << std::endl;
+  // std::cout << "start SignalPlotView" << std::endl;
 
   // const double initSamplePeriod = 0.01;
   const uint16_t arraySize = sizeDataToPlot;
@@ -32,8 +32,8 @@ SignalPlotView::SignalPlotView(QWidget *parent)
   const QString initTitleString = "Left and right channel signal";
   plotSignalChannelLeftRight = new plot2D(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
   plotSignalChannelLeftRight->setTitle(initTitleString);
-  QChart* chart = plotSignalChannelLeftRight->getChart();
-  chart->axisY()->setRange(-140.0,0.0);
+  QChart* pChart = plotSignalChannelLeftRight->getChart();
+  pChart->createDefaultAxes();
 
   scene()->addItem(plotSignalChannelLeftRight->getChart());
 
@@ -44,17 +44,6 @@ SignalPlotView::SignalPlotView(QWidget *parent)
   m_coordY = new QGraphicsSimpleTextItem(chart);
   m_coordY->setPos(chart->size().width()/2 + 50, chart->size().height()-30);
   m_coordY->setText("Y: ");
-
-  // connect the slots:
-  // std::cout << "connect the slots" << std::endl;
-  // connect the hovering over the first data series of the spectrum chart with the tooltip display
-  // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
-  // connect the hovering over the second data series of the spectrum chart with the tooltip display
-  // connect(plotSignalChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
-  // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
-  // connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SignalPlotView::keepCallout);
-  // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
-  // connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SignalPlotView::keepCallout);
 
   // create the Portaudio handler
   std::cout << "create the Portaudio handler" << std::endl;
@@ -69,7 +58,7 @@ SignalPlotView::SignalPlotView(QWidget *parent)
   else
     std::cout << "stream open failed" << std::endl;
 
-  std::cout << "SignalPlotView created" << std::endl;
+  // std::cout << "SignalPlotView created" << std::endl;
 }
 
 void SignalPlotView::updatePA()
