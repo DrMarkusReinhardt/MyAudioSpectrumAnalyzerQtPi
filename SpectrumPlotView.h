@@ -54,6 +54,7 @@ private:
   vector<double> signalTimeRight;
   vector<double> signalRight;
   double m_sampleFrequency;
+  double m_samplePeriod;
   SpectrumParameter m_spectrumParameter;
   SpectrumCalculator *spectrumCalculator;
   QGraphicsSimpleTextItem *m_coordX;

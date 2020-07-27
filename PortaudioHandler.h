@@ -274,7 +274,7 @@ public:
     signalRight.resize(_noSamples/2-dataOffset);
     for (uint32_t k=0; k < _noSamples/2-dataOffset; k++)
     {
-      timeSamples[k] = (double)k;
+      timeSamples[k] = (double)k * _sampleRate;
       signalLeft[k] = _data.recordedSamples[2*k+2*dataOffset];
       _minLeftSignal = std::fmin(_minLeftSignal,signalLeft[k]);
       _maxLeftSignal = std::fmax(_maxLeftSignal,signalLeft[k]);

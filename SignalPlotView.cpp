@@ -11,6 +11,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   : QGraphicsView(new QGraphicsScene, parent), m_sampleFrequency(initSampleFrequency)
 {
   // std::cout << "start SignalPlotView" << std::endl;
+  m_samplePeriod = 1.0 / m_sampleFrequency;
 
   // const double initSamplePeriod = 0.01;
   const uint16_t arraySize = sizeDataToPlot;
@@ -112,11 +113,11 @@ void SignalPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
                                     vector<double>& x2,vector<double>& y2)
 {
   for(uint16_t k = 0; k < x1.size(); k++)
-    x1[k] = k*1.0;
+    x1[k] = k*m_samplePeriod;
   for(uint16_t k = 0; k < y1.size(); k++)
     y1[k] = 0.0;
   for(uint16_t k = 0; k < x2.size(); k++)
-    x2[k] = k*1.0;
+    x2[k] = k*m_samplePeriod;
   for(uint16_t k = 0; k < y2.size(); k++)
     y2[k] = 0.0;
 }
@@ -126,10 +127,10 @@ void SignalPlotView::createRandomData(vector<double>& x1,vector<double>& y1,
 {
   y1 = m_nrg.generate(y1.size());
   for(uint16_t k = 0; k < x1.size(); k++)
-    x1[k] = k*1.0;
+    x1[k] = k*m_samplePeriod;
   y2 = m_nrg.generate(y2.size());
   for(uint16_t k = 0; k < x2.size(); k++)
-    x2[k] = k*1.0;
+    x2[k] = k*m_samplePeriod;
 }
 
 void SignalPlotView::resizeEvent(QResizeEvent *event)

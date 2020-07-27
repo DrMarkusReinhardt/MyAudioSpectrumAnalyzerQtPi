@@ -48,7 +48,6 @@ public slots:
   void tooltip(QPointF point, bool state);
 
 private:
-  double m_sampleFrequency;
   PortaudioHandler *paHandler;
   NormalRandomGenerator m_nrg{1.0,1.0};
   plot2D* plotSignalChannelLeftRight;      // signal plot for the left and right channel
@@ -56,6 +55,8 @@ private:
   vector<double> signalLeft;
   vector<double> signalTimeRight;
   vector<double> signalRight;
+  double m_sampleFrequency;
+  double m_samplePeriod;
   QGraphicsSimpleTextItem *m_coordX;
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;
