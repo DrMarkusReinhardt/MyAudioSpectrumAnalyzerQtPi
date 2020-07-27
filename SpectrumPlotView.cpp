@@ -44,7 +44,7 @@ SpectrumPlotView::SpectrumPlotView(QWidget *parent)
   // connect the slots:
   // std::cout << "connect the slots" << std::endl;
   // connect the hovering over the first data series of the spectrum chart with the tooltip display
-  connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+  // connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
   // connect the hovering over the second data series of the spectrum chart with the tooltip display
   // connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
   // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
@@ -76,6 +76,8 @@ void SpectrumPlotView::updateSpectra()
   spectrumCalculator->normalizeMagnitudeSpectrum();
   VectorXd magnitudeSpectrumRight = spectrumCalculator->returnMagnitudeSpectrum();
   plotSpectrumChannelLeftRight->updateData(frequencyRange,magnitudeSpectrumLeft,frequencyRange,magnitudeSpectrumRight);
+  connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+  connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
 }
 
 void SpectrumPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
@@ -136,12 +138,13 @@ void SpectrumPlotView::keepCallout()
 
 void SpectrumPlotView::tooltip(QPointF point, bool state)
 {
-  std::cout << "tooltip start" << std::endl;
+  // std::cout << "SpectrumPlotView: tooltip start" << std::endl;
   if (m_tooltip == 0)
     m_tooltip = new Callout(plotSpectrumChannelLeftRight->getChart());
 
   if (state)
   {
+    // std::cout << "SpectrumPlotView: tooltip true state" << std::endl;
     m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
     m_tooltip->setAnchor(point);
     m_tooltip->setZValue(11);
@@ -150,6 +153,7 @@ void SpectrumPlotView::tooltip(QPointF point, bool state)
   }
   else
   {
+    // std::cout << "SpectrumPlotView: tooltip false state" << std::endl;
     m_tooltip->hide();
   }
 }

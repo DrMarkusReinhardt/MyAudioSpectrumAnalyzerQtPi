@@ -32,6 +32,9 @@ SignalPlotView::SignalPlotView(QWidget *parent)
   const QString initTitleString = "Left and right channel signal";
   plotSignalChannelLeftRight = new plot2D(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
   plotSignalChannelLeftRight->setTitle(initTitleString);
+  QChart* chart = plotSignalChannelLeftRight->getChart();
+  chart->axisY()->setRange(-140.0,0.0);
+
   scene()->addItem(plotSignalChannelLeftRight->getChart());
 
   QChart* chart = plotSignalChannelLeftRight->getChart();
@@ -43,9 +46,9 @@ SignalPlotView::SignalPlotView(QWidget *parent)
   m_coordY->setText("Y: ");
 
   // connect the slots:
-  std::cout << "connect the slots" << std::endl;
+  // std::cout << "connect the slots" << std::endl;
   // connect the hovering over the first data series of the spectrum chart with the tooltip display
-  connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
+  // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
   // connect the hovering over the second data series of the spectrum chart with the tooltip display
   // connect(plotSignalChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
   // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
@@ -92,6 +95,8 @@ void SignalPlotView::updateSignals()
   // createRandomData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
   // std::cout << "call update data" << std::endl;
   plotSignalChannelLeftRight->updateData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
+  // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
+  // connect(plotSignalChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
 }
 
 vector<double> SignalPlotView::returnTimeLeftSignal()
@@ -171,12 +176,13 @@ void SignalPlotView::keepCallout()
 
 void SignalPlotView::tooltip(QPointF point, bool state)
 {
-  // std::cout << "tooltip start" << std::endl;
+  std::cout << "SignalPlotView: tooltip start" << std::endl;
   if (m_tooltip == 0)
     m_tooltip = new Callout(plotSignalChannelLeftRight->getChart());
 
   if (state)
   {
+    std::cout << "SignalPlotView: tooltip true state" << std::endl;
     m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
     m_tooltip->setAnchor(point);
     m_tooltip->setZValue(11);
@@ -185,6 +191,7 @@ void SignalPlotView::tooltip(QPointF point, bool state)
   }
   else
   {
+    std::cout << "SignalPlotView: tooltip false state" << std::endl;
     m_tooltip->hide();
   }
 }
