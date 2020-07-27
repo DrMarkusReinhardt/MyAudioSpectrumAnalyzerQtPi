@@ -15,11 +15,14 @@ uint16_t plotData::size()
   return m_x.size();
 }
 
-QLineSeries* plotData::createSeries()
+QLineSeries* plotData::createSeries(QString color)
 {
   QLineSeries* series = new QLineSeries();
   for(uint16_t k = 0; k < m_x.size(); k++)
     series->append(m_x[k],m_y[k]);
+  QPen pen = series->pen();
+  pen.setColor(color);
+  series->setPen(pen);
   m_series = series;
   return series;
 }
@@ -51,9 +54,11 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1) : m_x1(x1), m_y
   numberPlotDataPairs = 1;
   plotData1 = new plotData(m_x1,m_y1);
   m_chart = new QChart();
-  m_chart = createLineChart(*plotData1);
+  m_chart = createLineChart(*plotData1,"red");
   m_chart->setAcceptHoverEvents(true);
   m_chart->setMinimumSize(1200, 400);
+  QBrush backgroundBrush(Qt::black);
+  m_chart->setBackgroundBrush(backgroundBrush);
   setChart(m_chart);
   m_chart->createDefaultAxes();
   setRenderHint(QPainter::Antialiasing);
@@ -77,10 +82,12 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1,
   numberPlotDataPairs = 2;
   m_chart = new QChart();
   plotData1 = new plotData(m_x1,m_y1);
-  m_chart = createLineChart(*plotData1);
+  m_chart = createLineChart(*plotData1,"green");
   plotData2 = new plotData(m_x2,m_y2);
-  addData(*plotData2);
+  addData(*plotData2,"red");
   m_chart->setAcceptHoverEvents(true);
+  QBrush backgroundBrush(Qt::black);
+  m_chart->setBackgroundBrush(backgroundBrush);
   setChart(m_chart);
   // m_chart->createDefaultAxes();
   setRenderHint(QPainter::Antialiasing);
@@ -96,9 +103,9 @@ QChart* plot2D::getChart()
   return m_chart;
 }
 
-void plot2D::addData(plotData &data)
+void plot2D::addData(plotData &data, QString color)
 {
-  m_chart->addSeries(data.createSeries());
+  m_chart->addSeries(data.createSeries(color));
   // m_chart->createDefaultAxes();
   // m_chart->axes(Qt::Horizontal).first()->setRange(data.m_minValX, data.m_maxValX);
   // m_chart->axes(Qt::Vertical).first()->setRange(data.m_minValY, data.m_maxValY);
@@ -111,9 +118,9 @@ void plot2D::updateData(const vector<double> x1, const vector<double> y1,
   // std::cout << "updateData: size of vector y1 = " << y1.size() << std::endl;
   m_chart->removeAllSeries();
   plotData1 = new plotData(x1,y1);
-  addData(*plotData1);
+  addData(*plotData1,"green");
   plotData2 = new plotData(x2,y2);
-  addData(*plotData2);
+  addData(*plotData2,"red");
   setChart(m_chart);
   // m_chart->createDefaultAxes();
   m_chart->setAcceptHoverEvents(true);
@@ -132,10 +139,10 @@ QLineSeries* plot2D::returnSeries2()
 }
 
 
-QChart *plot2D::createLineChart(plotData &data)
+QChart *plot2D::createLineChart(plotData &data, QString color)
 {
   QChart *chart = new QChart();
-  chart->addSeries(data.createSeries());
+  chart->addSeries(data.createSeries(color));
   chart->legend()->hide();
   chart->createDefaultAxes();
   // chart->axes(Qt::Horizontal).first()->setRange(data.m_minValX, data.m_maxValX);

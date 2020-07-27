@@ -4,6 +4,9 @@
 #include <vector>
 #include <QObject>
 #include <QWidget>
+#include <QString>
+#include <QPen>
+#include <QColor>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
@@ -31,7 +34,7 @@ public:
   double m_minValY;
   double m_maxValY;
   uint16_t size();
-  QLineSeries* createSeries();
+  QLineSeries* createSeries(QString color);
   QLineSeries* returnSeries();
 
 private:
@@ -55,9 +58,9 @@ public:
   QChart* getChart();
 
 private:
-  void addData(plotData &data);
+  void addData(plotData &data, QString color);
   plotData *plotData1, *plotData2;
-  QChart* createLineChart(plotData &data);
+  QChart* createLineChart(plotData &data, QString color);
   vector<double> m_x1, m_y1;
   vector<double> m_x2, m_y2;
   QChart* m_chart;
