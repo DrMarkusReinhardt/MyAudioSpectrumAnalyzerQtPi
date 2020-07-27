@@ -37,7 +37,7 @@ private:
   SpectrumPlotView *m_SpectrumPlotView;
 
   // fixed parameters
-  const double initSampleFrequency = 96000.0;
+  const double initSampleFrequency = 96000.0;  // alternatively 44100.0 or 48000.0
   const double initsamplePeriod = 1.0 / initSampleFrequency;
   uint32_t m_discreteTime;
   uint32_t m_discreteSimulationSteps;
@@ -45,7 +45,7 @@ private:
   double m_sampleFrequency;
 
   // parameters to define the frequency range and resolution
-  const uint16_t initNoSpectrumSamples = 500;
+  const uint16_t initNoSpectrumSamples = 1000;
   uint16_t m_noSpectrumSamples;
   const double minFrequencyRange = 0.0;
   const double maxFrequencyRange = 20000.0;

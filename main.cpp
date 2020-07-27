@@ -1,4 +1,7 @@
-/* Simpled demo program to show usage of plots in Qt
+/* Simpled audio spectrum analyzer program based on Qt for
+ * the Raspberry Pi 3B+ with Pisound board
+ *
+ * History: Creation, Dr. Markus Reinhardt, July 2020
  *
  */
 #include <QApplication>

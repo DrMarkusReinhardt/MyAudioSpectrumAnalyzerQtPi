@@ -24,7 +24,7 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   // define the simulation loop timer
   m_timer = new QTimer(this);
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
-  const uint16_t delayTime_ms = 200;
+  const uint16_t delayTime_ms = 120;
   m_timer->start(delayTime_ms);
   std::cout << "Simulation loop started" << std::endl;
 }
