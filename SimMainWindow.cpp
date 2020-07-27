@@ -79,13 +79,11 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // setup the signal plot view
     std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
-    // m_SignalPlotView->setMinimumSize(1000,400);
     std::cout << "SignalPlotView created" << std::endl;
 
     // setup the spectrum plot view
     std::cout << "setup SpectrumPlotView" << std::endl;
     m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
-    // m_SpectrumPlotView->setMinimumSize(1000,400);
     std::cout << "SpectrumPlotView created" << std::endl;
 
     // create layout

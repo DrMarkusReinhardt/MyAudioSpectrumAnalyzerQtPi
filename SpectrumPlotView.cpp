@@ -36,6 +36,8 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   plotSpectrumChannelLeftRight->setTitle(initTitleStringSpectrumLeft);
   QChart* pChart = plotSpectrumChannelLeftRight->getChart();
   pChart->createDefaultAxes();
+  pChart->setMinimumSize(1200.0,400.0);
+  pChart->setMaximumSize(1200.0,400.0);
   pChart->axisY()->setRange(-140.0,0.0);
   pChart->axisX()->setRange(m_spectrumParameter.minFrequencyRange,
                             m_spectrumParameter.maxFrequencyRange);
