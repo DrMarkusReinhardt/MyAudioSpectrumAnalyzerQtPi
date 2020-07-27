@@ -4,15 +4,18 @@
 #include <QWidget>
 #include "SpectrumPlotView.h"
 #include "DefineDataSizes.h"
+#include "SpectrumParameter.h"
 
 using namespace MR_SIM;
 
-SpectrumPlotView::SpectrumPlotView(QWidget *parent)
-  : QGraphicsView(new QGraphicsScene, parent)
+SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter initSpectrumParameter,
+                                   QWidget *parent)
+  : QGraphicsView(new QGraphicsScene, parent), m_sampleFrequency(initSampleFrequency),
+    m_spectrumParameter(initSpectrumParameter)
 {
   // std::cout << "start SpectrumPlotView" << std::endl;
 
-  const uint16_t arraySizeSpectrum = 400;
+  const uint16_t arraySizeSpectrum = m_spectrumParameter.noSpectrumSamples;
   vector<double> spectrumFrequencyLeft(arraySizeSpectrum);
   vector<double> spectrumMagnitudeLeft(arraySizeSpectrum);
   vector<double> spectrumFrequencyRight(arraySizeSpectrum);
@@ -34,7 +37,10 @@ SpectrumPlotView::SpectrumPlotView(QWidget *parent)
   QChart* pChart = plotSpectrumChannelLeftRight->getChart();
   pChart->createDefaultAxes();
   pChart->axisY()->setRange(-140.0,0.0);
+  pChart->axisX()->setRange(m_spectrumParameter.minFrequencyRange,
+                            m_spectrumParameter.maxFrequencyRange);
 
+  // initialize the first tooltip
   m_tooltip = new Callout(pChart);
 
   scene()->addItem(plotSpectrumChannelLeftRight->getChart());
@@ -48,7 +54,7 @@ SpectrumPlotView::SpectrumPlotView(QWidget *parent)
   m_coordY->setText("Y: ");
 
   // create the spectrum calculator
-  spectrumCalculator = new SpectrumCalculator(arraySizeSpectrum);
+  spectrumCalculator = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
 }
 
 void SpectrumPlotView::getSignals(vector<double> x1,vector<double> y1,
@@ -62,14 +68,15 @@ void SpectrumPlotView::getSignals(vector<double> x1,vector<double> y1,
 
 void SpectrumPlotView::updateSpectra()
 {
-  VectorXd frequencyRange = spectrumCalculator->returnFrequencyRange();
+  // VectorXd frequencyRange = spectrumCalculator->returnFrequencyRange();
   spectrumCalculator->calculateSpectrum(signalLeft);
   spectrumCalculator->normalizeMagnitudeSpectrum();
   VectorXd magnitudeSpectrumLeft = spectrumCalculator->returnMagnitudeSpectrum();
   spectrumCalculator->calculateSpectrum(signalRight);
   spectrumCalculator->normalizeMagnitudeSpectrum();
   VectorXd magnitudeSpectrumRight = spectrumCalculator->returnMagnitudeSpectrum();
-  plotSpectrumChannelLeftRight->updateData(frequencyRange,magnitudeSpectrumLeft,frequencyRange,magnitudeSpectrumRight);
+  plotSpectrumChannelLeftRight->updateData(m_spectrumParameter.frequencyRange,magnitudeSpectrumLeft,
+                                           m_spectrumParameter.frequencyRange,magnitudeSpectrumRight);
   // connect the hovering over the first data series of the spectrum chart with the tooltip display
   connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
   // connect the hovering over the second data series of the spectrum chart with the tooltip display

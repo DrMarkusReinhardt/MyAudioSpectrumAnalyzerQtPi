@@ -380,16 +380,16 @@ private:
   // private data
 private:
   PaError             _err = paNoError;
-  PaStreamParameters  _inputParameters;
+  // PaStreamParameters  _inputParameters;
   PaStream*           _stream;
   paTestData          _data;
-  uint32_t            i;
+  // uint32_t            i;
   uint32_t            _noFrames;
   uint32_t            _noSamples;
   uint32_t            _noBytes;
   uint8_t             _noChannels;
   uint32_t            _sampleRate;
-  SAMPLE              max, val;
+  // SAMPLE              max, val;
   double              _minLeftSignal;
   double              _maxLeftSignal;
   double              _minRightSignal;

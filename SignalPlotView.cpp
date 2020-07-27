@@ -7,8 +7,8 @@
 
 using namespace MR_SIM;
 
-SignalPlotView::SignalPlotView(QWidget *parent)
-  : QGraphicsView(new QGraphicsScene, parent)
+SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
+  : QGraphicsView(new QGraphicsScene, parent), m_sampleFrequency(initSampleFrequency)
 {
   // std::cout << "start SignalPlotView" << std::endl;
 
@@ -49,8 +49,7 @@ SignalPlotView::SignalPlotView(QWidget *parent)
   std::cout << "create the Portaudio handler" << std::endl;
   uint16_t initNoFrames = 512;
   uint8_t initNoChannels = 2;
-  uint32_t initSampleRate = 44100;
-  paHandler = new PortaudioHandler(initNoFrames,initNoChannels,initSampleRate);
+  paHandler = new PortaudioHandler(initNoFrames,initNoChannels,m_sampleFrequency);
   if (paHandler->open())
   {
     std::cout << "stream opened successfully" << std::endl;

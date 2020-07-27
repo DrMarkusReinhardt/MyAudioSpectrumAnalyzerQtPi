@@ -9,6 +9,7 @@
 #include <vector>
 #include "RandomGenerator.h"
 #include "SpectrumCalculator.h"
+#include "SpectrumParameter.h"
 #include "callout.h"
 
 QT_CHARTS_BEGIN_NAMESPACE
@@ -27,7 +28,8 @@ class SpectrumPlotView : public QGraphicsView
   Q_OBJECT
 
 public:
-  SpectrumPlotView(QWidget *parent = nullptr);
+  SpectrumPlotView(double initSampleFrequency, SpectrumParameter initSpectrumParameter,
+                   QWidget *parent = nullptr);
   void createZeroData(vector<double>& x1,vector<double>& y1,
                       vector<double>& x2,vector<double>& y2);
   void createRandomData(vector<double>& x1,vector<double>& y1,
@@ -51,6 +53,8 @@ private:
   vector<double> signalLeft;
   vector<double> signalTimeRight;
   vector<double> signalRight;
+  double m_sampleFrequency;
+  SpectrumParameter m_spectrumParameter;
   SpectrumCalculator *spectrumCalculator;
   QGraphicsSimpleTextItem *m_coordX;
   QGraphicsSimpleTextItem *m_coordY;

@@ -5,6 +5,7 @@
 #include <vector>
 #include <complex>
 #include <cmath>
+#include "SpectrumParameter.h"
 
 // double vector type
 typedef std::vector<double> VectorXd;
@@ -13,21 +14,17 @@ typedef std::vector<std::complex<double> > VectorXcd;
 class SpectrumCalculator
 {
 public:
-  SpectrumCalculator(uint16_t initNoFrequencySamples);
+  SpectrumCalculator(double initSampleFrequency, SpectrumParameter initSpectrumParameter);
   void calculateSpectrum(const VectorXd& inputSignal);
   VectorXd returnFrequencyRange();
   void normalizeMagnitudeSpectrum();
   VectorXd returnMagnitudeSpectrum();
 
 private:
-  const double samplingFrequency = 44100.0;
-  uint16_t noFrequencySamples;
-  const double minFrequencyRange = 1000;
-  const double maxFrequencyRange = 10000;
-  double deltaF;
-  VectorXd frequencyRange;
-  VectorXd magnitudeSpectrum;
-  VectorXcd fourierTransform;
+  double m_sampleFrequency;
+  SpectrumParameter m_spectrumParameter;
+  VectorXd m_magnitudeSpectrum;
+  VectorXcd m_fourierTransform;
   DTFT *dtft;
 };
 

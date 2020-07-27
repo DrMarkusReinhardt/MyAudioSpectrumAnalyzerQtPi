@@ -38,7 +38,8 @@ HEADERS += \
     DefineDataSizes.h \
     SpectrumCalculator.h \
     DTFT.h \
-    callout.h
+    callout.h \
+    SpectrumParameter.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include

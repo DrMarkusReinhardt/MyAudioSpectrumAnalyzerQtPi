@@ -11,42 +11,15 @@ using namespace MR_SIM;
 SimMainWindow::SimMainWindow(QMainWindow *parent)
   : QMainWindow(parent)
 {
-  // get and set the main simulation parameters
-  m_discreteTime = 0;
-  getParameters();
-
   // add menu bar
   QMenu *menu = menuBar()->addMenu(tr("&File"));
   menu->addAction(tr("&Quit"), this, &QWidget::close);
 
-  // setup the signal plot view
-  std::cout << "setup SignalPlotView" << std::endl;
-  m_SignalPlotView = new SignalPlotView(this);
-  // m_SignalPlotView->setMinimumSize(1000,400);
-  std::cout << "SignalPlotView created" << std::endl;
+  // get and set the main calculation parameters
+  setParameters();
 
-  // setup the spectrum plot view
-  std::cout << "setup SpectrumPlotView" << std::endl;
-  m_SpectrumPlotView = new SpectrumPlotView(this);
-  // m_SpectrumPlotView->setMinimumSize(1000,400);
-  std::cout << "SpectrumPlotView created" << std::endl;
-
-  // setCentralWidget(m_SignalPlotView);
-  // create layout
-  QHBoxLayout *HLayout1 = new QHBoxLayout;
-  HLayout1->addWidget(m_SignalPlotView);
-  QRect RH1(30,30,700,450);
-  HLayout1->setGeometry(RH1);
-
-  QHBoxLayout *HLayout2 = new QHBoxLayout;
-  HLayout2->addWidget(m_SpectrumPlotView);
-  QRect RH2(30,490,1200,450);
-  HLayout2->setGeometry(RH2);
-
-  QVBoxLayout *VLayout = new QVBoxLayout;
-  VLayout->addLayout(HLayout1);
-  VLayout->addLayout(HLayout2);
-  setLayout(VLayout);
+  // setup the widgets and the layouts
+  setupWidgetsAndLayouts();
 
   // define the simulation loop timer
   m_timer = new QTimer(this);
@@ -56,29 +29,80 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   std::cout << "Simulation loop started" << std::endl;
 }
 
-
-void SimMainWindow::getParameters()
+void SimMainWindow::setParameters()
 {
-  QFile file("SimParams.txt");
-  if(!file.open(QIODevice::ReadOnly))
-  {
-    std::cout << "error" << file.errorString().toStdString() << std::endl;
-  }
-  QTextStream in(&file);
+  m_discreteTime = 0;
+  m_sampleFrequency = initSampleFrequency;
+  m_samplePeriod = 1.0 / m_sampleFrequency;
+  m_noSpectrumSamples = initNoSpectrumSamples;
+  calcFrequencyRange();
+  m_spectrumParameter.minFrequencyRange = minFrequencyRange;
+  m_spectrumParameter.maxFrequencyRange = maxFrequencyRange;
+  m_spectrumParameter.noSpectrumSamples = m_noSpectrumSamples;
+  m_spectrumParameter.frequencyRange = m_frequencyRange;
+}
 
-  // QString strSimulationSteps = in.readLine();
-  QString strSimulationSteps = "10";
-  std::cout << "Read discrete simulation steps string = " << strSimulationSteps.toStdString() << std::endl;
-  m_discreteSimulationSteps = strSimulationSteps.toUInt();
-  std::cout << "Read discrete simulation steps = " << m_discreteSimulationSteps << std::endl;
+void SimMainWindow::readParametersFromFile()
+{
+    QFile file("SimParams.txt");
+    if(!file.open(QIODevice::ReadOnly))
+    {
+      std::cout << "error" << file.errorString().toStdString() << std::endl;
+    }
 
-  // QString strSamplePeriod = in.readLine();
-  QString strSamplePeriod = "0.01";
-  std::cout << "Read sample period string = " << strSamplePeriod.toStdString() << std::endl;
-  m_samplePeriod = strSamplePeriod.toDouble();
-  std::cout << "Read sample period = " << m_samplePeriod << std::endl;
+    QTextStream in(&file);
+    // QString strSimulationSteps = in.readLine();
+    QString strSimulationSteps = "10";
+    std::cout << "Read discrete simulation steps string = " << strSimulationSteps.toStdString() << std::endl;
+    m_discreteSimulationSteps = strSimulationSteps.toUInt();
+    std::cout << "Read discrete simulation steps = " << m_discreteSimulationSteps << std::endl;
 
-  file.close();
+    // QString strSamplePeriod = in.readLine();
+    QString strSamplePeriod = "0.01";
+    std::cout << "Read sample period string = " << strSamplePeriod.toStdString() << std::endl;
+    m_samplePeriod = strSamplePeriod.toDouble();
+    std::cout << "Read sample period = " << m_samplePeriod << std::endl;
+
+    file.close();
+}
+
+void SimMainWindow::calcFrequencyRange()
+{
+  m_deltaF = (maxFrequencyRange - minFrequencyRange) / (m_noSpectrumSamples - 1);
+  m_frequencyRange.resize(m_noSpectrumSamples);
+  for(uint16_t k = 0; k < m_noSpectrumSamples; k++)
+    m_frequencyRange[k] = k * m_deltaF + minFrequencyRange;
+}
+
+void SimMainWindow::setupWidgetsAndLayouts()
+{
+    // setup the signal plot view
+    std::cout << "setup SignalPlotView" << std::endl;
+    m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
+    // m_SignalPlotView->setMinimumSize(1000,400);
+    std::cout << "SignalPlotView created" << std::endl;
+
+    // setup the spectrum plot view
+    std::cout << "setup SpectrumPlotView" << std::endl;
+    m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
+    // m_SpectrumPlotView->setMinimumSize(1000,400);
+    std::cout << "SpectrumPlotView created" << std::endl;
+
+    // create layout
+    QHBoxLayout *HLayout1 = new QHBoxLayout;
+    HLayout1->addWidget(m_SignalPlotView);
+    QRect RH1(30,30,700,450);
+    HLayout1->setGeometry(RH1);
+
+    QHBoxLayout *HLayout2 = new QHBoxLayout;
+    HLayout2->addWidget(m_SpectrumPlotView);
+    QRect RH2(30,490,1200,450);
+    HLayout2->setGeometry(RH2);
+
+    QVBoxLayout *VLayout = new QVBoxLayout;
+    VLayout->addLayout(HLayout1);
+    VLayout->addLayout(HLayout2);
+    setLayout(VLayout);
 }
 
 
