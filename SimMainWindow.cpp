@@ -89,20 +89,13 @@ void SimMainWindow::setupWidgetsAndLayouts()
     std::cout << "SpectrumPlotView created" << std::endl;
 
     // create layout
-    QHBoxLayout *HLayout1 = new QHBoxLayout;
-    HLayout1->addWidget(m_SignalPlotView);
-    QRect RH1(30,30,700,450);
-    HLayout1->setGeometry(RH1);
-
-    QHBoxLayout *HLayout2 = new QHBoxLayout;
-    HLayout2->addWidget(m_SpectrumPlotView);
+    QVBoxLayout *Layout = new QVBoxLayout(this);
+    QRect RH1(30,30,1200,450);
+    m_SignalPlotView->setGeometry(RH1);
+    Layout->addWidget(m_SignalPlotView);
     QRect RH2(30,490,1200,450);
-    HLayout2->setGeometry(RH2);
-
-    QVBoxLayout *VLayout = new QVBoxLayout;
-    VLayout->addLayout(HLayout1);
-    VLayout->addLayout(HLayout2);
-    setLayout(VLayout);
+    m_SpectrumPlotView->setGeometry(RH2);
+    Layout->addWidget(m_SpectrumPlotView);
 }
 
 

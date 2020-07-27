@@ -37,7 +37,7 @@ private:
   SpectrumPlotView *m_SpectrumPlotView;
 
   // fixed parameters
-  const double initSampleFrequency = 44100.0;
+  const double initSampleFrequency = 96000.0;
   const double initsamplePeriod = 1.0 / initSampleFrequency;
   uint32_t m_discreteTime;
   uint32_t m_discreteSimulationSteps;

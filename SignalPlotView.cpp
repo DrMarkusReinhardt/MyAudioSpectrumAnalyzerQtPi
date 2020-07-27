@@ -34,6 +34,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   plotSignalChannelLeftRight->setTitle(initTitleString);
   QChart* pChart = plotSignalChannelLeftRight->getChart();
   pChart->createDefaultAxes();
+  pChart->setMinimumSize(1200.0,450.0);
 
   scene()->addItem(plotSignalChannelLeftRight->getChart());
 
