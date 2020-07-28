@@ -78,8 +78,8 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // std::cout << "SpectrumPlotView created" << std::endl;
 
     // max. time knob
-    m_maxNumberSignalSamplesKnob = new Knob( "Max. no. samples", 100.0, 1000.0, this );
-    m_maxNumberSignalSamplesKnob->setValue(1000.0);
+    m_maxNumberSignalSamplesKnob = new Knob( "Max. no. samples", 100.0, 500.0, this );
+    m_maxNumberSignalSamplesKnob->setValue(500.0);
 
     // Combo box for the min. frequency
     m_minFrequencyDial = new QComboBox(this);
@@ -125,7 +125,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
 
     // connect signals and slots
     connect(m_maxNumberSignalSamplesKnob, QOverload<double>::of(&Knob::valueChanged),
-            m_SpectrumPlotView, &SpectrumPlotView::updateMinFrequency);
+            m_SignalPlotView, &SignalPlotView::updateMaxSamplesToPlot);
 
     // connect combo boxes
     connect(m_minFrequencyDial, QOverload<int>::of(&QComboBox::currentIndexChanged),

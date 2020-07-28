@@ -12,6 +12,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
 {
   // std::cout << "start SignalPlotView" << std::endl;
   m_samplePeriod = 1.0 / m_sampleFrequency;
+  m_noSamplesToPlot = (double)sizeDataToPlot/2;
 
   // const double initSamplePeriod = 0.01;
   const uint16_t arraySize = sizeDataToPlot;
@@ -36,7 +37,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   QChart* pChart = plotSignalChannelLeftRight->getChart();
   pChart->legend()->hide();
   pChart->createDefaultAxes();
-  // pChart->axisX()->setRange(0.0,1000.0*m_samplePeriod);
+  pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod);
   pChart->setMinimumSize(1200.0,400.0);
   pChart->setMaximumSize(1200.0,400.0);
   scene()->addItem(pChart);
@@ -80,17 +81,25 @@ void SignalPlotView::updateSignals()
 {
   // std::cout << "Update left and right signal" << std::endl;
   signalTimeLeft = paHandler->returnDiscreteTimeSamples(); // get the discrete time samples from the Portaudio handler
+  // std::cout << "size of time array from PA = " << signalTimeLeft.size() << std::endl;
   signalTimeRight = signalTimeLeft;
   signalLeft = paHandler->returnSignalLeft();              // get the data of the left channel from the Portaudio handler
   signalRight = paHandler->returnSignalRight();            // get the data of the right channel from the Portaudio handler
-  // createRandomData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
-  // std::cout << "call update data" << std::endl;
   plotSignalChannelLeftRight->updateData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
-  // QChart* pChart = plotSignalChannelLeftRight->getChart();
-  // pChart->axisX()->setRange(0.0,1000.0*m_samplePeriod);
+  QChart* pChart = plotSignalChannelLeftRight->getChart();
+  pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod);
 
   // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
   // connect(plotSignalChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
+}
+
+void SignalPlotView::updateMaxSamplesToPlot(double newNoSamples)
+{
+    m_noSamplesToPlot = newNoSamples;
+    QChart* pChart = plotSignalChannelLeftRight->getChart();
+    pChart->legend()->hide();
+    pChart->createDefaultAxes();
+    pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod);
 }
 
 vector<double> SignalPlotView::returnTimeLeftSignal()

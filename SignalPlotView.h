@@ -46,6 +46,7 @@ protected:
 public slots:
   void keepCallout();
   void tooltip(QPointF point, bool state);
+  void updateMaxSamplesToPlot(double newNoSamples);
 
 private:
   PortaudioHandler *paHandler;
@@ -57,6 +58,7 @@ private:
   vector<double> signalRight;
   double m_sampleFrequency;
   double m_samplePeriod;
+  double m_noSamplesToPlot;
   QGraphicsSimpleTextItem *m_coordX;
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;
