@@ -29,7 +29,7 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
   const uint16_t delayTime_ms = 10;
   m_timer->start(delayTime_ms);
-  std::cout << "Simulation loop started" << std::endl;
+  std::cout << "Spectrum analyzer started" << std::endl;
 }
 
 void SimMainWindow::setParameters()
@@ -68,14 +68,14 @@ void SimMainWindow::readParametersFromFile()
 void SimMainWindow::setupWidgetsAndLayouts()
 {
     // setup the signal plot view
-    std::cout << "setup SignalPlotView" << std::endl;
+    // std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
-    std::cout << "SignalPlotView created" << std::endl;
+    // std::cout << "SignalPlotView created" << std::endl;
 
     // setup the spectrum plot view
-    std::cout << "setup SpectrumPlotView" << std::endl;
+    // std::cout << "setup SpectrumPlotView" << std::endl;
     m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
-    std::cout << "SpectrumPlotView created" << std::endl;
+    // std::cout << "SpectrumPlotView created" << std::endl;
 
     // max. time knob
     m_maxNumberSignalSamplesKnob = new Knob( "Max. no. samples", 100.0, 1000.0, this );
@@ -136,7 +136,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
 
 void SimMainWindow::minFrequencyDialChanged(int newIndex)
 {
-   std::cout << "minFrequencyDialChanged(): " << newIndex <<std::endl;
+   // std::cout << "minFrequencyDialChanged(): " << newIndex <<std::endl;
    int indexMaxFrequencyDial = m_maxFrequencyDial->currentIndex();
    if (newIndex >= indexMaxFrequencyDial)
       newIndex = max(0,indexMaxFrequencyDial-1);
@@ -147,7 +147,7 @@ void SimMainWindow::minFrequencyDialChanged(int newIndex)
 
 void SimMainWindow::maxFrequencyDialChanged(int newIndex)
 {
-   std::cout << "maxFrequencyDialChanged(): " << newIndex <<std::endl;
+   // std::cout << "maxFrequencyDialChanged(): " << newIndex <<std::endl;
    int indexMinFrequencyDial = m_minFrequencyDial->currentIndex();
    if (newIndex <= indexMinFrequencyDial)
       newIndex = min(8,indexMinFrequencyDial+1);

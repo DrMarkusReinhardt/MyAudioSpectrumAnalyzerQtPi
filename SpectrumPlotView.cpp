@@ -31,7 +31,7 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   createRandomData(spectrumFrequencyLeft,spectrumMagnitudeLeft,spectrumFrequencyRight,spectrumMagnitudeRight);
 
   // setup spectrum plot widget
-  std::cout << "setup spectrum plot widget" << std::endl;
+  // std::cout << "setup spectrum plot widget" << std::endl;
   const QString initTitleStringSpectrumLeft = "Left and right channel magnitude spectrum";
   plotSpectrumChannelLeftRight = new plot2D(spectrumFrequencyLeft,spectrumMagnitudeLeft,spectrumFrequencyRight,spectrumMagnitudeRight);
   plotSpectrumChannelLeftRight->setTitle(initTitleStringSpectrumLeft);
@@ -46,7 +46,7 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   scene()->addItem(pChart);
 
   // initialize the first tooltip
-  std::cout << "create tooltip" << std::endl;
+  // std::cout << "create tooltip" << std::endl;
   m_tooltip = new Callout(pChart);
 
   m_coordX = new QGraphicsSimpleTextItem(pChart);
@@ -111,7 +111,7 @@ void SpectrumPlotView::updateSpectra()
 
 void SpectrumPlotView::updateMinFrequency(double newMinFrequency)
 {
-   std::cout << " new min. frequency = " << newMinFrequency << std::endl;
+   // std::cout << " new min. frequency = " << newMinFrequency << std::endl;
    m_spectrumParameter->setMinFrequency(newMinFrequency);
    delete spectrumCalculatorLeft;
    delete spectrumCalculatorRight;
@@ -122,7 +122,7 @@ void SpectrumPlotView::updateMinFrequency(double newMinFrequency)
 
 void SpectrumPlotView::updateMaxFrequency(double newMaxFrequency)
 {
-   std::cout << " new max. frequency = " << newMaxFrequency << std::endl;
+   // std::cout << " new max. frequency = " << newMaxFrequency << std::endl;
    m_spectrumParameter->setMaxFrequency(newMaxFrequency);
    delete spectrumCalculatorLeft;
    delete spectrumCalculatorRight;

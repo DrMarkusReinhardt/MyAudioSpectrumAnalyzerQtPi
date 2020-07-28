@@ -29,7 +29,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   // generate ramdom data
   createRandomData(signalTimeLeft, signalLeft, signalTimeRight, signalRight);
 
-  std::cout << "setup signal plot widget" << std::endl;
+  // std::cout << "setup signal plot widget" << std::endl;
   const QString initTitleString = "Left and right channel signal";
   plotSignalChannelLeftRight = new plot2D(signalTimeLeft, signalLeft, signalTimeRight, signalRight);
   plotSignalChannelLeftRight->setTitle(initTitleString);
@@ -49,7 +49,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   m_coordY->setText("Y: ");
 
   // create the Portaudio handler
-  std::cout << "create the Portaudio handler" << std::endl;
+  // std::cout << "create the Portaudio handler" << std::endl;
   uint16_t initNoFrames = 512;
   uint8_t initNoChannels = 2;
   paHandler = new PortaudioHandler(initNoFrames, initNoChannels, m_sampleFrequency);
