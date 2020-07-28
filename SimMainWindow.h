@@ -43,7 +43,9 @@ private:
   QTimer *m_timer;
   // widgets
   SignalPlotView *m_SignalPlotView;
+  QLabel *m_signalAxisLabel;
   SpectrumPlotView *m_SpectrumPlotView;
+  QLabel *m_frequencyAxisLabel;
   Knob *m_maxNumberSignalSamplesKnob;
 
   const QList<QString> m_frequencyDialList = {"0.0", "100.0", "200.0", "500.0", "1000.0", "2000.0", "5000.0", "10000.0", "20000.0"};

@@ -70,11 +70,18 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // setup the signal plot view
     // std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
+    QString signalAxisLabelStr("time / sec. -->");
+    m_signalAxisLabel = new QLabel(signalAxisLabelStr, this);
+    m_signalAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
     // std::cout << "SignalPlotView created" << std::endl;
 
     // setup the spectrum plot view
     // std::cout << "setup SpectrumPlotView" << std::endl;
     m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
+    QString frequencyAxisLabelStr("frequency / Hz -->");
+    m_frequencyAxisLabel = new QLabel(frequencyAxisLabelStr, this);
+    m_frequencyAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+
     // std::cout << "SpectrumPlotView created" << std::endl;
 
     // max. time knob
@@ -100,9 +107,18 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // place all widgets
     QRect Rect1(30,30,1200,450);
     m_SignalPlotView->setGeometry(Rect1);
+    QRect RectSignalLabel(550,400,200,50);
+    m_signalAxisLabel->setGeometry(RectSignalLabel);
+    m_signalAxisLabel->setVisible(true);
+    m_signalAxisLabel->setStyleSheet("QLabel { color : white; }");
 
     QRect Rect2(30,490,1200,450);
     m_SpectrumPlotView->setGeometry(Rect2);
+
+    QRect RectFrequencyLabel(550,860,200,50);
+    m_frequencyAxisLabel->setGeometry(RectFrequencyLabel);
+    m_frequencyAxisLabel->setVisible(true);
+    m_frequencyAxisLabel->setStyleSheet("QLabel { color : white; }");
 
     QRect Rect3(1260,30,200,200);
     m_maxNumberSignalSamplesKnob->setGeometry(Rect3);
