@@ -1,3 +1,5 @@
+include( $${PWD}/myprojects.pri )
+
 QT += core gui
 QT += charts
 QT += widgets
@@ -26,7 +28,8 @@ SOURCES += \
     SpectrumPlotView.cpp  \
     plot2D.cpp \
     SpectrumCalculator.cpp \
-    callout.cpp
+    callout.cpp \
+    knob.cpp
 
 HEADERS += \
     SimMainWindow.h \
@@ -39,11 +42,13 @@ HEADERS += \
     SpectrumCalculator.h \
     DTFT.h \
     callout.h \
-    SpectrumParameter.h
+    SpectrumParameter.h \
+    knob.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include
 LIBS += -llapack -lGL -lGLU -lX11 -lXcursor -lrt -lm -pthread -lasound -ljack -lportaudio
+LIBS += -lqwt
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

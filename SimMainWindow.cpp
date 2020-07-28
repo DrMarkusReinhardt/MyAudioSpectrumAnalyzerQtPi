@@ -1,8 +1,11 @@
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMenu>
 #include <QTextStream>
 #include <QtCore/QTimer>
 #include <QRect>
+#include <QtGlobal>
 #include <iostream>
 #include "SimMainWindow.h"
 
@@ -24,7 +27,7 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   // define the simulation loop timer
   m_timer = new QTimer(this);
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
-  const uint16_t delayTime_ms = 120;
+  const uint16_t delayTime_ms = 10;
   m_timer->start(delayTime_ms);
   std::cout << "Simulation loop started" << std::endl;
 }
@@ -35,11 +38,7 @@ void SimMainWindow::setParameters()
   m_sampleFrequency = initSampleFrequency;
   m_samplePeriod = 1.0 / m_sampleFrequency;
   m_noSpectrumSamples = initNoSpectrumSamples;
-  calcFrequencyRange();
-  m_spectrumParameter.minFrequencyRange = minFrequencyRange;
-  m_spectrumParameter.maxFrequencyRange = maxFrequencyRange;
-  m_spectrumParameter.noSpectrumSamples = m_noSpectrumSamples;
-  m_spectrumParameter.frequencyRange = m_frequencyRange;
+  m_spectrumParameter = new SpectrumParameter(minFrequencyRange, maxFrequencyRange, m_noSpectrumSamples);
 }
 
 void SimMainWindow::readParametersFromFile()
@@ -66,14 +65,6 @@ void SimMainWindow::readParametersFromFile()
     file.close();
 }
 
-void SimMainWindow::calcFrequencyRange()
-{
-  m_deltaF = (maxFrequencyRange - minFrequencyRange) / (m_noSpectrumSamples - 1);
-  m_frequencyRange.resize(m_noSpectrumSamples);
-  for(uint16_t k = 0; k < m_noSpectrumSamples; k++)
-    m_frequencyRange[k] = k * m_deltaF + minFrequencyRange;
-}
-
 void SimMainWindow::setupWidgetsAndLayouts()
 {
     // setup the signal plot view
@@ -86,16 +77,84 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
     std::cout << "SpectrumPlotView created" << std::endl;
 
-    // create layout
-    QVBoxLayout *Layout = new QVBoxLayout(this);
-    QRect RH1(30,30,1200,450);
-    m_SignalPlotView->setGeometry(RH1);
-    Layout->addWidget(m_SignalPlotView);
-    QRect RH2(30,490,1200,450);
-    m_SpectrumPlotView->setGeometry(RH2);
-    Layout->addWidget(m_SpectrumPlotView);
+    // max. time knob
+    m_maxNumberSignalSamplesKnob = new Knob( "Max. no. samples", 100.0, 1000.0, this );
+    m_maxNumberSignalSamplesKnob->setValue(1000.0);
+
+    // Combo box for the min. frequency
+    m_minFrequencyDial = new QComboBox(this);
+    m_minFrequencyDial->addItems(m_frequencyDialList);
+    m_minFrequencyDial->setCurrentIndex(0);
+    QString minFrequencyLabelStr("min. frequency");
+    m_minFrequencyLabel = new QLabel(minFrequencyLabelStr, this);
+    m_minFrequencyLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+
+    // Combo box for the max. frequency
+    m_maxFrequencyDial = new QComboBox(this);
+    m_maxFrequencyDial->addItems(m_frequencyDialList);
+    m_maxFrequencyDial->setCurrentIndex(8);
+    QString maxFrequencyLabelStr("max. frequency");
+    m_maxFrequencyLabel = new QLabel(maxFrequencyLabelStr, this);
+    m_maxFrequencyLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+
+    // place all widgets
+    QRect Rect1(30,30,1200,450);
+    m_SignalPlotView->setGeometry(Rect1);
+
+    QRect Rect2(30,490,1200,450);
+    m_SpectrumPlotView->setGeometry(Rect2);
+
+    QRect Rect3(1260,30,200,200);
+    m_maxNumberSignalSamplesKnob->setGeometry(Rect3);
+
+    QRect Rect4(1330,550,100,40);
+    m_minFrequencyLabel->setGeometry(Rect4);
+    m_minFrequencyLabel->setVisible(true);
+
+    QRect Rect5(1330,570,100,40);
+    m_minFrequencyDial->setGeometry(Rect5);
+    m_minFrequencyDial->setVisible(true);
+
+    QRect Rect6(1330,650,100,40);
+    m_maxFrequencyLabel->setGeometry(Rect6);
+    m_maxFrequencyLabel->setVisible(true);
+
+    QRect Rect7(1330,670,100,40);
+    m_maxFrequencyDial->setGeometry(Rect7);
+    m_maxFrequencyDial->setVisible(true);
+
+    // connect signals and slots
+    connect(m_maxNumberSignalSamplesKnob, QOverload<double>::of(&Knob::valueChanged),
+            m_SpectrumPlotView, &SpectrumPlotView::updateMinFrequency);
+
+    // connect combo boxes
+    connect(m_minFrequencyDial, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [=](int index){ minFrequencyDialChanged(index); });
+    connect(m_maxFrequencyDial, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [=](int index){ maxFrequencyDialChanged(index); });
 }
 
+void SimMainWindow::minFrequencyDialChanged(int newIndex)
+{
+   std::cout << "minFrequencyDialChanged(): " << newIndex <<std::endl;
+   int indexMaxFrequencyDial = m_maxFrequencyDial->currentIndex();
+   if (newIndex >= indexMaxFrequencyDial)
+      newIndex = max(0,indexMaxFrequencyDial-1);
+   m_minFrequencyDial->setCurrentIndex(newIndex);
+   double newMinFrequency = m_minFrequencyDial->currentText().toDouble();
+   m_SpectrumPlotView->updateMinFrequency(newMinFrequency);
+}
+
+void SimMainWindow::maxFrequencyDialChanged(int newIndex)
+{
+   std::cout << "maxFrequencyDialChanged(): " << newIndex <<std::endl;
+   int indexMinFrequencyDial = m_minFrequencyDial->currentIndex();
+   if (newIndex <= indexMinFrequencyDial)
+      newIndex = min(8,indexMinFrequencyDial+1);
+   m_maxFrequencyDial->setCurrentIndex(newIndex);
+   double newMaxFrequency = m_maxFrequencyDial->currentText().toDouble();
+   m_SpectrumPlotView->updateMaxFrequency(newMaxFrequency);
+}
 
 void SimMainWindow::step()
 {

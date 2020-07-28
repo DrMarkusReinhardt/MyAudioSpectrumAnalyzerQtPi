@@ -29,14 +29,15 @@ class DTFT
 {
 public:
   // the constructor
-  DTFT(double initSamplingFrequency, VectorXd initFrequencyRange)
-    : samplingFrequency(initSamplingFrequency), frequencyRange(initFrequencyRange)
-  {  }
+  DTFT(double initSamplingFrequency) : samplingFrequency(initSamplingFrequency)
+  {
+      m_Ts = 1.0 / samplingFrequency;
+  }
 
   // calculate the spectrum
-  void calculateSpectrum(VectorXd &magnitudeSpectrum, VectorXcd& fourierTransform, VectorXd inputSignal)
+  void calculateSpectrum(VectorXd &magnitudeSpectrum, VectorXcd& fourierTransform,
+                         VectorXd inputSignal, VectorXd frequencyRange)
   {
-    double Ts = 1.0 / samplingFrequency;
     uint16_t lenInputSignal = inputSignal.size();
     uint16_t lenOutputSignal = frequencyRange.size();
     VectorXd window(lenInputSignal);
@@ -51,13 +52,13 @@ public:
       double f = frequencyRange[freqIndex];
       for(uint16_t k = 0; k < lenInputSignal; k++)
       {
-        exparg = -j * 2.0 * M_PI * f * (double)k * Ts;
+        exparg = -j * 2.0 * M_PI * f * (double)k * m_Ts;
         spectrumVal += window[k] * inputSignal[k] * exp(exparg);
       }
       // std::cout << "exparg = " << exparg << std::endl;
       // std::cout << "spectrumVal = " << spectrumVal << std::endl;
       fourierTransform[freqIndex] = spectrumVal;
-      magnitudeSpectrum[freqIndex] = 20.0 * log10(abs(spectrumVal*conj(spectrumVal)));
+      magnitudeSpectrum[freqIndex] = 10.0 * log10(abs(spectrumVal*conj(spectrumVal)));
       // std::cout << "fourierTransform = " << fourierTransform[freqIndex]  << std::endl;
       // std::cout << "magnitudeSpectrum( = " << magnitudeSpectrum[freqIndex]  << std::endl;
     }
@@ -133,6 +134,5 @@ private:
   //  private variables
 private:
   double samplingFrequency;
-  VectorXd frequencyRange;
-
+  double m_Ts;
 };

@@ -26,33 +26,33 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   const QString initRightSignalLabel = "amplitude right -->";
   const QString initTimeLabel = "time -->";
 
-  // generate zero data
-  createZeroData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
+  // generate ramdom data
+  createRandomData(signalTimeLeft, signalLeft, signalTimeRight, signalRight);
 
   std::cout << "setup signal plot widget" << std::endl;
   const QString initTitleString = "Left and right channel signal";
-  plotSignalChannelLeftRight = new plot2D(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
+  plotSignalChannelLeftRight = new plot2D(signalTimeLeft, signalLeft, signalTimeRight, signalRight);
   plotSignalChannelLeftRight->setTitle(initTitleString);
   QChart* pChart = plotSignalChannelLeftRight->getChart();
+  pChart->legend()->hide();
   pChart->createDefaultAxes();
+  // pChart->axisX()->setRange(0.0,1000.0*m_samplePeriod);
   pChart->setMinimumSize(1200.0,400.0);
   pChart->setMaximumSize(1200.0,400.0);
+  scene()->addItem(pChart);
 
-  scene()->addItem(plotSignalChannelLeftRight->getChart());
-
-  QChart* chart = plotSignalChannelLeftRight->getChart();
-  m_coordX = new QGraphicsSimpleTextItem(chart);
-  m_coordX->setPos(chart->size().width()/2 - 50, chart->size().height()-30);
+  m_coordX = new QGraphicsSimpleTextItem(pChart);
+  m_coordX->setPos(pChart->size().width()/2 - 50, pChart->size().height()-30);
   m_coordX->setText("X: ");
-  m_coordY = new QGraphicsSimpleTextItem(chart);
-  m_coordY->setPos(chart->size().width()/2 + 50, chart->size().height()-30);
+  m_coordY = new QGraphicsSimpleTextItem(pChart);
+  m_coordY->setPos(pChart->size().width()/2 + 50, pChart->size().height()-30);
   m_coordY->setText("Y: ");
 
   // create the Portaudio handler
   std::cout << "create the Portaudio handler" << std::endl;
   uint16_t initNoFrames = 512;
   uint8_t initNoChannels = 2;
-  paHandler = new PortaudioHandler(initNoFrames,initNoChannels,m_sampleFrequency);
+  paHandler = new PortaudioHandler(initNoFrames, initNoChannels, m_sampleFrequency);
   if (paHandler->open())
   {
     std::cout << "stream opened successfully" << std::endl;
@@ -68,7 +68,7 @@ void SignalPlotView::updatePA()
   // std::cout << "PA handler before start" << std::endl;
   paHandler->start();                                          // start input stream processing
   // std::cout << "PA handler started and waiting" << std::endl;
-  paHandler->wait();                                           // wait until the Portaudio handler returns from sampling
+  paHandler->wait();                      // wait until the Portaudio handler returns from sampling
   // paHandler->write2screen();
   // std::cout << "PA handler after wait" << std::endl;
   paHandler->transferSampledData2Channels();
@@ -86,6 +86,9 @@ void SignalPlotView::updateSignals()
   // createRandomData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
   // std::cout << "call update data" << std::endl;
   plotSignalChannelLeftRight->updateData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
+  // QChart* pChart = plotSignalChannelLeftRight->getChart();
+  // pChart->axisX()->setRange(0.0,1000.0*m_samplePeriod);
+
   // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
   // connect(plotSignalChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
 }
@@ -114,11 +117,11 @@ void SignalPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
                                     vector<double>& x2,vector<double>& y2)
 {
   for(uint16_t k = 0; k < x1.size(); k++)
-    x1[k] = k*m_samplePeriod;
+    x1[k] = (double)k * m_samplePeriod;
   for(uint16_t k = 0; k < y1.size(); k++)
     y1[k] = 0.0;
   for(uint16_t k = 0; k < x2.size(); k++)
-    x2[k] = k*m_samplePeriod;
+    x2[k] = (double)k * m_samplePeriod;
   for(uint16_t k = 0; k < y2.size(); k++)
     y2[k] = 0.0;
 }
@@ -128,10 +131,10 @@ void SignalPlotView::createRandomData(vector<double>& x1,vector<double>& y1,
 {
   y1 = m_nrg.generate(y1.size());
   for(uint16_t k = 0; k < x1.size(); k++)
-    x1[k] = k*m_samplePeriod;
+    x1[k] = (double)k * m_samplePeriod;
   y2 = m_nrg.generate(y2.size());
   for(uint16_t k = 0; k < x2.size(); k++)
-    x2[k] = k*m_samplePeriod;
+    x2[k] = (double)k * m_samplePeriod;
 }
 
 void SignalPlotView::resizeEvent(QResizeEvent *event)

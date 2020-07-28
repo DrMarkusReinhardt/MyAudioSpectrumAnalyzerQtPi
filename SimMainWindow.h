@@ -2,15 +2,21 @@
 #define SIMMAINWINDOW_H
 
 #include <QMainWindow>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QComboBox>
+#include <QList>
+#include <QString>
+#include <QLabel>
 #include "SignalPlotView.h"
 #include "SpectrumPlotView.h"
 #include "SpectrumParameter.h"
+#include "knob.h"
 
 QT_BEGIN_NAMESPACE
 class QMainWindow;
 QT_END_NAMESPACE
+
+class QLabel;
+class QComboBox;
 
 namespace MR_SIM
 {
@@ -27,14 +33,24 @@ public:
   void step();
 
 private:
-  void calcFrequencyRange();
   void setupWidgetsAndLayouts();
+
+private Q_SLOTS:
+  void minFrequencyDialChanged(int newIndex);
+  void maxFrequencyDialChanged(int newIndex);
 
 private:
   QTimer *m_timer;
   // widgets
   SignalPlotView *m_SignalPlotView;
   SpectrumPlotView *m_SpectrumPlotView;
+  Knob *m_maxNumberSignalSamplesKnob;
+
+  const QList<QString> m_frequencyDialList = {"0.0", "100.0", "200.0", "500.0", "1000.0", "2000.0", "5000.0", "10000.0", "20000.0"};
+  QComboBox *m_minFrequencyDial;
+  QLabel *m_minFrequencyLabel;
+  QComboBox *m_maxFrequencyDial;
+  QLabel *m_maxFrequencyLabel;
 
   // fixed parameters
   const double initSampleFrequency = 96000.0;  // alternatively 44100.0 or 48000.0
@@ -51,7 +67,8 @@ private:
   const double maxFrequencyRange = 20000.0;
   double m_deltaF;
   vector<double> m_frequencyRange;
-  SpectrumParameter m_spectrumParameter;
+  SpectrumParameter *m_spectrumParameter;
+
 };
 
 } // namespace MR_Sim

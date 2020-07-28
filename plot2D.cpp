@@ -54,13 +54,13 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1) : m_x1(x1), m_y
   numberPlotDataPairs = 1;
   plotData1 = new plotData(m_x1,m_y1);
   m_chart = new QChart();
-  m_chart = createLineChart(*plotData1,"red");
+  addData(*plotData1,"green");
   m_chart->setAcceptHoverEvents(true);
   m_chart->setMinimumSize(1200, 400);
   QBrush backgroundBrush(Qt::black);
   m_chart->setBackgroundBrush(backgroundBrush);
-  setChart(m_chart);
   m_chart->createDefaultAxes();
+  setChart(m_chart);
   setRenderHint(QPainter::Antialiasing);
 }
 
@@ -82,14 +82,15 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1,
   numberPlotDataPairs = 2;
   m_chart = new QChart();
   plotData1 = new plotData(m_x1,m_y1);
-  m_chart = createLineChart(*plotData1,"green");
+  addData(*plotData1,"green");
+  m_chart->createDefaultAxes();
   plotData2 = new plotData(m_x2,m_y2);
   addData(*plotData2,"red");
+  m_chart->createDefaultAxes();
   m_chart->setAcceptHoverEvents(true);
   QBrush backgroundBrush(Qt::black);
   m_chart->setBackgroundBrush(backgroundBrush);
   setChart(m_chart);
-  // m_chart->createDefaultAxes();
   setRenderHint(QPainter::Antialiasing);
 }
 
@@ -119,11 +120,12 @@ void plot2D::updateData(const vector<double> x1, const vector<double> y1,
   m_chart->removeAllSeries();
   plotData1 = new plotData(x1,y1);
   addData(*plotData1,"green");
+  m_chart->createDefaultAxes();
   plotData2 = new plotData(x2,y2);
   addData(*plotData2,"red");
-  setChart(m_chart);
-  // m_chart->createDefaultAxes();
+  m_chart->createDefaultAxes();
   m_chart->setAcceptHoverEvents(true);
+  setChart(m_chart);
   setRenderHint(QPainter::Antialiasing);
   m_chart->show();
 }
@@ -144,7 +146,7 @@ QChart *plot2D::createLineChart(plotData &data, QString color)
   QChart *chart = new QChart();
   chart->addSeries(data.createSeries(color));
   chart->legend()->hide();
-  chart->createDefaultAxes();
+  // chart->createDefaultAxes();
   // chart->axes(Qt::Horizontal).first()->setRange(data.m_minValX, data.m_maxValX);
   // chart->axes(Qt::Vertical).first()->setRange(data.m_minValY, data.m_maxValY);
   // Add space to label to add space between labels and axis

@@ -91,9 +91,10 @@ public:
   PortaudioHandler(uint16_t initNoFrames, uint8_t initNoChannels,uint32_t initSampleRate)
     : _noFrames(initNoFrames), _noChannels(initNoChannels), _sampleRate(initSampleRate)
   {
-    _err = initializeDataArray();
+    _samplePeriod = 1.0 /(double)_sampleRate;
 
     // initialize the PA system
+    _err = initializeDataArray();
     if (_err == paNoError)
     {
       _err = Pa_Initialize();
@@ -272,9 +273,9 @@ public:
     timeSamples.resize(_noSamples/2-dataOffset);
     signalLeft.resize(_noSamples/2-dataOffset);
     signalRight.resize(_noSamples/2-dataOffset);
-    for (uint32_t k=0; k < _noSamples/2-dataOffset; k++)
+    for (uint32_t k = 0; k < _noSamples/2-dataOffset; k++)
     {
-      timeSamples[k] = (double)k * _sampleRate;
+      timeSamples[k] = (double)k * _samplePeriod;
       signalLeft[k] = _data.recordedSamples[2*k+2*dataOffset];
       _minLeftSignal = std::fmin(_minLeftSignal,signalLeft[k]);
       _maxLeftSignal = std::fmax(_maxLeftSignal,signalLeft[k]);
@@ -307,7 +308,6 @@ public:
       std::cout << "right: " << signalRight[k] << std::endl;
     }
   }
-
 
   void write2file()
   {
@@ -383,13 +383,12 @@ private:
   // PaStreamParameters  _inputParameters;
   PaStream*           _stream;
   paTestData          _data;
-  // uint32_t            i;
   uint32_t            _noFrames;
   uint32_t            _noSamples;
   uint32_t            _noBytes;
   uint8_t             _noChannels;
   uint32_t            _sampleRate;
-  // SAMPLE              max, val;
+  double              _samplePeriod;
   double              _minLeftSignal;
   double              _maxLeftSignal;
   double              _minRightSignal;

@@ -28,7 +28,7 @@ class SpectrumPlotView : public QGraphicsView
   Q_OBJECT
 
 public:
-  SpectrumPlotView(double initSampleFrequency, SpectrumParameter initSpectrumParameter,
+  SpectrumPlotView(double initSampleFrequency, SpectrumParameter *initSpectrumParameter,
                    QWidget *parent = nullptr);
   void createZeroData(vector<double>& x1,vector<double>& y1,
                       vector<double>& x2,vector<double>& y2);
@@ -37,6 +37,8 @@ public:
   void updateSpectra();
   void getSignals(vector<double> x1,vector<double> y1,
                   vector<double> x2,vector<double> y2);
+  void updateMinFrequency(double newMinFrequency);
+  void updateMaxFrequency(double newMaxFrequency);
 
 protected:
   void resizeEvent(QResizeEvent *event);
@@ -55,8 +57,9 @@ private:
   vector<double> signalRight;
   double m_sampleFrequency;
   double m_samplePeriod;
-  SpectrumParameter m_spectrumParameter;
-  SpectrumCalculator *spectrumCalculator;
+  SpectrumParameter *m_spectrumParameter;
+  SpectrumCalculator *spectrumCalculatorLeft;
+  SpectrumCalculator *spectrumCalculatorRight;
   QGraphicsSimpleTextItem *m_coordX;
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;

@@ -8,14 +8,15 @@
 
 using namespace MR_SIM;
 
-SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter initSpectrumParameter,
+SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter *initSpectrumParameter,
                                    QWidget *parent)
   : QGraphicsView(new QGraphicsScene, parent), m_sampleFrequency(initSampleFrequency),
     m_spectrumParameter(initSpectrumParameter)
 {
   // std::cout << "start SpectrumPlotView" << std::endl;
 
-  const uint16_t arraySizeSpectrum = m_spectrumParameter.noSpectrumSamples;
+  // create data arrays for the initial display
+  const uint16_t arraySizeSpectrum = m_spectrumParameter->getNoFrequencySamples();
   vector<double> spectrumFrequencyLeft(arraySizeSpectrum);
   vector<double> spectrumMagnitudeLeft(arraySizeSpectrum);
   vector<double> spectrumFrequencyRight(arraySizeSpectrum);
@@ -30,33 +31,34 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   createRandomData(spectrumFrequencyLeft,spectrumMagnitudeLeft,spectrumFrequencyRight,spectrumMagnitudeRight);
 
   // setup spectrum plot widget
-  // std::cout << "setup spectrum plot widget" << std::endl;
+  std::cout << "setup spectrum plot widget" << std::endl;
   const QString initTitleStringSpectrumLeft = "Left and right channel magnitude spectrum";
-  plotSpectrumChannelLeftRight = new plot2D(spectrumFrequencyLeft,spectrumMagnitudeLeft);
+  plotSpectrumChannelLeftRight = new plot2D(spectrumFrequencyLeft,spectrumMagnitudeLeft,spectrumFrequencyRight,spectrumMagnitudeRight);
   plotSpectrumChannelLeftRight->setTitle(initTitleStringSpectrumLeft);
   QChart* pChart = plotSpectrumChannelLeftRight->getChart();
+  pChart->legend()->hide();
   pChart->createDefaultAxes();
   pChart->setMinimumSize(1200.0,400.0);
   pChart->setMaximumSize(1200.0,400.0);
-  pChart->axisY()->setRange(-140.0,0.0);
-  pChart->axisX()->setRange(m_spectrumParameter.minFrequencyRange,
-                            m_spectrumParameter.maxFrequencyRange);
+  pChart->axisY()->setRange(-100.0,0.0);
+  pChart->axisX()->setRange(m_spectrumParameter->getMinFrequency(),
+                            m_spectrumParameter->getMaxFrequency());
+  scene()->addItem(pChart);
 
   // initialize the first tooltip
+  std::cout << "create tooltip" << std::endl;
   m_tooltip = new Callout(pChart);
 
-  scene()->addItem(plotSpectrumChannelLeftRight->getChart());
-
-  QChart* chart = plotSpectrumChannelLeftRight->getChart();
-  m_coordX = new QGraphicsSimpleTextItem(chart);
-  m_coordX->setPos(chart->size().width()/2 - 50, chart->size().height()-30);
+  m_coordX = new QGraphicsSimpleTextItem(pChart);
+  m_coordX->setPos(pChart->size().width()/2 - 50, pChart->size().height()-30);
   m_coordX->setText("X: ");
-  m_coordY = new QGraphicsSimpleTextItem(chart);
-  m_coordY->setPos(chart->size().width()/2 + 50, chart->size().height()-30);
+  m_coordY = new QGraphicsSimpleTextItem(pChart);
+  m_coordY->setPos(pChart->size().width()/2 + 50, pChart->size().height()-30);
   m_coordY->setText("Y: ");
 
-  // create the spectrum calculator
-  spectrumCalculator = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+  // create the spectrum calculators
+  spectrumCalculatorLeft = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+  spectrumCalculatorRight = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
 }
 
 void SpectrumPlotView::getSignals(vector<double> x1,vector<double> y1,
@@ -71,14 +73,32 @@ void SpectrumPlotView::getSignals(vector<double> x1,vector<double> y1,
 void SpectrumPlotView::updateSpectra()
 {
   // VectorXd frequencyRange = spectrumCalculator->returnFrequencyRange();
-  spectrumCalculator->calculateSpectrum(signalLeft);
-  spectrumCalculator->normalizeMagnitudeSpectrum();
-  VectorXd magnitudeSpectrumLeft = spectrumCalculator->returnMagnitudeSpectrum();
-  spectrumCalculator->calculateSpectrum(signalRight);
-  spectrumCalculator->normalizeMagnitudeSpectrum();
-  VectorXd magnitudeSpectrumRight = spectrumCalculator->returnMagnitudeSpectrum();
-  plotSpectrumChannelLeftRight->updateData(m_spectrumParameter.frequencyRange,magnitudeSpectrumLeft,
-                                           m_spectrumParameter.frequencyRange,magnitudeSpectrumRight);
+  spectrumCalculatorLeft->calculateSpectrum(signalLeft);
+  double maxMagnitudeLeft = spectrumCalculatorLeft->getMaxMagnitudeSpectrum();
+  // std::cout << "maxMagnitudeLeft = " << maxMagnitudeLeft << std::endl;
+
+  spectrumCalculatorRight->calculateSpectrum(signalRight);
+  double maxMagnitudeRight = spectrumCalculatorRight->getMaxMagnitudeSpectrum();
+  // std::cout << "maxMagnitudeRight = " << maxMagnitudeRight << std::endl;
+
+  // normalize spectra
+  double overallMaxMagnitude = max(maxMagnitudeLeft,maxMagnitudeRight);
+  // std::cout << "overallMaxMagnitude = " << overallMaxMagnitude << std::endl;
+  spectrumCalculatorLeft->normalizeMagnitudeSpectrumVal(overallMaxMagnitude);
+  spectrumCalculatorRight->normalizeMagnitudeSpectrumVal(overallMaxMagnitude);
+
+  VectorXd magnitudeSpectrumLeft = spectrumCalculatorLeft->returnMagnitudeSpectrum();
+  VectorXd magnitudeSpectrumRight = spectrumCalculatorRight->returnMagnitudeSpectrum();
+
+  VectorXd frequencyRange = m_spectrumParameter->getFrequencyRange();
+  plotSpectrumChannelLeftRight->updateData(frequencyRange, magnitudeSpectrumLeft,
+                                           frequencyRange, magnitudeSpectrumRight);
+  QChart* pChart = plotSpectrumChannelLeftRight->getChart();
+  pChart->axisY()->setRange(-100.0,0.0);
+  pChart->axisX()->setRange(m_spectrumParameter->getMinFrequency(),
+                            m_spectrumParameter->getMaxFrequency());
+
+  // with new series added to the chart, it is necessary to update the signal connections for the hovering mouse
   // connect the hovering over the first data series of the spectrum chart with the tooltip display
   connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
   // connect the hovering over the second data series of the spectrum chart with the tooltip display
@@ -87,6 +107,28 @@ void SpectrumPlotView::updateSpectra()
   connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
   // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
   connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+}
+
+void SpectrumPlotView::updateMinFrequency(double newMinFrequency)
+{
+   std::cout << " new min. frequency = " << newMinFrequency << std::endl;
+   m_spectrumParameter->setMinFrequency(newMinFrequency);
+   delete spectrumCalculatorLeft;
+   delete spectrumCalculatorRight;
+   spectrumCalculatorLeft = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+   spectrumCalculatorRight = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+   updateSpectra();
+}
+
+void SpectrumPlotView::updateMaxFrequency(double newMaxFrequency)
+{
+   std::cout << " new max. frequency = " << newMaxFrequency << std::endl;
+   m_spectrumParameter->setMaxFrequency(newMaxFrequency);
+   delete spectrumCalculatorLeft;
+   delete spectrumCalculatorRight;
+   spectrumCalculatorLeft = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+   spectrumCalculatorRight = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+   updateSpectra();
 }
 
 void SpectrumPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
@@ -120,8 +162,10 @@ void SpectrumPlotView::resizeEvent(QResizeEvent *event)
   {
     scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
     plotSpectrumChannelLeftRight->resize(event->size());
-    m_coordX->setPos(plotSpectrumChannelLeftRight->size().width()/2 - 50, plotSpectrumChannelLeftRight->size().height()-30);
-    m_coordY->setPos(plotSpectrumChannelLeftRight->size().width()/2 + 50, plotSpectrumChannelLeftRight->size().height()-30);
+    m_coordX->setPos(plotSpectrumChannelLeftRight->size().width()/2 - 50,
+                     plotSpectrumChannelLeftRight->size().height()-30);
+    m_coordY->setPos(plotSpectrumChannelLeftRight->size().width()/2 + 50,
+                     plotSpectrumChannelLeftRight->size().height()-30);
 
     const auto callouts = m_callouts;
     for (Callout *callout : callouts)

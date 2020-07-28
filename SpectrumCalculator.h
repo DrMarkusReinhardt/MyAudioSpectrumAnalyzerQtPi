@@ -14,15 +14,18 @@ typedef std::vector<std::complex<double> > VectorXcd;
 class SpectrumCalculator
 {
 public:
-  SpectrumCalculator(double initSampleFrequency, SpectrumParameter initSpectrumParameter);
+  SpectrumCalculator(double initSampleFrequency, SpectrumParameter *initSpectrumParameter);
   void calculateSpectrum(const VectorXd& inputSignal);
   VectorXd returnFrequencyRange();
+  double getMaxMagnitudeSpectrum();
   void normalizeMagnitudeSpectrum();
+  void normalizeMagnitudeSpectrumVal(double maxValue);
   VectorXd returnMagnitudeSpectrum();
+  VectorXcd returnFourierTransform();
 
 private:
   double m_sampleFrequency;
-  SpectrumParameter m_spectrumParameter;
+  SpectrumParameter *m_spectrumParameter;
   VectorXd m_magnitudeSpectrum;
   VectorXcd m_fourierTransform;
   DTFT *dtft;
