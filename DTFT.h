@@ -69,7 +69,7 @@ private:
   // calculate the window
   void calculateWindow(VectorXd &window, uint16_t lenInputSignal)
   {
-    double atten = 60.0;
+    double atten = 80.0;
     chebyshev_window(window, lenInputSignal, atten);
   }
 
