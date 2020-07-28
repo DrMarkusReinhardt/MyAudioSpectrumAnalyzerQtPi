@@ -70,7 +70,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // setup the signal plot view
     // std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
-    QString signalAxisLabelStr("time / sec. -->");
+    QString signalAxisLabelStr("time / ms -->");
     m_signalAxisLabel = new QLabel(signalAxisLabelStr, this);
     m_signalAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
     // std::cout << "SignalPlotView created" << std::endl;
