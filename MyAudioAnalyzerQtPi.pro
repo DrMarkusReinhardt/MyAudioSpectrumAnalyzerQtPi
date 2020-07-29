@@ -29,7 +29,8 @@ SOURCES += \
     plot2D.cpp \
     SpectrumCalculator.cpp \
     callout.cpp \
-    knob.cpp
+    knob.cpp \
+    THDCalculator.cpp
 
 HEADERS += \
     SimMainWindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     DTFT.h \
     callout.h \
     SpectrumParameter.h \
-    knob.h
+    knob.h \
+    THDCalculator.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include

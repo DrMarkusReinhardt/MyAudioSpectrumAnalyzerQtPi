@@ -24,6 +24,17 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   // setup the widgets and the layouts
   setupWidgetsAndLayouts();
 
+  // prepare for THD calculations
+  double defaultBaseFrequencyLeft = 1000.0;
+  double defaultNumberOvertonesLeft = 20;
+  THDCalcLeft = new THDCalculator(defaultBaseFrequencyLeft, defaultNumberOvertonesLeft, m_sampleFrequency);
+  THDCalcLeft->initTHDCalculation();
+
+  double defaultBaseFrequencyRight = 1000.0;
+  double defaultNumberOvertonesRight = 20;
+  THDCalcRight = new THDCalculator(defaultBaseFrequencyRight, defaultNumberOvertonesRight, m_sampleFrequency);
+  THDCalcRight->initTHDCalculation();
+
   // define the simulation loop timer
   m_timer = new QTimer(this);
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
@@ -185,6 +196,17 @@ void SimMainWindow::step()
                                  m_SignalPlotView->returnTimeRightSignal(),
                                  m_SignalPlotView->returnRightSignal());
   m_SpectrumPlotView->updateSpectra();
+
+  // THD calculations
+  double THD_F_left;
+  double THD_R_left;
+  THDCalcLeft->calcTHD(THD_F_left, THD_R_left, m_SignalPlotView->returnLeftSignal());
+  double THD_F_right;
+  double THD_R_right;
+  THDCalcRight->calcTHD(THD_F_right, THD_R_right, m_SignalPlotView->returnRightSignal());
+
+  std::cout << "THD_F (left)  = " << THD_F_left  << " THD_R (left)  = " << THD_R_left  << std::endl;
+  std::cout << "THD_F (right) = " << THD_F_right << " THD_R (right) = " << THD_R_right << std::endl;
 
   /*
   if (m_discreteTime >= m_discreteSimulationSteps)

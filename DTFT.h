@@ -11,6 +11,8 @@
              Tested successfully 30th June 2020
 
 */
+#ifndef DTFT_H
+#define DTFT_H
 
 #include <iostream>
 #include <vector>
@@ -136,3 +138,5 @@ private:
   double samplingFrequency;
   double m_Ts;
 };
+
+#endif

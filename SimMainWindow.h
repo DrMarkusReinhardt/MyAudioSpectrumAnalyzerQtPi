@@ -10,6 +10,7 @@
 #include "SpectrumPlotView.h"
 #include "SpectrumParameter.h"
 #include "knob.h"
+#include "THDCalculator.h"
 
 QT_BEGIN_NAMESPACE
 class QMainWindow;
@@ -41,6 +42,7 @@ private Q_SLOTS:
 
 private:
   QTimer *m_timer;
+
   // widgets
   SignalPlotView *m_SignalPlotView;
   QLabel *m_signalAxisLabel;
@@ -70,6 +72,10 @@ private:
   double m_deltaF;
   vector<double> m_frequencyRange;
   SpectrumParameter *m_spectrumParameter;
+
+  // THD calculator
+  THDCalculator *THDCalcLeft;
+  THDCalculator *THDCalcRight;
 
 };
 
