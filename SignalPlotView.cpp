@@ -31,7 +31,7 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   createRandomData(signalTimeLeft, signalLeft, signalTimeRight, signalRight);
 
   // std::cout << "setup signal plot widget" << std::endl;
-  const QString initTitleString = "Left and right channel signal";
+  const QString initTitleString = "Left (green) and right (red) channel signal";
   plotSignalChannelLeftRight = new plot2D(signalTimeLeft, signalLeft, signalTimeRight, signalRight);
   plotSignalChannelLeftRight->setTitle(initTitleString);
   QChart* pChart = plotSignalChannelLeftRight->getChart();

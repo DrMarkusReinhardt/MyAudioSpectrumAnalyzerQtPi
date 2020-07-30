@@ -32,7 +32,7 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
 
   // setup spectrum plot widget
   // std::cout << "setup spectrum plot widget" << std::endl;
-  const QString initTitleStringSpectrumLeft = "Left and right channel magnitude spectrum";
+  const QString initTitleStringSpectrumLeft = "Left (green) and right (red) channel magnitude spectrum";
   plotSpectrumChannelLeftRight = new plot2D(spectrumFrequencyLeft,spectrumMagnitudeLeft,spectrumFrequencyRight,spectrumMagnitudeRight);
   plotSpectrumChannelLeftRight->setTitle(initTitleStringSpectrumLeft);
   QChart* pChart = plotSpectrumChannelLeftRight->getChart();

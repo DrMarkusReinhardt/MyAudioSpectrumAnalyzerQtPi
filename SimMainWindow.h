@@ -11,6 +11,7 @@
 #include "SpectrumParameter.h"
 #include "knob.h"
 #include "THDCalculator.h"
+#include "THDHandler.h"
 
 QT_BEGIN_NAMESPACE
 class QMainWindow;
@@ -73,9 +74,9 @@ private:
   vector<double> m_frequencyRange;
   SpectrumParameter *m_spectrumParameter;
 
-  // THD calculator
-  THDCalculator *THDCalcLeft;
-  THDCalculator *THDCalcRight;
+  // THD handlers
+  THDHandler *THDHandlerLeft;
+  THDHandler *THDHandlerRight;
 
 };
 

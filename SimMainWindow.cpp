@@ -24,17 +24,6 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   // setup the widgets and the layouts
   setupWidgetsAndLayouts();
 
-  // prepare for THD calculations
-  double defaultBaseFrequencyLeft = 1000.0;
-  double defaultNumberOvertonesLeft = 20;
-  THDCalcLeft = new THDCalculator(defaultBaseFrequencyLeft, defaultNumberOvertonesLeft, m_sampleFrequency);
-  THDCalcLeft->initTHDCalculation();
-
-  double defaultBaseFrequencyRight = 1000.0;
-  double defaultNumberOvertonesRight = 20;
-  THDCalcRight = new THDCalculator(defaultBaseFrequencyRight, defaultNumberOvertonesRight, m_sampleFrequency);
-  THDCalcRight->initTHDCalculation();
-
   // define the simulation loop timer
   m_timer = new QTimer(this);
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
@@ -78,6 +67,10 @@ void SimMainWindow::readParametersFromFile()
 
 void SimMainWindow::setupWidgetsAndLayouts()
 {
+
+    QFont font( "Helvetica", 10 );
+    font.setBold( true );
+
     // setup the signal plot view
     // std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
@@ -92,28 +85,44 @@ void SimMainWindow::setupWidgetsAndLayouts()
     QString frequencyAxisLabelStr("frequency / Hz -->");
     m_frequencyAxisLabel = new QLabel(frequencyAxisLabelStr, this);
     m_frequencyAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
-
     // std::cout << "SpectrumPlotView created" << std::endl;
 
     // max. time knob
     m_maxNumberSignalSamplesKnob = new Knob( "Max. no. samples", 100.0, 500.0, this );
     m_maxNumberSignalSamplesKnob->setValue(500.0);
 
+    // prepare for THD calculations
+    std::cout << "setup THD" << std::endl;
+    double defaultBaseFrequencyLeft = 1000.0;
+    double defaultNumberOvertonesLeft = 20;
+    double defaultBaseFrequencyRight = 1000.0;
+    double defaultNumberOvertonesRight = 20;
+    // handler to parameterize and show the THD calculations
+    QString THDHeaderLeftStr("THD Left Channel:");
+    THDHandlerLeft  = new THDHandler(THDHeaderLeftStr, defaultBaseFrequencyLeft,
+                                     defaultNumberOvertonesLeft, m_sampleFrequency, this);
+    QString THDHeaderRightStr("THD Right Channel:");
+    THDHandlerRight = new THDHandler(THDHeaderRightStr, defaultBaseFrequencyRight,
+                                     defaultNumberOvertonesRight, m_sampleFrequency, this);
+
     // Combo box for the min. frequency
     m_minFrequencyDial = new QComboBox(this);
     m_minFrequencyDial->addItems(m_frequencyDialList);
     m_minFrequencyDial->setCurrentIndex(0);
-    QString minFrequencyLabelStr("min. frequency");
+    QString minFrequencyLabelStr("Select min. frequency");
     m_minFrequencyLabel = new QLabel(minFrequencyLabelStr, this);
-    m_minFrequencyLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+    m_minFrequencyLabel->setAlignment( Qt::AlignLeft );
+    m_minFrequencyLabel->setFont(font);
 
     // Combo box for the max. frequency
     m_maxFrequencyDial = new QComboBox(this);
     m_maxFrequencyDial->addItems(m_frequencyDialList);
     m_maxFrequencyDial->setCurrentIndex(8);
-    QString maxFrequencyLabelStr("max. frequency");
+    QString maxFrequencyLabelStr("Select max. frequency");
     m_maxFrequencyLabel = new QLabel(maxFrequencyLabelStr, this);
-    m_maxFrequencyLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+    m_maxFrequencyLabel->setAlignment( Qt::AlignLeft );
+    m_maxFrequencyLabel->setFont(font);
+
 
     // place all widgets
     QRect Rect1(30,30,1200,450);
@@ -131,22 +140,33 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_frequencyAxisLabel->setVisible(true);
     m_frequencyAxisLabel->setStyleSheet("QLabel { color : white; }");
 
-    QRect Rect3(1260,30,200,200);
+    // number of signal samples knob
+    QRect Rect3(1260,0,200,150);
     m_maxNumberSignalSamplesKnob->setGeometry(Rect3);
 
-    QRect Rect4(1330,550,100,40);
+    // THD handler widgets
+    QRect RectTHDLeft(1240,180,240,280);
+    THDHandlerLeft->setGeometry(RectTHDLeft);
+    THDHandlerLeft->setVisible(true);
+
+    QRect RectTHDRight(1240,480,240,280);
+    THDHandlerRight->setGeometry(RectTHDRight);
+    THDHandlerRight->setVisible(true);
+
+    // min. and max. frequency selection widgets
+    QRect Rect4(1300,800,200,30);
     m_minFrequencyLabel->setGeometry(Rect4);
     m_minFrequencyLabel->setVisible(true);
 
-    QRect Rect5(1330,570,100,40);
+    QRect Rect5(1300,830,100,30);
     m_minFrequencyDial->setGeometry(Rect5);
     m_minFrequencyDial->setVisible(true);
 
-    QRect Rect6(1330,650,100,40);
+    QRect Rect6(1300,880,200,30);
     m_maxFrequencyLabel->setGeometry(Rect6);
     m_maxFrequencyLabel->setVisible(true);
 
-    QRect Rect7(1330,670,100,40);
+    QRect Rect7(1300,910,100,30);
     m_maxFrequencyDial->setGeometry(Rect7);
     m_maxFrequencyDial->setVisible(true);
 
@@ -198,15 +218,9 @@ void SimMainWindow::step()
   m_SpectrumPlotView->updateSpectra();
 
   // THD calculations
-  double THD_F_left;
-  double THD_R_left;
-  THDCalcLeft->calcTHD(THD_F_left, THD_R_left, m_SignalPlotView->returnLeftSignal());
-  double THD_F_right;
-  double THD_R_right;
-  THDCalcRight->calcTHD(THD_F_right, THD_R_right, m_SignalPlotView->returnRightSignal());
+  THDHandlerLeft->run(m_SignalPlotView->returnLeftSignal());
+  THDHandlerRight->run(m_SignalPlotView->returnRightSignal());
 
-  std::cout << "THD_F (left)  = " << THD_F_left  << " THD_R (left)  = " << THD_R_left  << std::endl;
-  std::cout << "THD_F (right) = " << THD_F_right << " THD_R (right) = " << THD_R_right << std::endl;
 
   /*
   if (m_discreteTime >= m_discreteSimulationSteps)
