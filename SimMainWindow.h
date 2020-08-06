@@ -6,6 +6,7 @@
 #include <QList>
 #include <QString>
 #include <QLabel>
+#include <QPushButton>
 #include "SignalPlotView.h"
 #include "SpectrumPlotView.h"
 #include "SpectrumParameter.h"
@@ -47,13 +48,34 @@ private Q_SLOTS:
 private:
   QTimer *m_timer;
 
-  // widgets
+  // signal and spectrum plots
   SignalPlotView *m_SignalPlotView;
   QLabel *m_signalAxisLabel;
   SpectrumPlotView *m_SpectrumPlotView;
   QLabel *m_frequencyAxisLabel;
+
+  // on/off buttons, status and measurement fields
+  QPushButton *m_leftChannelActivationButton;
+  QPushButton *m_rightChannelActivationButton;
+  QPushButton *m_processingOnOff;
+  QLabel *m_processingStatus;
+
+  // peak spectrum values and frequency location
+  QLabel *m_peakSpectrumValuesLabel;
+  QLabel *m_leftChannelPeakSpectrumValueDisplay;
+  QLabel *m_rightChannelPeakSpectrumValueDisplay;
+  QLabel *m_peakFrequencyValuesLabel;
+  QLabel *m_leftChannelPeakSpectrumFrequencyDisplay;
+  QLabel *m_rightChannelPeakSpectrumFrequencyDisplay;
+
+  // know to control the shown signal samples
   Knob *m_maxNumberSignalSamplesKnob;
 
+  // THD handlers
+  THDHandler *THDHandlerLeft;
+  THDHandler *THDHandlerRight;
+
+  // combo box to control min. and max. frequency of spectrum plot
   const QList<QString> m_frequencyDialList = {"0.0", "100.0", "200.0", "500.0", "1000.0", "2000.0", "5000.0", "10000.0", "20000.0"};
   QComboBox *m_minFrequencyDial;
   QLabel *m_minFrequencyLabel;
@@ -76,11 +98,6 @@ private:
   double m_deltaF;
   vector<double> m_frequencyRange;
   SpectrumParameter *m_spectrumParameter;
-
-  // THD handlers
-  THDHandler *THDHandlerLeft;
-  THDHandler *THDHandlerRight;
-
 };
 
 } // namespace MR_Sim

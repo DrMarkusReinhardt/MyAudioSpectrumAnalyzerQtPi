@@ -132,6 +132,36 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_frequencyAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
     // std::cout << "SpectrumPlotView created" << std::endl;
 
+    // activation button for left and right channel
+    m_leftChannelActivationButton = new QPushButton(this);
+    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+    m_leftChannelActivationButton->setText("Left channel on");
+    m_rightChannelActivationButton = new QPushButton(this);
+    m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+    m_rightChannelActivationButton->setText("Right channel on");
+    m_processingOnOff = new QPushButton(this);
+    m_processingOnOff->setStyleSheet("QPushButton { background-color : red; }");
+    m_processingOnOff->setText("Stop");
+    m_processingStatus = new QLabel(this);
+    m_processingStatus->setText("Running");
+    m_processingStatus->setFrameStyle(QFrame::Sunken);
+    m_processingStatus->setStyleSheet("QLabel { background-color : white; }");
+    m_processingStatus->setAlignment( Qt::AlignHCenter );
+
+    // peak spectrum values and frequency location
+    m_peakSpectrumValuesLabel = new QLabel(this);
+    m_peakSpectrumValuesLabel->setText("Peak spectrum values / dB:");
+    m_leftChannelPeakSpectrumValueDisplay = new QLabel(this);
+    m_leftChannelPeakSpectrumValueDisplay->setText(" ");
+    m_rightChannelPeakSpectrumValueDisplay = new QLabel(this);
+    m_rightChannelPeakSpectrumValueDisplay->setText(" ");
+    m_peakFrequencyValuesLabel = new QLabel(this);
+    m_peakFrequencyValuesLabel->setText("at frequencies:");
+    m_leftChannelPeakSpectrumFrequencyDisplay = new QLabel(this);
+    m_leftChannelPeakSpectrumFrequencyDisplay->setText(" ");
+    m_rightChannelPeakSpectrumFrequencyDisplay = new QLabel(this);
+    m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
+
     // max. time knob
     m_maxNumberSignalSamplesKnob = new Knob( "No. samples in signal display:", 100.0, 500.0, this );
     m_maxNumberSignalSamplesKnob->setValue(500.0);
@@ -170,22 +200,62 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_maxFrequencyLabel->setAlignment( Qt::AlignLeft );
     m_maxFrequencyLabel->setFont(font);
 
-
     // place all widgets
-    QRect Rect1(30,30,1200,420);
+    QRect Rect1(10,30,1200,420);
     m_SignalPlotView->setGeometry(Rect1);
-    QRect RectSignalLabel(550,400,200,50);
+    QRect RectSignalLabel(540,400,200,50);
     m_signalAxisLabel->setGeometry(RectSignalLabel);
     m_signalAxisLabel->setVisible(true);
     m_signalAxisLabel->setStyleSheet("QLabel { color : white; }");
 
-    QRect Rect2(30,450,1200,420);
+    QRect Rect2(10,450,1200,420);
     m_SpectrumPlotView->setGeometry(Rect2);
 
-    QRect RectFrequencyLabel(550,820,200,50);
+    QRect RectFrequencyLabel(530,820,200,50);
     m_frequencyAxisLabel->setGeometry(RectFrequencyLabel);
     m_frequencyAxisLabel->setVisible(true);
     m_frequencyAxisLabel->setStyleSheet("QLabel { color : white; }");
+
+    // left and right channel activation buttons
+    QRect RectLeftChannelActivationButton(10,890,120,20);
+    m_leftChannelActivationButton->setGeometry(RectLeftChannelActivationButton);
+    m_leftChannelActivationButton->setVisible(true);
+    QRect RectRightChannelActivationButton(150,890,120,20);
+    m_rightChannelActivationButton->setGeometry(RectRightChannelActivationButton);
+    m_rightChannelActivationButton->setVisible(true);
+    QRect ProcessingActivationButton(10,920,120,20);
+    m_processingOnOff->setGeometry(ProcessingActivationButton);
+    m_processingOnOff->setVisible(true);
+    QRect RectProcessingStatus(150,920,120,20);
+    m_processingStatus->setGeometry(RectProcessingStatus);
+    m_processingStatus->setVisible(true);
+
+    // measurement widgets
+    QRect RectPeakSpectrumValuesLabel(295,920,180,20);
+    m_peakSpectrumValuesLabel->setGeometry(RectPeakSpectrumValuesLabel);
+    QRect RectLeftChannelPeakSpectrumValueDisplay(480,920,120,20);
+    m_leftChannelPeakSpectrumValueDisplay->setGeometry(RectLeftChannelPeakSpectrumValueDisplay);
+    m_leftChannelPeakSpectrumValueDisplay->setFrameStyle(QFrame::Sunken);
+    m_leftChannelPeakSpectrumValueDisplay->setStyleSheet("QLabel { background-color : white; }");
+    m_leftChannelPeakSpectrumValueDisplay->setAlignment( Qt::AlignRight );
+    QRect RectRightChannelPeakSpectrumValueDisplay(620,920,120,20);
+    m_rightChannelPeakSpectrumValueDisplay->setGeometry(RectRightChannelPeakSpectrumValueDisplay);
+    m_rightChannelPeakSpectrumValueDisplay->setFrameStyle(QFrame::Sunken);
+    m_rightChannelPeakSpectrumValueDisplay->setStyleSheet("QLabel { background-color : white; }");
+    m_rightChannelPeakSpectrumValueDisplay->setAlignment( Qt::AlignRight );
+    QRect RectPeakFrequencyValuesLabel(760,920,160,20);
+    m_peakFrequencyValuesLabel->setGeometry(RectPeakFrequencyValuesLabel);
+    m_peakFrequencyValuesLabel->setAlignment( Qt::AlignRight );
+    QRect RectLeftChannelPeakSpectrumFrequencyDisplay(940,920,120,20);
+    m_leftChannelPeakSpectrumFrequencyDisplay->setGeometry(RectLeftChannelPeakSpectrumFrequencyDisplay);
+    m_leftChannelPeakSpectrumFrequencyDisplay->setFrameStyle(QFrame::Sunken);
+    m_leftChannelPeakSpectrumFrequencyDisplay->setStyleSheet("QLabel { background-color : white; }");
+    m_leftChannelPeakSpectrumFrequencyDisplay->setAlignment( Qt::AlignRight );
+    QRect RectRightChannelPeakSpectrumFrequencyDisplay(1080,920,120,20);
+    m_rightChannelPeakSpectrumFrequencyDisplay->setGeometry(RectRightChannelPeakSpectrumFrequencyDisplay);
+    m_rightChannelPeakSpectrumFrequencyDisplay->setFrameStyle(QFrame::Sunken);
+    m_rightChannelPeakSpectrumFrequencyDisplay->setStyleSheet("QLabel { background-color : white; }");
+    m_rightChannelPeakSpectrumFrequencyDisplay->setAlignment( Qt::AlignRight );
 
     // number of signal samples knob
     QRect Rect3(1260,20,200,150);
