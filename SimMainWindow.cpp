@@ -2,6 +2,7 @@
 #include <QHBoxLayout>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QToolBar>
 #include <QTextStream>
 #include <QtCore/QTimer>
 #include <QRect>
@@ -14,9 +15,8 @@ using namespace MR_SIM;
 SimMainWindow::SimMainWindow(QMainWindow *parent)
   : QMainWindow(parent)
 {
-  // add menu bar
-  QMenu *menu = menuBar()->addMenu(tr("&File"));
-  menu->addAction(tr("&Quit"), this, &QWidget::close);
+  // add menu bar with actions
+  createMenuAndActions();
 
   // get and set the main calculation parameters
   setParameters();
@@ -30,6 +30,51 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   const uint16_t delayTime_ms = 10;
   m_timer->start(delayTime_ms);
   std::cout << "Spectrum analyzer started" << std::endl;
+}
+
+void SimMainWindow::createMenuAndActions()
+{
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    // QToolBar *fileToolBar = addToolBar(tr("File"));
+    /*
+    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
+    QAction *newAct = new QAction(newIcon, tr("&New"), this);
+    newAct->setShortcuts(QKeySequence::New);
+    newAct->setStatusTip(tr("Create a new file"));
+    connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
+    fileMenu->addAction(newAct);
+    fileToolBar->addAction(newAct);
+    */
+
+    const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
+    QAction *saveAct = new QAction(saveIcon, tr("&Save"), this);
+    saveAct->setShortcuts(QKeySequence::Save);
+    saveAct->setStatusTip(tr("Save the spectrum data to disk"));
+    connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
+    fileMenu->addAction(saveAct);
+    // fileToolBar->addAction(saveAct);
+
+    const QIcon saveAsIcon = QIcon::fromTheme("document-save-as");
+    QAction *saveAsAct = fileMenu->addAction(saveAsIcon, tr("Save &As..."), this, &SimMainWindow::saveAs);
+    saveAsAct->setShortcuts(QKeySequence::SaveAs);
+    saveAsAct->setStatusTip(tr("Save the document under a new name"));
+
+    fileMenu->addSeparator();
+
+    const QIcon exitIcon = QIcon::fromTheme("application-exit");
+    QAction *exitAct = fileMenu->addAction(exitIcon, tr("E&xit"), this, &QWidget::close);
+    exitAct->setShortcuts(QKeySequence::Quit);
+    exitAct->setStatusTip(tr("Exit the application"));
+}
+
+void SimMainWindow::save()
+{
+   std::cout << "save() called" << std::endl;
+}
+
+void SimMainWindow::saveAs()
+{
+    std::cout << "saveAs() called" << std::endl;
 }
 
 void SimMainWindow::setParameters()
@@ -127,17 +172,17 @@ void SimMainWindow::setupWidgetsAndLayouts()
 
 
     // place all widgets
-    QRect Rect1(30,30,1200,450);
+    QRect Rect1(30,30,1200,420);
     m_SignalPlotView->setGeometry(Rect1);
     QRect RectSignalLabel(550,400,200,50);
     m_signalAxisLabel->setGeometry(RectSignalLabel);
     m_signalAxisLabel->setVisible(true);
     m_signalAxisLabel->setStyleSheet("QLabel { color : white; }");
 
-    QRect Rect2(30,490,1200,450);
+    QRect Rect2(30,450,1200,420);
     m_SpectrumPlotView->setGeometry(Rect2);
 
-    QRect RectFrequencyLabel(550,860,200,50);
+    QRect RectFrequencyLabel(550,820,200,50);
     m_frequencyAxisLabel->setGeometry(RectFrequencyLabel);
     m_frequencyAxisLabel->setVisible(true);
     m_frequencyAxisLabel->setStyleSheet("QLabel { color : white; }");

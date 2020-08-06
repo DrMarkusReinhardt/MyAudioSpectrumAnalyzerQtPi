@@ -30,6 +30,9 @@ class SimMainWindow : public QMainWindow
 public:
   SimMainWindow(QMainWindow *parent = nullptr);
   ~SimMainWindow();
+  void createMenuAndActions();
+  void save();
+  void saveAs();
   void setParameters();
   void readParametersFromFile();
   void step();
