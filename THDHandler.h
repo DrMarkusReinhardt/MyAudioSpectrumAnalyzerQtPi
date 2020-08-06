@@ -20,13 +20,19 @@ public:
     virtual QSize sizeHint() const;
 
 private:
+    void updateNoOvertonesDisplay(double newNoOvertones);
+    void updateBaseFrequencyDisplay(double newBaseFrequency);
+
+private:
     QString m_channelString;
     QLabel *m_channelTitle;
     double m_baseFrequency;
     uint16_t m_noOvertones;
     double m_sampleFrequency;
     Knob *m_knobNoOvertones;
+    QLabel *m_displayNoOvertones;
     QwtSlider *m_sliderBaseFrequency;
+    QLabel *m_displayBaseFrequency;
     QLabel *m_labelBaseFrequency;
     THDCalculator *m_THDCalc;
     QString m_THDResultLabelString;

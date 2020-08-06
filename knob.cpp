@@ -88,7 +88,7 @@ QSize Knob::sizeHint() const
   const int h = sz1.height() + sz2.height();
 
   int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
-  off -= 15; // spacing
+  off -= 30; // spacing
 
   return QSize( w, h - off );
 }
@@ -116,8 +116,18 @@ QColor Knob::theme() const
 void Knob::resizeEvent( QResizeEvent *event )
 {
   const QSize sz = event->size();
-  const QSize hint = d_label->sizeHint();
+  const int labelHeight = d_label->sizeHint().height();
+  const int knobHeight = d_knob->sizeHint().height();
 
+  d_knob->setGeometry(0, sz.height() - knobHeight,
+                      sz.width(), knobHeight );
+  int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
+  off -= 30; // spacing
+
+  d_label->setGeometry( 0, d_knob->pos().y() - labelHeight + off,
+                        sz.width(), labelHeight );
+
+  /*
   d_label->setGeometry( 0, sz.height() - hint.height(),
                         sz.width(), hint.height() );
 
@@ -128,4 +138,5 @@ void Knob::resizeEvent( QResizeEvent *event )
 
   d_knob->setGeometry( 0, d_label->pos().y() - knobHeight + off,
                        sz.width(), knobHeight );
+  */
 }

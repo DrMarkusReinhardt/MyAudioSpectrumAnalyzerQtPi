@@ -1,67 +1,124 @@
 #include "THDHandler.h"
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGroupBox>
 
 THDHandler::THDHandler(QString initChannelString, double initBaseFrequency,
                        uint16_t initNoOvertones, double initSampleFrequency, QWidget* parent) :
     QWidget(parent), m_channelString(initChannelString), m_baseFrequency(initBaseFrequency), m_noOvertones(initNoOvertones), m_sampleFrequency(initSampleFrequency)
 {
     // initialize the GUI elements to control the THD calculation
-    QFont font( "Helvetica", 10 );
+    QFont font( "Helvetica", 9 );
     font.setBold( true );
-    m_channelTitle = new QLabel(initChannelString);
-    m_channelTitle->setAlignment( Qt::AlignHCenter );
-    m_channelTitle->setFont( font );
 
+    QFont fontTitle( "Helvetica", 12 );
+    fontTitle.setBold( true );
+    m_channelTitle = new QLabel(initChannelString);
+    m_channelTitle->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    m_channelTitle->setFont(fontTitle);
     // m_channelTitle->setBaseSize(QSize(200,50));
-    // m_channelTitle->setMinimumSize(200,50);
-    m_knobNoOvertones = new Knob("Select no. overtones", 1, 20);
-    // m_knobNoOvertones->setMinimumSize(200,250);
+    m_channelTitle->setMinimumSize(200,20);
+
+    m_knobNoOvertones = new Knob("Select no. overtones:", 1, 20);
     m_knobNoOvertones->setValue((double)m_noOvertones);
+    m_knobNoOvertones->setMinimumSize(150,130);
     // m_knobNoOvertones->setBaseSize(QSize(200,250));
-    m_labelBaseFrequency = new QLabel("Select THD base frequency / kHz");
-    m_labelBaseFrequency->setAlignment(Qt::AlignHCenter );
-    m_labelBaseFrequency->setFont( font );
-    // m_labelBaseFrequency->setMinimumSize(200,50);
+    QString knobDisplayOvertonesStr(QString::number(initNoOvertones));
+    m_displayNoOvertones = new QLabel(knobDisplayOvertonesStr);
+    m_displayNoOvertones->setMaximumSize(60,20);
+    m_displayNoOvertones->setMinimumSize(40,20);
+    m_displayNoOvertones->setFrameStyle(QFrame::Sunken);
+    m_displayNoOvertones->setStyleSheet("QLabel { background-color : white; }");
+    m_displayNoOvertones->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    m_displayNoOvertones->setFont(font);
+
+    m_labelBaseFrequency = new QLabel("Select THD base frequency/kHz:");
+    m_labelBaseFrequency->setAlignment(Qt::AlignHCenter | Qt::AlignBottom );
+    m_labelBaseFrequency->setFont(font);
+    m_labelBaseFrequency->setMinimumSize(200,30);
     m_sliderBaseFrequency = new QwtSlider(Qt::Horizontal);
     m_sliderBaseFrequency->setScale(0.0,20.0);
     m_sliderBaseFrequency->setValue(m_baseFrequency/1000.0);
     // m_sliderBaseFrequency->setBaseSize(QSize(200,200));
-    // m_sliderBaseFrequency->setMinimumSize(200,200);
+    m_sliderBaseFrequency->setMinimumSize(200,50);
+    QString sliderDisplayOvertonesStr(QString::number(m_baseFrequency/1000.0,'f',3)+" kHz");
+    m_displayBaseFrequency = new QLabel(sliderDisplayOvertonesStr);
+    // m_displayBaseFrequency->setMaximumSize(80,20);
+    m_displayBaseFrequency->setMinimumSize(200,20);
+    m_displayBaseFrequency->setFrameStyle(QFrame::Sunken);
+    m_displayBaseFrequency->setStyleSheet("QLabel { background-color : white; }");
+    m_displayBaseFrequency->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    m_displayBaseFrequency->setFont(font);
+
     m_THDResultLabelString = "THD Results:";
     m_THDResultLabel = new QLabel(m_THDResultLabelString);
-    m_THDResultLabel->setAlignment(Qt::AlignHCenter );
+    m_THDResultLabel->setMinimumSize(200,30);
+    m_THDResultLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
     m_THDResultLabel->setFont(font);
     m_THDResultString = " ";
     m_THD_F = 0.0;
     m_THD_R = 0.0;
-    m_THDResultString = "THD_F=" + QString::number(m_THD_F*100,'f',3) + " %, THD_R=" + QString::number(m_THD_R*100,'f',3) + " %";
+    m_THDResultString = "THD_F = " + QString::number(m_THD_F*100,'f',3) + " %, THD_R = " + QString::number(m_THD_R*100,'f',3) + " %";
     m_THDResultDisplay = new QLabel(m_THDResultString);
-    m_THDResultDisplay->setAlignment( Qt::AlignLeft );
+    m_THDResultDisplay->setFont(font);
+    m_THDResultDisplay->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     // m_THDResultDisplay->setBaseSize(QSize(200,50));
-    m_THDResultDisplay->setMinimumSize(240,20);
+    m_THDResultDisplay->setMinimumSize(200,20);
     m_THDResultDisplay->setFrameStyle(QFrame::Sunken);
     m_THDResultDisplay->setStyleSheet("QLabel { background-color : white; }");
     // setSizePolicy( QSizePolicy::MinimumExpanding,
-    //                QSizePolicy::MinimumExpanding );
+    //                QSizePolicy::MinimumExpanding )
 
-    QVBoxLayout* vLayout = new QVBoxLayout;
-    vLayout->addWidget(m_channelTitle);
-    vLayout->addWidget(m_knobNoOvertones);
-    vLayout->addWidget(m_sliderBaseFrequency);
-    vLayout->addWidget(m_labelBaseFrequency);
-    vLayout->addWidget(m_THDResultLabel);
-    vLayout->addWidget(m_THDResultDisplay);
-    setLayout(vLayout);
+    QGroupBox* THDGroupBox = new QGroupBox();
+    QVBoxLayout* vLayout1 = new QVBoxLayout();
+    vLayout1->addWidget(m_channelTitle);
+    vLayout1->addWidget(m_knobNoOvertones);
+    vLayout1->addWidget(m_displayNoOvertones);
+    // vLayout1->addLayout(hLayout1);
+    vLayout1->addWidget(m_labelBaseFrequency);
+    vLayout1->addWidget(m_sliderBaseFrequency);
+    vLayout1->addWidget(m_displayBaseFrequency);
+    vLayout1->addWidget(m_THDResultLabel);
+    vLayout1->addWidget(m_THDResultDisplay);
+    vLayout1->addStretch(1);
+    THDGroupBox->setLayout(vLayout1);
+
+    QVBoxLayout* vLayoutMain = new QVBoxLayout;
+    vLayoutMain->addWidget(THDGroupBox);
+    setLayout(vLayoutMain);
+
+    // connect signals and slots
+    connect(m_knobNoOvertones,QOverload<double>::of(&Knob::valueChanged),
+            this, &THDHandler::updateNoOvertonesDisplay);
+
+    connect(m_sliderBaseFrequency,QOverload<double>::of(&QwtSlider::valueChanged),
+            this, &THDHandler::updateBaseFrequencyDisplay);
 
     // initialize the THD calculators
     m_THDCalc = new THDCalculator(m_baseFrequency, m_noOvertones, m_sampleFrequency);
     m_THDCalc->initTHDCalculation();
 }
 
+void THDHandler::updateNoOvertonesDisplay(double newNoOvertones)
+{
+   uint16_t noOvertones = (uint16_t)round(newNoOvertones);
+   if (noOvertones < 1) noOvertones = 1;
+   if (noOvertones > 20) noOvertones = 20;
+   m_displayNoOvertones->setText(QString::number(noOvertones));
+}
+
+void THDHandler::updateBaseFrequencyDisplay(double newBaseFrequency_kHz)
+{
+   if (newBaseFrequency_kHz < 1.0) newBaseFrequency_kHz = 1.0;
+   if (newBaseFrequency_kHz > 20.0) newBaseFrequency_kHz = 20.0;
+   m_displayBaseFrequency->setText(QString::number(newBaseFrequency_kHz,'f',3)+" kHz");
+   m_THDCalc->setBaseFrequency(newBaseFrequency_kHz*1000.0);
+}
+
 void THDHandler::run(VectorXd inputSignal)
 {
     m_THDCalc->calcTHD(m_THD_F, m_THD_R, inputSignal);
-    m_THDResultString = "THD_F=" + QString::number(m_THD_F*100,'f',3) + " %, THD_R=" + QString::number(m_THD_R*100,'f',3) + " %";
+    m_THDResultString = "THD_F = " + QString::number(m_THD_F*100,'f',3) + " %, THD_R = " + QString::number(m_THD_R*100,'f',3) + " %";
     m_THDResultDisplay->setText(m_THDResultString);
     // std::cout << m_channelString.toStdString() << ": THD_F= " << m_THD_F*100  << " %, THD_R= " << m_THD_R*100  << " %" << std::endl;
 }
