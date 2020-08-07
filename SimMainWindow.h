@@ -51,6 +51,7 @@ private:
 private Q_SLOTS:
   void minFrequencyDialChanged(int newIndex);
   void maxFrequencyDialChanged(int newIndex);
+  void toggleOnOff();
 
 private:
   QTimer *m_timer;
@@ -96,6 +97,7 @@ private:
   uint32_t m_discreteSimulationSteps;
   double m_samplePeriod;
   double m_sampleFrequency;
+  bool m_applicationRunning;
 
   // parameters to define the frequency range and resolution
   const uint16_t initNoSpectrumSamples = 1000;

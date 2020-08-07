@@ -29,6 +29,7 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
   const uint16_t delayTime_ms = 10;
   m_timer->start(delayTime_ms);
+  m_applicationRunning = true;
   std::cout << "Spectrum analyzer started" << std::endl;
 }
 
@@ -322,6 +323,33 @@ void SimMainWindow::setupWidgetsAndLayouts()
             [=](int index){ minFrequencyDialChanged(index); });
     connect(m_maxFrequencyDial, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [=](int index){ maxFrequencyDialChanged(index); });
+
+    // connect Start/Stop push button
+    connect(m_processingOnOff, SIGNAL(clicked()), this, SLOT(toggleOnOff()));
+
+}
+
+void SimMainWindow::toggleOnOff()
+{
+    std::cout << "OnOff clicked" << std::endl;
+    //
+    if (m_applicationRunning)
+    {
+        m_applicationRunning = false;
+        m_processingOnOff->setStyleSheet("QPushButton { background-color : green; }");
+        m_processingOnOff->setText("Start");
+        m_processingStatus->setText("Stopped");
+        m_timer->stop();
+    }
+    else
+    {
+        m_applicationRunning = true;
+        m_processingOnOff->setStyleSheet("QPushButton { background-color : red; }");
+        m_processingOnOff->setText("Stop");
+        m_processingStatus->setText("Running");
+        const uint16_t delayTime_ms = 10;
+        m_timer->start(delayTime_ms);
+    }
 }
 
 void SimMainWindow::minFrequencyDialChanged(int newIndex)
