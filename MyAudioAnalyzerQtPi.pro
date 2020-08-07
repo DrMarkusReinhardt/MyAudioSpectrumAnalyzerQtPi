@@ -31,7 +31,8 @@ SOURCES += \
     callout.cpp \
     knob.cpp \
     THDCalculator.cpp \
-    THDHandler.cpp
+    THDHandler.cpp \
+    StoreSignalSpectrumData.cpp
 
 HEADERS += \
     SimMainWindow.h \
@@ -47,7 +48,8 @@ HEADERS += \
     SpectrumParameter.h \
     knob.h \
     THDCalculator.h \
-    THDHandler.h
+    THDHandler.h \
+    StoreSignalSpectrumData.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include

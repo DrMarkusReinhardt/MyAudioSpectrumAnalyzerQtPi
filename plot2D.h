@@ -12,6 +12,9 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
 #include <QtWidgets/QGraphicsScene>
+#include <eigen3/Eigen/Dense>
+
+using namespace Eigen;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QChartView;
@@ -28,7 +31,7 @@ namespace MR_SIM
 class plotData
 {
 public:
-  plotData(const vector<double> x, const vector<double> y);
+  plotData(const VectorXd x, const VectorXd y);
   double m_minValX;
   double m_maxValX;
   double m_minValY;
@@ -38,20 +41,20 @@ public:
   QLineSeries* returnSeries();
 
 private:
-  void calcMinMax(const vector<double> x, double* minVal, double* maxVal);
-  vector<double> m_x;
-  vector<double> m_y;
+  void calcMinMax(const VectorXd x, double* minVal, double* maxVal);
+  VectorXd m_x;
+  VectorXd m_y;
   QLineSeries* m_series;
 };
 
 class plot2D : public QChartView
 {
 public:
-  plot2D(const vector<double> x1, const vector<double> y1);
-  plot2D(const vector<double> x1, const vector<double> y1,
-         const vector<double> x2, const vector<double> y2);
-  void updateData(const vector<double> x1, const vector<double> y1,
-                  const vector<double> x2, const vector<double> y2);
+  plot2D(const VectorXd x1, const VectorXd y1);
+  plot2D(const VectorXd x1, const VectorXd y1,
+         const VectorXd x2, const VectorXd y2);
+  void updateData(const VectorXd x1, const VectorXd y1,
+                  const VectorXd x2, const VectorXd y2);
   void setTitle(QString str);
   QLineSeries* returnSeries1();
   QLineSeries* returnSeries2();
@@ -61,8 +64,8 @@ private:
   void addData(plotData &data, QString color);
   plotData *plotData1, *plotData2;
   QChart* createLineChart(plotData &data, QString color);
-  vector<double> m_x1, m_y1;
-  vector<double> m_x2, m_y2;
+  VectorXd m_x1, m_y1;
+  VectorXd m_x2, m_y2;
   QChart* m_chart;
   uint8_t numberPlotDataPairs;
 };

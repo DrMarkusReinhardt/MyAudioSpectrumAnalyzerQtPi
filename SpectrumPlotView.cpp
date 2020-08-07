@@ -17,10 +17,10 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
 
   // create data arrays for the initial display
   const uint16_t arraySizeSpectrum = m_spectrumParameter->getNoFrequencySamples();
-  vector<double> spectrumFrequencyLeft(arraySizeSpectrum);
-  vector<double> spectrumMagnitudeLeft(arraySizeSpectrum);
-  vector<double> spectrumFrequencyRight(arraySizeSpectrum);
-  vector<double> spectrumMagnitudeRight(arraySizeSpectrum);
+  VectorXd spectrumFrequencyLeft(arraySizeSpectrum);
+  VectorXd spectrumMagnitudeLeft(arraySizeSpectrum);
+  VectorXd spectrumFrequencyRight(arraySizeSpectrum);
+  VectorXd spectrumMagnitudeRight(arraySizeSpectrum);
 
   // plot spectra
   const QString initLeftSpectrumLabel = "magnitude spectrum left -->";
@@ -61,8 +61,8 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   spectrumCalculatorRight = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
 }
 
-void SpectrumPlotView::getSignals(vector<double> x1,vector<double> y1,
-                                  vector<double> x2,vector<double> y2)
+void SpectrumPlotView::getSignals(VectorXd x1,VectorXd y1,
+                                  VectorXd x2,VectorXd y2)
 {
    signalTimeLeft = x1;
    signalLeft = y1;
@@ -74,15 +74,15 @@ void SpectrumPlotView::updateSpectra()
 {
   // VectorXd frequencyRange = spectrumCalculator->returnFrequencyRange();
   spectrumCalculatorLeft->calculateSpectrum(signalLeft);
-  double maxMagnitudeLeft = spectrumCalculatorLeft->getMaxMagnitudeSpectrum();
+  spectrumCalculatorLeft->getMaxMagnitudeSpectrum(m_maxMagnitudeLeft, m_maxFrequencyValueLeft);
   // std::cout << "maxMagnitudeLeft = " << maxMagnitudeLeft << std::endl;
 
   spectrumCalculatorRight->calculateSpectrum(signalRight);
-  double maxMagnitudeRight = spectrumCalculatorRight->getMaxMagnitudeSpectrum();
+  spectrumCalculatorRight->getMaxMagnitudeSpectrum(m_maxMagnitudeRight, m_maxFrequencyValueRight);
   // std::cout << "maxMagnitudeRight = " << maxMagnitudeRight << std::endl;
 
   // normalize spectra
-  double overallMaxMagnitude = max(maxMagnitudeLeft,maxMagnitudeRight);
+  double overallMaxMagnitude = max(m_maxMagnitudeLeft,m_maxMagnitudeRight);
   // std::cout << "overallMaxMagnitude = " << overallMaxMagnitude << std::endl;
   spectrumCalculatorLeft->normalizeMagnitudeSpectrumVal(overallMaxMagnitude);
   spectrumCalculatorRight->normalizeMagnitudeSpectrumVal(overallMaxMagnitude);
@@ -131,8 +131,8 @@ void SpectrumPlotView::updateMaxFrequency(double newMaxFrequency)
    updateSpectra();
 }
 
-void SpectrumPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
-                                      vector<double>& x2,vector<double>& y2)
+void SpectrumPlotView::createZeroData(VectorXd& x1,VectorXd& y1,
+                                      VectorXd& x2,VectorXd& y2)
 {
   for(uint16_t k = 0; k < x1.size(); k++)
     x1[k] = k*1.0;
@@ -144,15 +144,44 @@ void SpectrumPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
     y2[k] = 0.0;
 }
 
-void SpectrumPlotView::createRandomData(vector<double>& x1,vector<double>& y1,
-                                        vector<double>& x2,vector<double>& y2)
+void SpectrumPlotView::createRandomData(VectorXd& x1,VectorXd& y1,
+                                        VectorXd& x2,VectorXd& y2)
 {
-  y1 = m_nrg.generate(y1.size());
-  for(uint16_t k = 0; k < x1.size(); k++)
-    x1[k] = k*1.0;
-  y2 = m_nrg.generate(y2.size());
-  for(uint16_t k = 0; k < x2.size(); k++)
-    x2[k] = k*1.0;
+    for(uint16_t k = 0; k < x1.size(); k++)
+      x1[k] = (double)k * 1.0;
+    vector<double> y1_tmp = m_nrg.generate(y1.size());
+    for(uint16_t k = 0; k < y1.size(); k++)
+      y1[k] = y1_tmp[k];
+    for(uint16_t k = 0; k < x2.size(); k++)
+      x2[k] = (double)k * 1.0;
+    vector<double> y2_tmp = m_nrg.generate(y2.size());
+    for(uint16_t k = 0; k < y2.size(); k++)
+      y2[k] = y2_tmp[k];
+}
+
+VectorXd SpectrumPlotView::returnFrequencyRange()
+{
+   return spectrumCalculatorLeft->returnFrequencyRange();
+}
+
+VectorXd SpectrumPlotView::returnMagnitudeSpectrumLeft()
+{
+   return spectrumCalculatorLeft->returnMagnitudeSpectrum();
+}
+
+VectorXd SpectrumPlotView::returnMagnitudeSpectrumRight()
+{
+    return spectrumCalculatorRight->returnMagnitudeSpectrum();
+}
+
+void SpectrumPlotView::getMaxMagnitudeSpectrumLeft(double& maximumMagnitudeValue, double& maxFrequencyValue)
+{
+  spectrumCalculatorLeft->getMaxMagnitudeSpectrum(maximumMagnitudeValue, maxFrequencyValue);
+}
+
+void SpectrumPlotView::getMaxMagnitudeSpectrumRight(double& maximumMagnitudeValue, double& maxFrequencyValue)
+{
+  spectrumCalculatorRight->getMaxMagnitudeSpectrum(maximumMagnitudeValue, maxFrequencyValue);
 }
 
 void SpectrumPlotView::resizeEvent(QResizeEvent *event)

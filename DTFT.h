@@ -18,13 +18,12 @@
 #include <vector>
 #include <complex>
 #include "boost/math/special_functions/chebyshev.hpp"
+#include <eigen3/Eigen/Dense>
 
-// double vector type
-typedef std::vector<double> VectorXd;
+using namespace Eigen;
 
 // complex vector type
 typedef std::complex<double>  zScalar;
-typedef std::vector<std::complex<double> > VectorXcd;
 
 /* windowed Discrete Time Fourier Transform (DTFT)  */
 class DTFT

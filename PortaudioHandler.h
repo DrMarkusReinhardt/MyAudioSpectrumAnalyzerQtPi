@@ -1,5 +1,10 @@
 #ifndef PORTAUDIOHANDLER_H
 #define PORTAUDIOHANDLER_H
+
+#include <eigen3/Eigen/Dense>
+
+using namespace Eigen;
+
 /** @file PortaudioHandler.h
 	@ingroup examples_src
 	@brief Class to record audio
@@ -260,9 +265,6 @@ public:
     PaError err = Pa_StopStream( _stream );
     return (err == paNoError);
   }
-
-  // double vector type
-  typedef std::vector<double> VectorXd;
 
   void transferSampledData2Channels()                   // transfer the sampled data to separate vectors
   {

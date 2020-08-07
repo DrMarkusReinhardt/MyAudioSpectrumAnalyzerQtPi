@@ -6,10 +6,9 @@
 #include <complex>
 #include <cmath>
 #include "SpectrumParameter.h"
+#include <eigen3/Eigen/Dense>
 
-// double vector type
-typedef std::vector<double> VectorXd;
-typedef std::vector<std::complex<double> > VectorXcd;
+using namespace Eigen;
 
 class SpectrumCalculator
 {
@@ -17,7 +16,7 @@ public:
   SpectrumCalculator(double initSampleFrequency, SpectrumParameter *initSpectrumParameter);
   void calculateSpectrum(const VectorXd& inputSignal);
   VectorXd returnFrequencyRange();
-  double getMaxMagnitudeSpectrum();
+  void getMaxMagnitudeSpectrum(double& maximumMagnitudeValue, double& maxFrequencyValue);
   void normalizeMagnitudeSpectrum();
   void normalizeMagnitudeSpectrumVal(double maxValue);
   VectorXd returnMagnitudeSpectrum();
@@ -26,6 +25,7 @@ public:
 private:
   double m_sampleFrequency;
   SpectrumParameter *m_spectrumParameter;
+  VectorXd m_frequencyRange;
   VectorXd m_magnitudeSpectrum;
   VectorXcd m_fourierTransform;
   DTFT *dtft;

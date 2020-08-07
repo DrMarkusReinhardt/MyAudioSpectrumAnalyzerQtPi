@@ -4,7 +4,7 @@
 
 using namespace MR_SIM;
 
-plotData::plotData(const vector<double> x, const vector<double> y) : m_x(x), m_y(y)
+plotData::plotData(const VectorXd x, const VectorXd y) : m_x(x), m_y(y)
 {
   calcMinMax(m_x,&m_minValX,&m_maxValX);
   calcMinMax(m_y,&m_minValY,&m_maxValY);
@@ -32,7 +32,7 @@ QLineSeries* plotData::returnSeries()
   return m_series;
 }
 
-void plotData::calcMinMax(const vector<double> x, double* minVal, double* maxVal)
+void plotData::calcMinMax(const VectorXd x, double* minVal, double* maxVal)
 {
   *minVal = x[0];
   *maxVal = x[0];
@@ -44,7 +44,7 @@ void plotData::calcMinMax(const vector<double> x, double* minVal, double* maxVal
 }
 
 
-plot2D::plot2D(const vector<double> x1, const vector<double> y1) : m_x1(x1), m_y1(y1)
+plot2D::plot2D(const VectorXd x1, const VectorXd y1) : m_x1(x1), m_y1(y1)
 {
   if (x1.size() != y1.size())
   {
@@ -64,8 +64,8 @@ plot2D::plot2D(const vector<double> x1, const vector<double> y1) : m_x1(x1), m_y
   setRenderHint(QPainter::Antialiasing);
 }
 
-plot2D::plot2D(const vector<double> x1, const vector<double> y1,
-               const vector<double> x2, const vector<double> y2
+plot2D::plot2D(const VectorXd x1, const VectorXd y1,
+               const VectorXd x2, const VectorXd y2
               ) : m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2)
 {
   if (x1.size() != y1.size())
@@ -112,8 +112,8 @@ void plot2D::addData(plotData &data, QString color)
   // m_chart->axes(Qt::Vertical).first()->setRange(data.m_minValY, data.m_maxValY);
 }
 
-void plot2D::updateData(const vector<double> x1, const vector<double> y1,
-                        const vector<double> x2, const vector<double> y2)
+void plot2D::updateData(const VectorXd x1, const VectorXd y1,
+                        const VectorXd x2, const VectorXd y2)
 {
   // std::cout << "updateData: size of vector x1 = " << x1.size() << std::endl;
   // std::cout << "updateData: size of vector y1 = " << y1.size() << std::endl;

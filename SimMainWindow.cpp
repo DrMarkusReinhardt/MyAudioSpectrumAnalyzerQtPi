@@ -67,14 +67,36 @@ void SimMainWindow::createMenuAndActions()
     exitAct->setStatusTip(tr("Exit the application"));
 }
 
+void SimMainWindow::getSignalSpectrumData()
+{
+    m_t = m_SignalPlotView->returnTimeLeftSignal();
+    m_leftSignal = m_SignalPlotView->returnLeftSignal();
+    m_rightSignal = m_SignalPlotView->returnRightSignal();
+
+    m_f = m_SpectrumPlotView->returnFrequencyRange();
+    m_leftSpectrum = m_SpectrumPlotView->returnMagnitudeSpectrumLeft();
+    m_rightSpectrum = m_SpectrumPlotView->returnMagnitudeSpectrumRight();
+}
+
 void SimMainWindow::save()
 {
    std::cout << "save() called" << std::endl;
+   getSignalSpectrumData();
+   m_storeSignalSpectrumData = new StoreSignalSpectrumData(m_t, m_leftSignal, m_rightSignal,
+                                                           m_f, m_leftSpectrum, m_rightSpectrum);
+   m_storeSignalSpectrumData->save();
+   delete m_storeSignalSpectrumData;
 }
 
 void SimMainWindow::saveAs()
 {
     std::cout << "saveAs() called" << std::endl;
+    // missing: get file name
+    getSignalSpectrumData();
+    m_storeSignalSpectrumData = new StoreSignalSpectrumData(m_t, m_leftSignal, m_rightSignal,
+                                                            m_f, m_leftSpectrum, m_rightSpectrum);
+    m_storeSignalSpectrumData->save();
+    delete m_storeSignalSpectrumData;
 }
 
 void SimMainWindow::setParameters()
@@ -84,6 +106,10 @@ void SimMainWindow::setParameters()
   m_samplePeriod = 1.0 / m_sampleFrequency;
   m_noSpectrumSamples = initNoSpectrumSamples;
   m_spectrumParameter = new SpectrumParameter(minFrequencyRange, maxFrequencyRange, m_noSpectrumSamples);
+  m_peakSpectrumValueLeft = -180;
+  m_peakSpectrumValueRight = -180;
+  m_peakSpectrumFrequencyLeft = 0.0;
+  m_peakSpectrumFrequencyRight = 0.0;
 }
 
 void SimMainWindow::readParametersFromFile()
@@ -338,6 +364,8 @@ void SimMainWindow::step()
   THDHandlerLeft->run(m_SignalPlotView->returnLeftSignal());
   THDHandlerRight->run(m_SignalPlotView->returnRightSignal());
 
+  // update the peak spectrum value and frequency displays
+  updatePeakSpectrumDisplays();
 
   /*
   if (m_discreteTime >= m_discreteSimulationSteps)
@@ -348,6 +376,17 @@ void SimMainWindow::step()
   */
 }
 
+void SimMainWindow::updatePeakSpectrumDisplays()
+{
+    // get the values
+    m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
+    m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight);
+    // update the displays
+    m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
+    m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
+    m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
+    m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));
+}
 
 SimMainWindow::~SimMainWindow()
 {

@@ -11,6 +11,9 @@
 #include "SpectrumCalculator.h"
 #include "SpectrumParameter.h"
 #include "callout.h"
+#include <eigen3/Eigen/Dense>
+
+using namespace Eigen;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QChart;
@@ -30,15 +33,20 @@ class SpectrumPlotView : public QGraphicsView
 public:
   SpectrumPlotView(double initSampleFrequency, SpectrumParameter *initSpectrumParameter,
                    QWidget *parent = nullptr);
-  void createZeroData(vector<double>& x1,vector<double>& y1,
-                      vector<double>& x2,vector<double>& y2);
-  void createRandomData(vector<double>& x1,vector<double>& y1,
-                        vector<double>& x2,vector<double>& y2);
+  void createZeroData(VectorXd& x1,VectorXd& y1,
+                      VectorXd& x2,VectorXd& y2);
+  void createRandomData(VectorXd& x1,VectorXd& y1,
+                        VectorXd& x2,VectorXd& y2);
   void updateSpectra();
-  void getSignals(vector<double> x1,vector<double> y1,
-                  vector<double> x2,vector<double> y2);
+  void getSignals(VectorXd x1,VectorXd y1,
+                  VectorXd x2,VectorXd y2);
   void updateMinFrequency(double newMinFrequency);
   void updateMaxFrequency(double newMaxFrequency);
+  VectorXd returnFrequencyRange();
+  VectorXd returnMagnitudeSpectrumLeft();
+  VectorXd returnMagnitudeSpectrumRight();
+  void getMaxMagnitudeSpectrumLeft(double& maximumMagnitudeValue, double& maxFrequencyValue);
+  void getMaxMagnitudeSpectrumRight(double& maximumMagnitudeValue, double& maxFrequencyValue);
 
 protected:
   void resizeEvent(QResizeEvent *event);
@@ -51,10 +59,10 @@ public slots:
 private:
   NormalRandomGenerator m_nrg{1.0,1.0};
   plot2D* plotSpectrumChannelLeftRight;         // spectrum plot for the left and right channel
-  vector<double> signalTimeLeft;
-  vector<double> signalLeft;
-  vector<double> signalTimeRight;
-  vector<double> signalRight;
+  VectorXd signalTimeLeft;
+  VectorXd signalLeft;
+  VectorXd signalTimeRight;
+  VectorXd signalRight;
   double m_sampleFrequency;
   double m_samplePeriod;
   SpectrumParameter *m_spectrumParameter;
@@ -64,8 +72,12 @@ private:
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;
   QList<Callout *> m_callouts;
-};
 
+  // peak spectrum values
+  double m_maxMagnitudeLeft;
+  double m_maxFrequencyValueLeft;
+  double m_maxMagnitudeRight;
+  double m_maxFrequencyValueRight;};
 }
 
 #endif // QCPLOTWIDGETS_H

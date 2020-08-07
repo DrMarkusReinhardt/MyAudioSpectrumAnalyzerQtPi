@@ -134,9 +134,5 @@ QSize THDHandler::sizeHint() const
   const int w = qMax( sz1.width(),qMax(sz2.width(),qMax(sz3.width(),(sz4.width(),(sz5.width())))));
   const int h = sz1.height()+sz2.height()+sz3.height()+sz4.height()+sz5.height();
 
-  // int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
-  // off -= 15; // spacing
-  // return QSize( w, h - off );
-
   return QSize( w, h );
 }

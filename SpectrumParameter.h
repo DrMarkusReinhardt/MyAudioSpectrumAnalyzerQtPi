@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <iostream>
+#include <eigen3/Eigen/Dense>
 
-typedef std::vector<double> VectorXd;
+using namespace Eigen;
 
 class SpectrumParameter
 {

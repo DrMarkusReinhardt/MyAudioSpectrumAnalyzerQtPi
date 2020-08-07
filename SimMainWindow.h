@@ -7,12 +7,17 @@
 #include <QString>
 #include <QLabel>
 #include <QPushButton>
+#include <vector>
 #include "SignalPlotView.h"
 #include "SpectrumPlotView.h"
 #include "SpectrumParameter.h"
 #include "knob.h"
 #include "THDCalculator.h"
 #include "THDHandler.h"
+#include "StoreSignalSpectrumData.h"
+#include <eigen3/Eigen/Dense>
+
+using namespace Eigen;
 
 QT_BEGIN_NAMESPACE
 class QMainWindow;
@@ -37,9 +42,11 @@ public:
   void setParameters();
   void readParametersFromFile();
   void step();
+  void updatePeakSpectrumDisplays();
 
 private:
   void setupWidgetsAndLayouts();
+  void getSignalSpectrumData();
 
 private Q_SLOTS:
   void minFrequencyDialChanged(int newIndex);
@@ -96,8 +103,24 @@ private:
   const double minFrequencyRange = 0.0;
   const double maxFrequencyRange = 20000.0;
   double m_deltaF;
-  vector<double> m_frequencyRange;
+  VectorXd m_frequencyRange;
   SpectrumParameter *m_spectrumParameter;
+
+  // peak spectrum data
+  double m_peakSpectrumValueLeft;
+  double m_peakSpectrumValueRight;
+  double m_peakSpectrumFrequencyLeft;
+  double m_peakSpectrumFrequencyRight;
+
+  // to store data
+  StoreSignalSpectrumData* m_storeSignalSpectrumData;
+  VectorXd m_t;
+  VectorXd m_leftSignal;
+  VectorXd m_rightSignal;
+  VectorXd m_f;
+  VectorXd m_leftSpectrum;
+  VectorXd m_rightSpectrum;
+
 };
 
 } // namespace MR_Sim

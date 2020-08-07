@@ -8,10 +8,9 @@
 #include <vector>
 #include <complex>
 #include "DTFT.h"
+#include <eigen3/Eigen/Dense>
 
-// double vector type
-typedef std::vector<double> VectorXd;
-typedef std::vector<std::complex<double> > VectorXcd;
+using namespace Eigen;
 
 class THDCalculator
 {

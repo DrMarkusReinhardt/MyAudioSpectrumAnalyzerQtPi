@@ -10,6 +10,9 @@
 #include "RandomGenerator.h"
 #include "PortaudioHandler.h"
 #include "callout.h"
+#include <eigen3/Eigen/Dense>
+
+using namespace Eigen;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QChart;
@@ -28,16 +31,16 @@ class SignalPlotView : public QGraphicsView
 
 public:
   SignalPlotView(double initSampleFrequency,QWidget *parent = nullptr);
-  void createZeroData(vector<double>& x1,vector<double>& y1,
-                      vector<double>& x2,vector<double>& y2);
-  void createRandomData(vector<double>& x1,vector<double>& y1,
-                        vector<double>& x2,vector<double>& y2);
+  void createZeroData(VectorXd& x1,VectorXd& y1,
+                      VectorXd& x2,VectorXd& y2);
+  void createRandomData(VectorXd& x1,VectorXd& y1,
+                        VectorXd& x2,VectorXd& y2);
   void updateSignals();
   void updatePA();
-  vector<double> returnTimeLeftSignal();
-  vector<double> returnTimeRightSignal();
-  vector<double> returnLeftSignal();
-  vector<double> returnRightSignal();
+  VectorXd returnTimeLeftSignal();
+  VectorXd returnTimeRightSignal();
+  VectorXd returnLeftSignal();
+  VectorXd returnRightSignal();
 
 protected:
   void resizeEvent(QResizeEvent *event);
@@ -52,10 +55,10 @@ private:
   PortaudioHandler *paHandler;
   NormalRandomGenerator m_nrg{1.0,1.0};
   plot2D* plotSignalChannelLeftRight;      // signal plot for the left and right channel
-  vector<double> signalTimeLeft;
-  vector<double> signalLeft;
-  vector<double> signalTimeRight;
-  vector<double> signalRight;
+  VectorXd signalTimeLeft;
+  VectorXd signalLeft;
+  VectorXd signalTimeRight;
+  VectorXd signalRight;
   double m_sampleFrequency;
   double m_samplePeriod;
   double m_noSamplesToPlot;
@@ -63,6 +66,7 @@ private:
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;
   QList<Callout *> m_callouts;
+
 };
 
 }

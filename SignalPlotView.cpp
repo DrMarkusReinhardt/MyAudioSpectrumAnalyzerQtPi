@@ -102,28 +102,28 @@ void SignalPlotView::updateMaxSamplesToPlot(double newNoSamples)
     pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod*1000.0);
 }
 
-vector<double> SignalPlotView::returnTimeLeftSignal()
+VectorXd SignalPlotView::returnTimeLeftSignal()
 {
   return signalTimeLeft;
 }
 
-vector<double> SignalPlotView::returnTimeRightSignal()
+VectorXd SignalPlotView::returnTimeRightSignal()
 {
     return signalTimeRight;
 }
 
-vector<double> SignalPlotView::returnLeftSignal()
+VectorXd SignalPlotView::returnLeftSignal()
 {
   return signalLeft;
 }
 
-vector<double> SignalPlotView::returnRightSignal()
+VectorXd SignalPlotView::returnRightSignal()
 {
   return signalRight;
 }
 
-void SignalPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
-                                    vector<double>& x2,vector<double>& y2)
+void SignalPlotView::createZeroData(VectorXd& x1,VectorXd& y1,
+                                    VectorXd& x2,VectorXd& y2)
 {
   for(uint16_t k = 0; k < x1.size(); k++)
     x1[k] = (double)k * m_samplePeriod;
@@ -135,15 +135,19 @@ void SignalPlotView::createZeroData(vector<double>& x1,vector<double>& y1,
     y2[k] = 0.0;
 }
 
-void SignalPlotView::createRandomData(vector<double>& x1,vector<double>& y1,
-                                      vector<double>& x2,vector<double>& y2)
+void SignalPlotView::createRandomData(VectorXd& x1,VectorXd& y1,
+                                      VectorXd& x2,VectorXd& y2)
 {
-  y1 = m_nrg.generate(y1.size());
   for(uint16_t k = 0; k < x1.size(); k++)
     x1[k] = (double)k * m_samplePeriod;
-  y2 = m_nrg.generate(y2.size());
+  vector<double> y1_tmp = m_nrg.generate(y1.size());
+  for(uint16_t k = 0; k < y1.size(); k++)
+    y1[k] = y1_tmp[k];
   for(uint16_t k = 0; k < x2.size(); k++)
     x2[k] = (double)k * m_samplePeriod;
+  vector<double> y2_tmp = m_nrg.generate(y2.size());
+  for(uint16_t k = 0; k < y2.size(); k++)
+    y2[k] = y2_tmp[k];
 }
 
 void SignalPlotView::resizeEvent(QResizeEvent *event)
