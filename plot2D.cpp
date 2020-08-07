@@ -112,22 +112,31 @@ void plot2D::addData(plotData &data, QString color)
   // m_chart->axes(Qt::Vertical).first()->setRange(data.m_minValY, data.m_maxValY);
 }
 
-void plot2D::updateData(const VectorXd x1, const VectorXd y1,
-                        const VectorXd x2, const VectorXd y2)
+void plot2D::updateData(bool active1, const VectorXd x1, const VectorXd y1,
+                        bool active2, const VectorXd x2, const VectorXd y2)
 {
   // std::cout << "updateData: size of vector x1 = " << x1.size() << std::endl;
   // std::cout << "updateData: size of vector y1 = " << y1.size() << std::endl;
   m_chart->removeAllSeries();
-  plotData1 = new plotData(x1,y1);
-  addData(*plotData1,"green");
-  m_chart->createDefaultAxes();
-  plotData2 = new plotData(x2,y2);
-  addData(*plotData2,"red");
-  m_chart->createDefaultAxes();
-  m_chart->setAcceptHoverEvents(true);
-  setChart(m_chart);
-  setRenderHint(QPainter::Antialiasing);
-  m_chart->show();
+  if (active1)
+  {
+    plotData1 = new plotData(x1,y1);
+    addData(*plotData1,"green");
+    m_chart->createDefaultAxes();
+  }
+  if (active2)
+  {
+    plotData2 = new plotData(x2,y2);
+    addData(*plotData2,"red");
+    m_chart->createDefaultAxes();
+  }
+  if (active1 | active2)
+  {
+    m_chart->setAcceptHoverEvents(true);
+    setChart(m_chart);
+    setRenderHint(QPainter::Antialiasing);
+    m_chart->show();
+  }
 }
 
 QLineSeries* plot2D::returnSeries1()
@@ -155,4 +164,3 @@ QChart *plot2D::createLineChart(plotData &data, QString color)
   axisY->setLabelFormat("%.1f  ");
   return chart;
 }
-

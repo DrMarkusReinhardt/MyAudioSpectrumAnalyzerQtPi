@@ -52,6 +52,8 @@ private Q_SLOTS:
   void minFrequencyDialChanged(int newIndex);
   void maxFrequencyDialChanged(int newIndex);
   void toggleOnOff();
+  void toggleLeftChannel();
+  void toggleRightChannel();
 
 private:
   QTimer *m_timer;
@@ -98,6 +100,10 @@ private:
   double m_samplePeriod;
   double m_sampleFrequency;
   bool m_applicationRunning;
+
+  // channel activity flags
+  bool m_leftChannelActive;
+  bool m_rightChannelActive;
 
   // parameters to define the frequency range and resolution
   const uint16_t initNoSpectrumSamples = 1000;

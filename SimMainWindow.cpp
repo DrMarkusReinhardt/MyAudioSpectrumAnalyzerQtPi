@@ -29,7 +29,7 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
   connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
   const uint16_t delayTime_ms = 10;
   m_timer->start(delayTime_ms);
-  m_applicationRunning = true;
+
   std::cout << "Spectrum analyzer started" << std::endl;
 }
 
@@ -81,7 +81,7 @@ void SimMainWindow::getSignalSpectrumData()
 
 void SimMainWindow::save()
 {
-   std::cout << "save() called" << std::endl;
+   // std::cout << "save() called" << std::endl;
    getSignalSpectrumData();
    m_storeSignalSpectrumData = new StoreSignalSpectrumData(m_t, m_leftSignal, m_rightSignal,
                                                            m_f, m_leftSpectrum, m_rightSpectrum);
@@ -91,7 +91,7 @@ void SimMainWindow::save()
 
 void SimMainWindow::saveAs()
 {
-    std::cout << "saveAs() called" << std::endl;
+    // std::cout << "saveAs() called" << std::endl;
     // missing: get file name
     getSignalSpectrumData();
     m_storeSignalSpectrumData = new StoreSignalSpectrumData(m_t, m_leftSignal, m_rightSignal,
@@ -111,6 +111,13 @@ void SimMainWindow::setParameters()
   m_peakSpectrumValueRight = -180;
   m_peakSpectrumFrequencyLeft = 0.0;
   m_peakSpectrumFrequencyRight = 0.0;
+
+  // set running flag
+  m_applicationRunning = true;
+
+  // set channel activity flags
+  m_leftChannelActive = true;
+  m_rightChannelActive = true;
 }
 
 void SimMainWindow::readParametersFromFile()
@@ -146,6 +153,15 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // setup the signal plot view
     // std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
+    if (m_leftChannelActive)
+      m_SignalPlotView->activateLeftChannel();
+    else
+      m_SignalPlotView->deactivateLeftChannel();
+    if (m_rightChannelActive)
+      m_SignalPlotView->activateRightChannel();
+    else
+      m_SignalPlotView->deactivateRightChannel();
+
     QString signalAxisLabelStr("time / ms -->");
     m_signalAxisLabel = new QLabel(signalAxisLabelStr, this);
     m_signalAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
@@ -154,6 +170,15 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // setup the spectrum plot view
     // std::cout << "setup SpectrumPlotView" << std::endl;
     m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
+    if (m_leftChannelActive)
+      m_SpectrumPlotView->activateLeftChannel();
+    else
+      m_SpectrumPlotView->deactivateLeftChannel();
+    if (m_rightChannelActive)
+      m_SpectrumPlotView->activateRightChannel();
+    else
+      m_SpectrumPlotView->deactivateRightChannel();
+
     QString frequencyAxisLabelStr("frequency / Hz -->");
     m_frequencyAxisLabel = new QLabel(frequencyAxisLabelStr, this);
     m_frequencyAxisLabel->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
@@ -327,11 +352,15 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // connect Start/Stop push button
     connect(m_processingOnOff, SIGNAL(clicked()), this, SLOT(toggleOnOff()));
 
+    // connect left / right channel activation buttons
+    connect(m_leftChannelActivationButton, SIGNAL(clicked()), this, SLOT(toggleLeftChannel()));
+    connect(m_rightChannelActivationButton, SIGNAL(clicked()), this, SLOT(toggleRightChannel()));
+
 }
 
 void SimMainWindow::toggleOnOff()
 {
-    std::cout << "OnOff clicked" << std::endl;
+    // std::cout << "OnOff clicked" << std::endl;
     //
     if (m_applicationRunning)
     {
@@ -349,6 +378,46 @@ void SimMainWindow::toggleOnOff()
         m_processingStatus->setText("Running");
         const uint16_t delayTime_ms = 10;
         m_timer->start(delayTime_ms);
+    }
+}
+
+void SimMainWindow::toggleLeftChannel()
+{
+  if (m_leftChannelActive)
+  {
+    m_leftChannelActive = false;
+    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
+    m_leftChannelActivationButton->setText("Left channel off");
+    m_SignalPlotView->deactivateLeftChannel();
+    m_SpectrumPlotView->deactivateLeftChannel();
+  }
+  else
+  {
+    m_leftChannelActive = true;
+    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+    m_leftChannelActivationButton->setText("Left channel on");
+    m_SignalPlotView->activateLeftChannel();
+    m_SpectrumPlotView->activateLeftChannel();
+  }
+}
+
+void SimMainWindow::toggleRightChannel()
+{
+    if (m_rightChannelActive)
+    {
+      m_rightChannelActive = false;
+      m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
+      m_rightChannelActivationButton->setText("Right channel off");
+      m_SignalPlotView->deactivateRightChannel();
+      m_SpectrumPlotView->deactivateRightChannel();
+    }
+    else
+    {
+      m_rightChannelActive = true;
+      m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+      m_rightChannelActivationButton->setText("Right channel on");
+      m_SignalPlotView->activateRightChannel();
+      m_SpectrumPlotView->activateRightChannel();
     }
 }
 

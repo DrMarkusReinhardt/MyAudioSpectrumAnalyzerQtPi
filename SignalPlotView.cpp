@@ -64,6 +64,26 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   // std::cout << "SignalPlotView created" << std::endl;
 }
 
+void SignalPlotView::activateLeftChannel()
+{
+    m_leftChannelActive = true;
+}
+
+void SignalPlotView::activateRightChannel()
+{
+  m_rightChannelActive = true;
+}
+
+void SignalPlotView::deactivateLeftChannel()
+{
+  m_leftChannelActive = false;
+}
+
+void SignalPlotView::deactivateRightChannel()
+{
+  m_rightChannelActive = false;
+}
+
 void SignalPlotView::updatePA()
 {
   // std::cout << "PA handler before start" << std::endl;
@@ -85,7 +105,8 @@ void SignalPlotView::updateSignals()
   signalTimeRight = signalTimeLeft;
   signalLeft = paHandler->returnSignalLeft();              // get the data of the left channel from the Portaudio handler
   signalRight = paHandler->returnSignalRight();            // get the data of the right channel from the Portaudio handler
-  plotSignalChannelLeftRight->updateData(signalTimeLeft,signalLeft,signalTimeRight,signalRight);
+  plotSignalChannelLeftRight->updateData(m_leftChannelActive,signalTimeLeft,signalLeft,
+                                         m_rightChannelActive,signalTimeRight,signalRight);
   QChart* pChart = plotSignalChannelLeftRight->getChart();
   pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod*1000.0);
 

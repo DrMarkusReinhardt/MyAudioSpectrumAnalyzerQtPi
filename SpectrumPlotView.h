@@ -47,6 +47,10 @@ public:
   VectorXd returnMagnitudeSpectrumRight();
   void getMaxMagnitudeSpectrumLeft(double& maximumMagnitudeValue, double& maxFrequencyValue);
   void getMaxMagnitudeSpectrumRight(double& maximumMagnitudeValue, double& maxFrequencyValue);
+  void activateLeftChannel();
+  void activateRightChannel();
+  void deactivateLeftChannel();
+  void deactivateRightChannel();
 
 protected:
   void resizeEvent(QResizeEvent *event);
@@ -77,7 +81,13 @@ private:
   double m_maxMagnitudeLeft;
   double m_maxFrequencyValueLeft;
   double m_maxMagnitudeRight;
-  double m_maxFrequencyValueRight;};
-}
+  double m_maxFrequencyValueRight;
+
+  // channel activity flags
+  bool m_leftChannelActive;
+  bool m_rightChannelActive;
+};
+
+} // namespace MR_SIM
 
 #endif // QCPLOTWIDGETS_H

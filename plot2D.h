@@ -53,8 +53,8 @@ public:
   plot2D(const VectorXd x1, const VectorXd y1);
   plot2D(const VectorXd x1, const VectorXd y1,
          const VectorXd x2, const VectorXd y2);
-  void updateData(const VectorXd x1, const VectorXd y1,
-                  const VectorXd x2, const VectorXd y2);
+  void updateData(bool active1, const VectorXd x1, const VectorXd y1,
+                  bool active2, const VectorXd x2, const VectorXd y2);
   void setTitle(QString str);
   QLineSeries* returnSeries1();
   QLineSeries* returnSeries2();

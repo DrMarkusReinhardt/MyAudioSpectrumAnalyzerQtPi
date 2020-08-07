@@ -41,6 +41,10 @@ public:
   VectorXd returnTimeRightSignal();
   VectorXd returnLeftSignal();
   VectorXd returnRightSignal();
+  void activateLeftChannel();
+  void activateRightChannel();
+  void deactivateLeftChannel();
+  void deactivateRightChannel();
 
 protected:
   void resizeEvent(QResizeEvent *event);
@@ -66,6 +70,10 @@ private:
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;
   QList<Callout *> m_callouts;
+
+  // channel activity flags
+  bool m_leftChannelActive;
+  bool m_rightChannelActive;
 
 };
 

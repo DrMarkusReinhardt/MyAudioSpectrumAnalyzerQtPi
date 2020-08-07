@@ -61,6 +61,27 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   spectrumCalculatorRight = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
 }
 
+
+void SpectrumPlotView::activateLeftChannel()
+{
+    m_leftChannelActive = true;
+}
+
+void SpectrumPlotView::activateRightChannel()
+{
+  m_rightChannelActive = true;
+}
+
+void SpectrumPlotView::deactivateLeftChannel()
+{
+  m_leftChannelActive = false;
+}
+
+void SpectrumPlotView::deactivateRightChannel()
+{
+  m_rightChannelActive = false;
+}
+
 void SpectrumPlotView::getSignals(VectorXd x1,VectorXd y1,
                                   VectorXd x2,VectorXd y2)
 {
@@ -91,8 +112,8 @@ void SpectrumPlotView::updateSpectra()
   VectorXd magnitudeSpectrumRight = spectrumCalculatorRight->returnMagnitudeSpectrum();
 
   VectorXd frequencyRange = m_spectrumParameter->getFrequencyRange();
-  plotSpectrumChannelLeftRight->updateData(frequencyRange, magnitudeSpectrumLeft,
-                                           frequencyRange, magnitudeSpectrumRight);
+  plotSpectrumChannelLeftRight->updateData(m_leftChannelActive, frequencyRange, magnitudeSpectrumLeft,
+                                           m_rightChannelActive, frequencyRange, magnitudeSpectrumRight);
   QChart* pChart = plotSpectrumChannelLeftRight->getChart();
   pChart->axisY()->setRange(-100.0,0.0);
   pChart->axisX()->setRange(m_spectrumParameter->getMinFrequency(),
@@ -100,13 +121,17 @@ void SpectrumPlotView::updateSpectra()
 
   // with new series added to the chart, it is necessary to update the signal connections for the hovering mouse
   // connect the hovering over the first data series of the spectrum chart with the tooltip display
-  connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+  if (m_leftChannelActive)
+    connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
   // connect the hovering over the second data series of the spectrum chart with the tooltip display
-  connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+  if (m_rightChannelActive)
+    connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
   // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
-  connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+  if (m_leftChannelActive)
+    connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
   // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
-  connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+  if (m_rightChannelActive)
+    connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
 }
 
 void SpectrumPlotView::updateMinFrequency(double newMinFrequency)
