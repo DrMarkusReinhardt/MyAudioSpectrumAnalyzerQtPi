@@ -38,3 +38,11 @@ Makefile
 *.pro.user
 MyAudioAnalyzerQtPi
 *.stash
+
+# LaTeX files
+*.aux
+*.toc
+*.lof
+*.log
+*.gz
+*.bak
