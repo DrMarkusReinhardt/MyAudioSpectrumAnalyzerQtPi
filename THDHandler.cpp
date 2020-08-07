@@ -3,9 +3,9 @@
 #include <QHBoxLayout>
 #include <QGroupBox>
 
-THDHandler::THDHandler(QString initChannelString, double initBaseFrequency,
+THDHandler::THDHandler(QString initChannelString, double initBaseFrequency_kHz,
                        uint16_t initNoOvertones, double initSampleFrequency, QWidget* parent) :
-    QWidget(parent), m_channelString(initChannelString), m_baseFrequency(initBaseFrequency), m_noOvertones(initNoOvertones), m_sampleFrequency(initSampleFrequency)
+    QWidget(parent), m_channelString(initChannelString), m_baseFrequency_kHz(initBaseFrequency_kHz), m_noOvertones(initNoOvertones), m_sampleFrequency(initSampleFrequency)
 {
     // initialize the GUI elements to control the THD calculation
     QFont font( "Helvetica", 9 );
@@ -38,10 +38,10 @@ THDHandler::THDHandler(QString initChannelString, double initBaseFrequency,
     m_labelBaseFrequency->setMinimumSize(200,30);
     m_sliderBaseFrequency = new QwtSlider(Qt::Horizontal);
     m_sliderBaseFrequency->setScale(0.0,20.0);
-    m_sliderBaseFrequency->setValue(m_baseFrequency/1000.0);
+    m_sliderBaseFrequency->setValue(m_baseFrequency_kHz);
     // m_sliderBaseFrequency->setBaseSize(QSize(200,200));
     m_sliderBaseFrequency->setMinimumSize(200,50);
-    QString sliderDisplayOvertonesStr(QString::number(m_baseFrequency/1000.0,'f',3)+" kHz");
+    QString sliderDisplayOvertonesStr(QString::number(m_baseFrequency_kHz,'f',3)+" kHz");
     m_displayBaseFrequency = new QLabel(sliderDisplayOvertonesStr);
     // m_displayBaseFrequency->setMaximumSize(80,20);
     m_displayBaseFrequency->setMinimumSize(200,20);
@@ -89,30 +89,35 @@ THDHandler::THDHandler(QString initChannelString, double initBaseFrequency,
 
     // connect signals and slots
     connect(m_knobNoOvertones,QOverload<double>::of(&Knob::valueChanged),
-            this, &THDHandler::updateNoOvertonesDisplay);
+            this, &THDHandler::updateNoOvertones);
 
     connect(m_sliderBaseFrequency,QOverload<double>::of(&QwtSlider::valueChanged),
-            this, &THDHandler::updateBaseFrequencyDisplay);
+            this, &THDHandler::updateBaseFrequency);
 
     // initialize the THD calculators
-    m_THDCalc = new THDCalculator(m_baseFrequency, m_noOvertones, m_sampleFrequency);
+    newBaseFrequency_kHz = m_baseFrequency_kHz;
+    m_THDCalc = new THDCalculator(m_baseFrequency_kHz*1000.0, m_noOvertones, m_sampleFrequency);
     m_THDCalc->initTHDCalculation();
 }
 
-void THDHandler::updateNoOvertonesDisplay(double newNoOvertones)
+void THDHandler::updateNoOvertones(double newNoOvertones)
 {
    uint16_t noOvertones = (uint16_t)round(newNoOvertones);
    if (noOvertones < 1) noOvertones = 1;
    if (noOvertones > 20) noOvertones = 20;
    m_displayNoOvertones->setText(QString::number(noOvertones));
+   m_THDCalc->setNoOvertones(noOvertones);
+   m_THDCalc->initTHDCalculation();
 }
 
-void THDHandler::updateBaseFrequencyDisplay(double newBaseFrequency_kHz)
+void THDHandler::updateBaseFrequency(double newBaseFrequency_kHz)
 {
    if (newBaseFrequency_kHz < 1.0) newBaseFrequency_kHz = 1.0;
    if (newBaseFrequency_kHz > 20.0) newBaseFrequency_kHz = 20.0;
+   m_baseFrequency_kHz = newBaseFrequency_kHz;
    m_displayBaseFrequency->setText(QString::number(newBaseFrequency_kHz,'f',3)+" kHz");
    m_THDCalc->setBaseFrequency(newBaseFrequency_kHz*1000.0);
+   m_THDCalc->initTHDCalculation();
 }
 
 void THDHandler::run(VectorXd inputSignal)

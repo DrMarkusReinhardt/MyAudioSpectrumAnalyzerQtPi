@@ -220,16 +220,16 @@ void SimMainWindow::setupWidgetsAndLayouts()
 
     // prepare for THD calculations
     std::cout << "setup THD" << std::endl;
-    double defaultBaseFrequencyLeft = 1000.0;
+    double defaultBaseFrequencyLeft_kHz = 1.0;
     double defaultNumberOvertonesLeft = 20;
-    double defaultBaseFrequencyRight = 1000.0;
+    double defaultBaseFrequencyRight_kHz = 1.0;
     double defaultNumberOvertonesRight = 20;
     // handler to parameterize and show the THD calculations
     QString THDHeaderLeftStr("THD Left Channel");
-    THDHandlerLeft  = new THDHandler(THDHeaderLeftStr, defaultBaseFrequencyLeft,
+    THDHandlerLeft  = new THDHandler(THDHeaderLeftStr, defaultBaseFrequencyLeft_kHz,
                                      defaultNumberOvertonesLeft, m_sampleFrequency, this);
     QString THDHeaderRightStr("THD Right Channel");
-    THDHandlerRight = new THDHandler(THDHeaderRightStr, defaultBaseFrequencyRight,
+    THDHandlerRight = new THDHandler(THDHeaderRightStr, defaultBaseFrequencyRight_kHz,
                                      defaultNumberOvertonesRight, m_sampleFrequency, this);
 
     // Combo box for the min. frequency
@@ -388,6 +388,8 @@ void SimMainWindow::toggleLeftChannel()
     m_leftChannelActive = false;
     m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
     m_leftChannelActivationButton->setText("Left channel off");
+    m_leftChannelPeakSpectrumValueDisplay->setText(" ");
+    m_leftChannelPeakSpectrumFrequencyDisplay->setText(" ");
     m_SignalPlotView->deactivateLeftChannel();
     m_SpectrumPlotView->deactivateLeftChannel();
   }
@@ -408,6 +410,8 @@ void SimMainWindow::toggleRightChannel()
       m_rightChannelActive = false;
       m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
       m_rightChannelActivationButton->setText("Right channel off");
+      m_rightChannelPeakSpectrumValueDisplay->setText(" ");
+      m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
       m_SignalPlotView->deactivateRightChannel();
       m_SpectrumPlotView->deactivateRightChannel();
     }
@@ -458,8 +462,10 @@ void SimMainWindow::step()
   m_SpectrumPlotView->updateSpectra();
 
   // THD calculations
-  THDHandlerLeft->run(m_SignalPlotView->returnLeftSignal());
-  THDHandlerRight->run(m_SignalPlotView->returnRightSignal());
+  if (m_leftChannelActive)
+    THDHandlerLeft->run(m_SignalPlotView->returnLeftSignal());
+  if (m_rightChannelActive)  
+    THDHandlerRight->run(m_SignalPlotView->returnRightSignal());
 
   // update the peak spectrum value and frequency displays
   updatePeakSpectrumDisplays();
@@ -475,14 +481,23 @@ void SimMainWindow::step()
 
 void SimMainWindow::updatePeakSpectrumDisplays()
 {
-    // get the values
-    m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
-    m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight);
-    // update the displays
-    m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
-    m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
-    m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
-    m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));
+    if (m_leftChannelActive)
+    {
+      // get the values
+      m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
+      // update the displays
+      m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
+      m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
+    }
+    
+    if (m_rightChannelActive)
+    {
+      // get the values
+      m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight);
+      // update the displays
+      m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
+      m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));
+    }
 }
 
 SimMainWindow::~SimMainWindow()

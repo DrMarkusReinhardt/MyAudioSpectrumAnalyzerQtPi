@@ -14,19 +14,20 @@
 class THDHandler : public QWidget
 {
 public:
-    THDHandler(QString initChannelString, double initBaseFrequency, uint16_t initNoOvertones,
+    THDHandler(QString initChannelString, double initBaseFrequency_kHz, uint16_t initNoOvertones,
                double initSampleFrequency, QWidget *parent = nullptr );
     void run(VectorXd inputSignal);
     virtual QSize sizeHint() const;
 
 private:
-    void updateNoOvertonesDisplay(double newNoOvertones);
-    void updateBaseFrequencyDisplay(double newBaseFrequency);
+    void updateNoOvertones(double newNoOvertones);
+    void updateBaseFrequency(double newBaseFrequency_kHz);
 
 private:
     QString m_channelString;
     QLabel *m_channelTitle;
-    double m_baseFrequency;
+    double newBaseFrequency_kHz;
+    double m_baseFrequency_kHz;
     uint16_t m_noOvertones;
     double m_sampleFrequency;
     Knob *m_knobNoOvertones;

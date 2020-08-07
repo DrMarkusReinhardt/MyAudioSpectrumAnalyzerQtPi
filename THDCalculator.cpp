@@ -39,6 +39,14 @@ void THDCalculator::setBaseFrequency(double newBaseFrequency)
    baseFrequency = newBaseFrequency;
 }
 
+void THDCalculator::updateOvertones()
+{
+    for(uint8_t k = 0; k < numberOvertones; k++)
+    {
+        overtones[k] = (k+1) * baseFrequency;
+    }
+}
+
 void THDCalculator::initTHDCalculation()
 {
     zScalar complexZero(0.0,0.0);

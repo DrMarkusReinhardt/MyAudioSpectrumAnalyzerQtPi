@@ -19,6 +19,7 @@ public:
                   double initSampleFrequency);
     void initTHDCalculation();
     void calcTHD(double& THD_F, double& THD_R, VectorXd inputSignal);
+    void updateOvertones();
     void setBaseFrequency(double newBaseFrequency);
     void setNoOvertones(double newNumberOvertones);
 
