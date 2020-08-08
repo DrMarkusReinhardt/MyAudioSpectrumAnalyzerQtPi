@@ -13,24 +13,24 @@
 using namespace MR_SIM;
 
 SimMainWindow::SimMainWindow(QMainWindow *parent)
-  : QMainWindow(parent)
+    : QMainWindow(parent)
 {
-  // add menu bar with actions
-  createMenuAndActions();
+    // add menu bar with actions
+    createMenuAndActions();
 
-  // get and set the main calculation parameters
-  setParameters();
+    // get and set the main calculation parameters
+    setParameters();
 
-  // setup the widgets and the layouts
-  setupWidgetsAndLayouts();
+    // setup the widgets and the layouts
+    setupWidgetsAndLayouts();
 
-  // define the simulation loop timer
-  m_timer = new QTimer(this);
-  connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
-  const uint16_t delayTime_ms = 10;
-  m_timer->start(delayTime_ms);
+    // define the simulation loop timer
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
+    const uint16_t delayTime_ms = 10;
+    m_timer->start(delayTime_ms);
 
-  std::cout << "Spectrum analyzer started" << std::endl;
+    std::cout << "Spectrum analyzer started" << std::endl;
 }
 
 void SimMainWindow::createMenuAndActions()
@@ -81,12 +81,12 @@ void SimMainWindow::getSignalSpectrumData()
 
 void SimMainWindow::save()
 {
-   // std::cout << "save() called" << std::endl;
-   getSignalSpectrumData();
-   m_storeSignalSpectrumData = new StoreSignalSpectrumData(m_t, m_leftSignal, m_rightSignal,
-                                                           m_f, m_leftSpectrum, m_rightSpectrum);
-   m_storeSignalSpectrumData->save();
-   delete m_storeSignalSpectrumData;
+    // std::cout << "save() called" << std::endl;
+    getSignalSpectrumData();
+    m_storeSignalSpectrumData = new StoreSignalSpectrumData(m_t, m_leftSignal, m_rightSignal,
+                                                            m_f, m_leftSpectrum, m_rightSpectrum);
+    m_storeSignalSpectrumData->save();
+    delete m_storeSignalSpectrumData;
 }
 
 void SimMainWindow::saveAs()
@@ -102,22 +102,22 @@ void SimMainWindow::saveAs()
 
 void SimMainWindow::setParameters()
 {
-  m_discreteTime = 0;
-  m_sampleFrequency = initSampleFrequency;
-  m_samplePeriod = 1.0 / m_sampleFrequency;
-  m_noSpectrumSamples = initNoSpectrumSamples;
-  m_spectrumParameter = new SpectrumParameter(minFrequencyRange, maxFrequencyRange, m_noSpectrumSamples);
-  m_peakSpectrumValueLeft = -180;
-  m_peakSpectrumValueRight = -180;
-  m_peakSpectrumFrequencyLeft = 0.0;
-  m_peakSpectrumFrequencyRight = 0.0;
+    m_discreteTime = 0;
+    m_sampleFrequency = initSampleFrequency;
+    m_samplePeriod = 1.0 / m_sampleFrequency;
+    m_noSpectrumSamples = initNoSpectrumSamples;
+    m_spectrumParameter = new SpectrumParameter(minFrequencyRange, maxFrequencyRange, m_noSpectrumSamples);
+    m_peakSpectrumValueLeft = -180;
+    m_peakSpectrumValueRight = -180;
+    m_peakSpectrumFrequencyLeft = 0.0;
+    m_peakSpectrumFrequencyRight = 0.0;
 
-  // set running flag
-  m_applicationRunning = true;
+    // set running flag
+    m_applicationRunning = true;
 
-  // set channel activity flags
-  m_leftChannelActive = true;
-  m_rightChannelActive = true;
+    // set channel activity flags
+    m_leftChannelActive = true;
+    m_rightChannelActive = true;
 }
 
 void SimMainWindow::readParametersFromFile()
@@ -125,7 +125,7 @@ void SimMainWindow::readParametersFromFile()
     QFile file("SimParams.txt");
     if(!file.open(QIODevice::ReadOnly))
     {
-      std::cout << "error" << file.errorString().toStdString() << std::endl;
+        std::cout << "error" << file.errorString().toStdString() << std::endl;
     }
 
     QTextStream in(&file);
@@ -154,13 +154,13 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // std::cout << "setup SignalPlotView" << std::endl;
     m_SignalPlotView = new SignalPlotView(m_sampleFrequency, this);
     if (m_leftChannelActive)
-      m_SignalPlotView->activateLeftChannel();
+        m_SignalPlotView->activateLeftChannel();
     else
-      m_SignalPlotView->deactivateLeftChannel();
+        m_SignalPlotView->deactivateLeftChannel();
     if (m_rightChannelActive)
-      m_SignalPlotView->activateRightChannel();
+        m_SignalPlotView->activateRightChannel();
     else
-      m_SignalPlotView->deactivateRightChannel();
+        m_SignalPlotView->deactivateRightChannel();
 
     QString signalAxisLabelStr("time / ms -->");
     m_signalAxisLabel = new QLabel(signalAxisLabelStr, this);
@@ -171,13 +171,13 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // std::cout << "setup SpectrumPlotView" << std::endl;
     m_SpectrumPlotView = new SpectrumPlotView(m_sampleFrequency, m_spectrumParameter, this);
     if (m_leftChannelActive)
-      m_SpectrumPlotView->activateLeftChannel();
+        m_SpectrumPlotView->activateLeftChannel();
     else
-      m_SpectrumPlotView->deactivateLeftChannel();
+        m_SpectrumPlotView->deactivateLeftChannel();
     if (m_rightChannelActive)
-      m_SpectrumPlotView->activateRightChannel();
+        m_SpectrumPlotView->activateRightChannel();
     else
-      m_SpectrumPlotView->deactivateRightChannel();
+        m_SpectrumPlotView->deactivateRightChannel();
 
     QString frequencyAxisLabelStr("frequency / Hz -->");
     m_frequencyAxisLabel = new QLabel(frequencyAxisLabelStr, this);
@@ -214,12 +214,21 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_rightChannelPeakSpectrumFrequencyDisplay = new QLabel(this);
     m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
 
+    // spectra normalization mode selection
+    QString normalizationModeLabelStr("Select normalization mode:");
+    m_normalizationModeLabel = new QLabel(normalizationModeLabelStr,this);
+    m_normalizationModeLabel->setAlignment(Qt::AlignLeft);
+    m_normalizationModeLabel->setFont(font);
+    m_normalizationModeSelector = new QComboBox(this);
+    m_normalizationModeSelector->addItems(m_normalizationModeList);
+    m_normalizationModeSelector->setCurrentIndex(0);
+
     // max. time knob
     m_maxNumberSignalSamplesKnob = new Knob( "No. samples in signal display:", 100.0, 500.0, this );
     m_maxNumberSignalSamplesKnob->setValue(500.0);
 
     // prepare for THD calculations
-    std::cout << "setup THD" << std::endl;
+    // std::cout << "setup THD" << std::endl;
     double defaultBaseFrequencyLeft_kHz = 1.0;
     double defaultNumberOvertonesLeft = 20;
     double defaultBaseFrequencyRight_kHz = 1.0;
@@ -239,7 +248,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
     QString minFrequencyLabelStr("Select min. frequency:");
     m_minFrequencyLabel = new QLabel(minFrequencyLabelStr, this);
     m_minFrequencyLabel->setWordWrap(true);
-    m_minFrequencyLabel->setAlignment( Qt::AlignLeft );
+    m_minFrequencyLabel->setAlignment(Qt::AlignLeft);
     m_minFrequencyLabel->setFont(font);
 
     // Combo box for the max. frequency
@@ -285,6 +294,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // measurement widgets
     QRect RectPeakSpectrumValuesLabel(295,920,180,20);
     m_peakSpectrumValuesLabel->setGeometry(RectPeakSpectrumValuesLabel);
+    m_peakSpectrumValuesLabel->setFont(font);
     QRect RectLeftChannelPeakSpectrumValueDisplay(480,920,120,20);
     m_leftChannelPeakSpectrumValueDisplay->setGeometry(RectLeftChannelPeakSpectrumValueDisplay);
     m_leftChannelPeakSpectrumValueDisplay->setFrameStyle(QFrame::Sunken);
@@ -298,6 +308,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
     QRect RectPeakFrequencyValuesLabel(760,920,160,20);
     m_peakFrequencyValuesLabel->setGeometry(RectPeakFrequencyValuesLabel);
     m_peakFrequencyValuesLabel->setAlignment( Qt::AlignRight );
+    m_peakFrequencyValuesLabel->setFont(font);
     QRect RectLeftChannelPeakSpectrumFrequencyDisplay(940,920,120,20);
     m_leftChannelPeakSpectrumFrequencyDisplay->setGeometry(RectLeftChannelPeakSpectrumFrequencyDisplay);
     m_leftChannelPeakSpectrumFrequencyDisplay->setFrameStyle(QFrame::Sunken);
@@ -308,6 +319,19 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_rightChannelPeakSpectrumFrequencyDisplay->setFrameStyle(QFrame::Sunken);
     m_rightChannelPeakSpectrumFrequencyDisplay->setStyleSheet("QLabel { background-color : white; }");
     m_rightChannelPeakSpectrumFrequencyDisplay->setAlignment( Qt::AlignRight );
+    
+    // copyright label
+    m_copyrightLabel = new QLabel(this);
+    m_copyrightLabel->setText("Made by Dr. Markus Reinhardt");
+    QRect RectCopyrightLabel(1260,940,240,30);
+    m_copyrightLabel->setGeometry(RectCopyrightLabel);
+    m_copyrightLabel->setFont(font);
+
+    // Selector for the normalization mode
+    QRect RectNormalizationModeLabel(295,890,180,20);
+    m_normalizationModeLabel->setGeometry(RectNormalizationModeLabel);
+    QRect RectNormalizationModeSelector(480,890,120,20);
+    m_normalizationModeSelector->setGeometry(RectNormalizationModeSelector);
 
     // number of signal samples knob
     QRect Rect3(1260,20,200,150);
@@ -356,6 +380,15 @@ void SimMainWindow::setupWidgetsAndLayouts()
     connect(m_leftChannelActivationButton, SIGNAL(clicked()), this, SLOT(toggleLeftChannel()));
     connect(m_rightChannelActivationButton, SIGNAL(clicked()), this, SLOT(toggleRightChannel()));
 
+    // connect normalization mode selector
+    connect(m_normalizationModeSelector, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [=](int index){ changeNormalizationMode(index); });
+}
+
+void SimMainWindow::changeNormalizationMode(uint8_t newNormalizationModeIndex)
+{
+    // std::cout << "normalization mode changed: newNormalizationModeIndex = " << newNormalizationModeIndex << std::endl;
+    m_SpectrumPlotView->setNormalizationMode(newNormalizationModeIndex);
 }
 
 void SimMainWindow::toggleOnOff()
@@ -383,126 +416,126 @@ void SimMainWindow::toggleOnOff()
 
 void SimMainWindow::toggleLeftChannel()
 {
-  if (m_leftChannelActive)
-  {
-    m_leftChannelActive = false;
-    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
-    m_leftChannelActivationButton->setText("Left channel off");
-    m_leftChannelPeakSpectrumValueDisplay->setText(" ");
-    m_leftChannelPeakSpectrumFrequencyDisplay->setText(" ");
-    m_SignalPlotView->deactivateLeftChannel();
-    m_SpectrumPlotView->deactivateLeftChannel();
-  }
-  else
-  {
-    m_leftChannelActive = true;
-    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
-    m_leftChannelActivationButton->setText("Left channel on");
-    m_SignalPlotView->activateLeftChannel();
-    m_SpectrumPlotView->activateLeftChannel();
-  }
+    if (m_leftChannelActive)
+    {
+        m_leftChannelActive = false;
+        m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
+        m_leftChannelActivationButton->setText("Left channel off");
+        m_leftChannelPeakSpectrumValueDisplay->setText(" ");
+        m_leftChannelPeakSpectrumFrequencyDisplay->setText(" ");
+        m_SignalPlotView->deactivateLeftChannel();
+        m_SpectrumPlotView->deactivateLeftChannel();
+    }
+    else
+    {
+        m_leftChannelActive = true;
+        m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+        m_leftChannelActivationButton->setText("Left channel on");
+        m_SignalPlotView->activateLeftChannel();
+        m_SpectrumPlotView->activateLeftChannel();
+    }
 }
 
 void SimMainWindow::toggleRightChannel()
 {
     if (m_rightChannelActive)
     {
-      m_rightChannelActive = false;
-      m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
-      m_rightChannelActivationButton->setText("Right channel off");
-      m_rightChannelPeakSpectrumValueDisplay->setText(" ");
-      m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
-      m_SignalPlotView->deactivateRightChannel();
-      m_SpectrumPlotView->deactivateRightChannel();
+        m_rightChannelActive = false;
+        m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
+        m_rightChannelActivationButton->setText("Right channel off");
+        m_rightChannelPeakSpectrumValueDisplay->setText(" ");
+        m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
+        m_SignalPlotView->deactivateRightChannel();
+        m_SpectrumPlotView->deactivateRightChannel();
     }
     else
     {
-      m_rightChannelActive = true;
-      m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
-      m_rightChannelActivationButton->setText("Right channel on");
-      m_SignalPlotView->activateRightChannel();
-      m_SpectrumPlotView->activateRightChannel();
+        m_rightChannelActive = true;
+        m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+        m_rightChannelActivationButton->setText("Right channel on");
+        m_SignalPlotView->activateRightChannel();
+        m_SpectrumPlotView->activateRightChannel();
     }
 }
 
 void SimMainWindow::minFrequencyDialChanged(int newIndex)
 {
-   // std::cout << "minFrequencyDialChanged(): " << newIndex <<std::endl;
-   int indexMaxFrequencyDial = m_maxFrequencyDial->currentIndex();
-   if (newIndex >= indexMaxFrequencyDial)
-      newIndex = max(0,indexMaxFrequencyDial-1);
-   m_minFrequencyDial->setCurrentIndex(newIndex);
-   double newMinFrequency = m_minFrequencyDial->currentText().toDouble();
-   m_SpectrumPlotView->updateMinFrequency(newMinFrequency);
+    // std::cout << "minFrequencyDialChanged(): " << newIndex <<std::endl;
+    int indexMaxFrequencyDial = m_maxFrequencyDial->currentIndex();
+    if (newIndex >= indexMaxFrequencyDial)
+        newIndex = max(0,indexMaxFrequencyDial-1);
+    m_minFrequencyDial->setCurrentIndex(newIndex);
+    double newMinFrequency = m_minFrequencyDial->currentText().toDouble();
+    m_SpectrumPlotView->updateMinFrequency(newMinFrequency);
 }
 
 void SimMainWindow::maxFrequencyDialChanged(int newIndex)
 {
-   // std::cout << "maxFrequencyDialChanged(): " << newIndex <<std::endl;
-   int indexMinFrequencyDial = m_minFrequencyDial->currentIndex();
-   if (newIndex <= indexMinFrequencyDial)
-      newIndex = min(8,indexMinFrequencyDial+1);
-   m_maxFrequencyDial->setCurrentIndex(newIndex);
-   double newMaxFrequency = m_maxFrequencyDial->currentText().toDouble();
-   m_SpectrumPlotView->updateMaxFrequency(newMaxFrequency);
+    // std::cout << "maxFrequencyDialChanged(): " << newIndex <<std::endl;
+    int indexMinFrequencyDial = m_minFrequencyDial->currentIndex();
+    if (newIndex <= indexMinFrequencyDial)
+        newIndex = min(8,indexMinFrequencyDial+1);
+    m_maxFrequencyDial->setCurrentIndex(newIndex);
+    double newMaxFrequency = m_maxFrequencyDial->currentText().toDouble();
+    m_SpectrumPlotView->updateMaxFrequency(newMaxFrequency);
 }
 
 void SimMainWindow::step()
 {
-  // run a simulation step ...
-  m_discreteTime++;
-  // std::cout << "SimMainWindow::step: m_discreteTime = " << m_discreteTime << std::endl;
+    // run a simulation step ...
+    m_discreteTime++;
+    // std::cout << "SimMainWindow::step: m_discreteTime = " << m_discreteTime << std::endl;
 
-  m_SignalPlotView->updatePA();
-  m_SignalPlotView->updateSignals();
-  m_SpectrumPlotView->getSignals(m_SignalPlotView->returnTimeLeftSignal(),
-                                 m_SignalPlotView->returnLeftSignal(),
-                                 m_SignalPlotView->returnTimeRightSignal(),
-                                 m_SignalPlotView->returnRightSignal());
-  m_SpectrumPlotView->updateSpectra();
+    m_SignalPlotView->updatePA();
+    m_SignalPlotView->updateSignals();
+    m_SpectrumPlotView->getSignals(m_SignalPlotView->returnTimeLeftSignal(),
+                                   m_SignalPlotView->returnLeftSignal(),
+                                   m_SignalPlotView->returnTimeRightSignal(),
+                                   m_SignalPlotView->returnRightSignal());
+    m_SpectrumPlotView->updateSpectra();
 
-  // THD calculations
-  if (m_leftChannelActive)
-    THDHandlerLeft->run(m_SignalPlotView->returnLeftSignal());
-  if (m_rightChannelActive)  
-    THDHandlerRight->run(m_SignalPlotView->returnRightSignal());
+    // THD calculations
+    if (m_leftChannelActive)
+        THDHandlerLeft->run(m_SignalPlotView->returnLeftSignal());
+    if (m_rightChannelActive)
+        THDHandlerRight->run(m_SignalPlotView->returnRightSignal());
 
-  // update the peak spectrum value and frequency displays
-  updatePeakSpectrumDisplays();
+    // update the peak spectrum value and frequency displays
+    updatePeakSpectrumDisplays();
 
-  /*
-  if (m_discreteTime >= m_discreteSimulationSteps)
-  {
-      m_timer->stop();
-      std::cout << "Simulation loop finished" << std::endl;
-  }
-  */
+    /*
+      if (m_discreteTime >= m_discreteSimulationSteps)
+      {
+          m_timer->stop();
+          std::cout << "Simulation loop finished" << std::endl;
+      }
+      */
 }
 
 void SimMainWindow::updatePeakSpectrumDisplays()
 {
     if (m_leftChannelActive)
     {
-      // get the values
-      m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
-      // update the displays
-      m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
-      m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
+        // get the values
+        m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
+        // update the displays
+        m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
+        m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
     }
-    
+
     if (m_rightChannelActive)
     {
-      // get the values
-      m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight);
-      // update the displays
-      m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
-      m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));
+        // get the values
+        m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight);
+        // update the displays
+        m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
+        m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));
     }
 }
 
 SimMainWindow::~SimMainWindow()
 {
-  delete m_SignalPlotView;
-  delete m_SpectrumPlotView;
-  delete m_timer;
+    delete m_SignalPlotView;
+    delete m_SpectrumPlotView;
+    delete m_timer;
 }

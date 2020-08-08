@@ -54,6 +54,7 @@ private Q_SLOTS:
   void toggleOnOff();
   void toggleLeftChannel();
   void toggleRightChannel();
+  void changeNormalizationMode(uint8_t index);
 
 private:
   QTimer *m_timer;
@@ -63,6 +64,9 @@ private:
   QLabel *m_signalAxisLabel;
   SpectrumPlotView *m_SpectrumPlotView;
   QLabel *m_frequencyAxisLabel;
+
+  // knob to control the shown signal samples
+  Knob *m_maxNumberSignalSamplesKnob;
 
   // on/off buttons, status and measurement fields
   QPushButton *m_leftChannelActivationButton;
@@ -78,10 +82,15 @@ private:
   QLabel *m_leftChannelPeakSpectrumFrequencyDisplay;
   QLabel *m_rightChannelPeakSpectrumFrequencyDisplay;
 
-  // know to control the shown signal samples
-  Knob *m_maxNumberSignalSamplesKnob;
+  // selection of normalization mode
+  QLabel *m_normalizationModeLabel;
+  QComboBox  *m_normalizationModeSelector;
+  const QList<QString> m_normalizationModeList = {"Both", "Left", "Right", "Separate"};
+  
+  // copyright label
+  QLabel *m_copyrightLabel;
 
-  // THD handlers
+ // THD handlers
   THDHandler *THDHandlerLeft;
   THDHandler *THDHandlerRight;
 

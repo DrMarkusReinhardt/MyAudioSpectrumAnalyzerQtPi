@@ -103,11 +103,8 @@ void SpectrumPlotView::updateSpectra()
   // std::cout << "maxMagnitudeRight = " << maxMagnitudeRight << std::endl;
 
   // normalize spectra
-  double overallMaxMagnitude = max(m_maxMagnitudeLeft,m_maxMagnitudeRight);
-  // std::cout << "overallMaxMagnitude = " << overallMaxMagnitude << std::endl;
-  spectrumCalculatorLeft->normalizeMagnitudeSpectrumVal(overallMaxMagnitude);
-  spectrumCalculatorRight->normalizeMagnitudeSpectrumVal(overallMaxMagnitude);
-
+  normalizeSpectra();
+  
   VectorXd magnitudeSpectrumLeft = spectrumCalculatorLeft->returnMagnitudeSpectrum();
   VectorXd magnitudeSpectrumRight = spectrumCalculatorRight->returnMagnitudeSpectrum();
 
@@ -132,6 +129,57 @@ void SpectrumPlotView::updateSpectra()
   // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
   if (m_rightChannelActive)
     connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+}
+
+void SpectrumPlotView::setNormalizationMode(uint8_t newNormalizationMode)
+{
+  m_normalizationMode = newNormalizationMode;
+}
+
+void SpectrumPlotView::normalizeSpectra()
+{
+  double newMagnitudeNormalizationValueLeft;
+  double newMagnitudeNormalizationValueRight;
+  
+  // determine the normalization values for both channels depending on the normalization mode
+  switch (m_normalizationMode)
+  {
+    case 0: // with max of both channels
+    {
+      double overallMaxMagnitude = max(m_maxMagnitudeLeft,m_maxMagnitudeRight);
+      newMagnitudeNormalizationValueLeft = overallMaxMagnitude;
+      newMagnitudeNormalizationValueRight = overallMaxMagnitude;
+      break;
+    }
+    case 1:  // with max of left channel
+    {
+      newMagnitudeNormalizationValueLeft = m_maxMagnitudeLeft;
+      newMagnitudeNormalizationValueRight = m_maxMagnitudeLeft;
+      break;
+    }  
+    case 2:  // with max of right channel
+    {
+      newMagnitudeNormalizationValueLeft = m_maxMagnitudeRight;
+      newMagnitudeNormalizationValueRight = m_maxMagnitudeRight;
+      break;
+    }  
+    case 3:  // with max of each channel separately
+    {
+      newMagnitudeNormalizationValueLeft = m_maxMagnitudeLeft;
+      newMagnitudeNormalizationValueRight = m_maxMagnitudeRight;
+      break;
+    }
+    default:
+    {
+      double overallMaxMagnitude = max(m_maxMagnitudeLeft,m_maxMagnitudeRight);
+      newMagnitudeNormalizationValueLeft = overallMaxMagnitude;
+      newMagnitudeNormalizationValueRight = overallMaxMagnitude;
+    }
+  }
+  
+  // do the normalization of both channel spectra
+  spectrumCalculatorLeft->normalizeMagnitudeSpectrumVal(newMagnitudeNormalizationValueLeft);
+  spectrumCalculatorRight->normalizeMagnitudeSpectrumVal(newMagnitudeNormalizationValueRight);
 }
 
 void SpectrumPlotView::updateMinFrequency(double newMinFrequency)

@@ -51,6 +51,8 @@ public:
   void activateRightChannel();
   void deactivateLeftChannel();
   void deactivateRightChannel();
+  void setNormalizationMode(uint8_t newNormalizationMode);
+  void normalizeSpectra(); 
 
 protected:
   void resizeEvent(QResizeEvent *event);
@@ -86,6 +88,10 @@ private:
   // channel activity flags
   bool m_leftChannelActive;
   bool m_rightChannelActive;
+  
+  // normalization mode
+  uint8_t m_normalizationMode;
+  
 };
 
 } // namespace MR_SIM
