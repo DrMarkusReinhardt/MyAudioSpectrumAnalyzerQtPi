@@ -38,6 +38,7 @@ Makefile
 *.pro.user
 MyAudioAnalyzerQtPi
 *.stash
+*.autosave
 
 # LaTeX files
 *.aux

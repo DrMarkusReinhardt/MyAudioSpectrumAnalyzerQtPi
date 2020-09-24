@@ -32,7 +32,9 @@ SOURCES += \
     knob.cpp \
     THDCalculator.cpp \
     THDHandler.cpp \
-    StoreSignalSpectrumData.cpp
+    StoreSignalSpectrumData.cpp \
+    SpectrumAverager.cpp \
+    VectorIIRFilter.cpp
 
 HEADERS += \
     SimMainWindow.h \
@@ -49,7 +51,9 @@ HEADERS += \
     knob.h \
     THDCalculator.h \
     THDHandler.h \
-    StoreSignalSpectrumData.h
+    StoreSignalSpectrumData.h \
+    SpectrumAverager.h \
+    VectorIIRFilter.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include

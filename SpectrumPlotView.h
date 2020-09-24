@@ -9,6 +9,7 @@
 #include <vector>
 #include "RandomGenerator.h"
 #include "SpectrumCalculator.h"
+#include "SpectrumAverager.h"
 #include "SpectrumParameter.h"
 #include "callout.h"
 #include <eigen3/Eigen/Dense>
@@ -74,6 +75,11 @@ private:
   SpectrumParameter *m_spectrumParameter;
   SpectrumCalculator *spectrumCalculatorLeft;
   SpectrumCalculator *spectrumCalculatorRight;
+  SpectrumAverager *spectrumAveragerLeft;
+  SpectrumAverager *spectrumAveragerRight;
+  VectorXd m_averageMagnitudeSpectrumLeft;
+  VectorXd m_averageMagnitudeSpectrumRight;
+
   QGraphicsSimpleTextItem *m_coordX;
   QGraphicsSimpleTextItem *m_coordY;
   Callout *m_tooltip;

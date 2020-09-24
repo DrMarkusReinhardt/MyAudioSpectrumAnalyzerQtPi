@@ -59,6 +59,11 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   // create the spectrum calculators
   spectrumCalculatorLeft = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
   spectrumCalculatorRight = new SpectrumCalculator(m_sampleFrequency, m_spectrumParameter);
+
+  // create the spectrum averagers
+  const bool initIIRorFIR = true;  // default shall be IIR averaging --> true
+  spectrumAveragerLeft = new SpectrumAverager(initIIRorFIR, m_spectrumParameter, 100);
+  spectrumAveragerRight = new SpectrumAverager(initIIRorFIR, m_spectrumParameter, 100);
 }
 
 
@@ -108,9 +113,13 @@ void SpectrumPlotView::updateSpectra()
   VectorXd magnitudeSpectrumLeft = spectrumCalculatorLeft->returnMagnitudeSpectrum();
   VectorXd magnitudeSpectrumRight = spectrumCalculatorRight->returnMagnitudeSpectrum();
 
+  // update average magnitude spectra
+  m_averageMagnitudeSpectrumLeft = spectrumAveragerLeft->updateAverageMagnitudeSpectrum(magnitudeSpectrumLeft);
+  m_averageMagnitudeSpectrumRight = spectrumAveragerRight->updateAverageMagnitudeSpectrum(magnitudeSpectrumRight);
+
   VectorXd frequencyRange = m_spectrumParameter->getFrequencyRange();
-  plotSpectrumChannelLeftRight->updateData(m_leftChannelActive, frequencyRange, magnitudeSpectrumLeft,
-                                           m_rightChannelActive, frequencyRange, magnitudeSpectrumRight);
+  plotSpectrumChannelLeftRight->updateData(m_leftChannelActive, frequencyRange, m_averageMagnitudeSpectrumLeft,
+                                           m_rightChannelActive, frequencyRange, m_averageMagnitudeSpectrumRight);
   QChart* pChart = plotSpectrumChannelLeftRight->getChart();
   pChart->axisY()->setRange(-100.0,0.0);
   pChart->axisX()->setRange(m_spectrumParameter->getMinFrequency(),
