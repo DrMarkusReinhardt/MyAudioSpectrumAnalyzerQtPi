@@ -7,6 +7,7 @@
 #ifndef VECTORIIRFILTER_H
 #define VECTORIIRFILTER_H
 
+#include <iostream>
 #include <eigen3/Eigen/Dense>
 
 using namespace Eigen;

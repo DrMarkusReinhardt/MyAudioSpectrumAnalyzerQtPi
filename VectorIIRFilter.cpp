@@ -17,8 +17,15 @@ VectorIIRFilter::VectorIIRFilter(uint16_t initLengthVector, double initAlpha) :
 VectorXd VectorIIRFilter::filter(VectorXd newSample)
 {
   if (m_init)
+  {
       m_state = newSample;
+      std::cout << "IIR init" << std::endl;
+  }
   else
+  {
+      std::cout << "IIR avg" << std::endl;
       m_state = m_alpha * m_state + m_oneMinusAlpha * newSample;
+      m_init = false;
+  }
   return m_state;
 }
