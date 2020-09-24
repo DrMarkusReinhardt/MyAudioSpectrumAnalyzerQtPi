@@ -20,7 +20,7 @@ void SpectrumAverager::resetAveraging()
 
 void SpectrumAverager::resetIIRAveraging()
 {
-  const double initAlpha = 0.99;
+  const double initAlpha = 0.9;
   // if (m_vectorIIR != nullptr)
   //     delete m_vectorIIR;
   m_vectorIIR = new VectorIIRFilter(m_spectrumParameter->getFrequencyRange().size(), initAlpha);
