@@ -22,7 +22,7 @@ Qt/Qwt based audio spectrum analyzer for RaspberryPi with Pisound board.
    The lower and upper limit of the frequency range used in the spectra can also be changed. 
    
 ### Peak spectrum values:
-    The value and location in frequency domain of the peaks of both spectra are displayed and updated periodically.
+   The value and location in frequency domain of the peaks of both spectra are displayed and updated periodically.
        
 ### Activation/deactivation:   
    Both channels can be activated and deactivated.
