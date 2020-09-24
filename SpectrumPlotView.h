@@ -53,7 +53,8 @@ public:
   void deactivateLeftChannel();
   void deactivateRightChannel();
   void setNormalizationMode(uint8_t newNormalizationMode);
-  void normalizeSpectra(); 
+  void normalizeSpectra();
+  void restart();
 
 protected:
   void resizeEvent(QResizeEvent *event);

@@ -10,6 +10,13 @@ SpectrumAverager::SpectrumAverager(bool initIIRorFIR, SpectrumParameter *initSpe
     resetAveraging();
 }
 
+void SpectrumAverager::restart()
+{
+  if (m_IIRorFIR) 
+    delete m_vectorIIR;
+  resetAveraging();
+}
+
 void SpectrumAverager::resetAveraging()
 {
   if (m_IIRorFIR)
@@ -20,10 +27,9 @@ void SpectrumAverager::resetAveraging()
 
 void SpectrumAverager::resetIIRAveraging()
 {
-  const double initAlpha = 0.9;
   // if (m_vectorIIR != nullptr)
   //     delete m_vectorIIR;
-  m_vectorIIR = new VectorIIRFilter(m_spectrumParameter->getFrequencyRange().size(), initAlpha);
+  m_vectorIIR = new VectorIIRFilter(m_spectrumParameter->getFrequencyRange().size(), m_initAlpha);
 }
 
 void SpectrumAverager::resetFIRAveraging()

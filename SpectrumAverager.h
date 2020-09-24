@@ -14,6 +14,7 @@ public:
     VectorXd returnAverageMagnitudeSpectrum();
     VectorXd updateAverageMagnitudeSpectrum(VectorXd newMagnitudeSpectrum);
     void resetAveraging();
+    void restart();
 
 private:
     void resetIIRAveraging();
@@ -24,6 +25,7 @@ private:
 private:
   // double m_sampleFrequency;
   bool m_IIRorFIR;   // select the filter type: FIR or IIR (if true --> default should be IIR of first order)
+  const double m_initAlpha = 0.9;
   SpectrumParameter *m_spectrumParameter;
   VectorXd m_frequencyRange;
   VectorXd m_averageMagnitudeSpectrum;

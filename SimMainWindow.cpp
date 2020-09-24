@@ -409,6 +409,7 @@ void SimMainWindow::toggleOnOff()
         m_processingOnOff->setStyleSheet("QPushButton { background-color : red; }");
         m_processingOnOff->setText("Stop");
         m_processingStatus->setText("Running");
+        m_SpectrumPlotView->restart();
         const uint16_t delayTime_ms = 10;
         m_timer->start(delayTime_ms);
     }
@@ -432,6 +433,7 @@ void SimMainWindow::toggleLeftChannel()
         m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
         m_leftChannelActivationButton->setText("Left channel on");
         m_SignalPlotView->activateLeftChannel();
+        m_SpectrumPlotView->restart();
         m_SpectrumPlotView->activateLeftChannel();
     }
 }
@@ -454,6 +456,7 @@ void SimMainWindow::toggleRightChannel()
         m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
         m_rightChannelActivationButton->setText("Right channel on");
         m_SignalPlotView->activateRightChannel();
+        m_SpectrumPlotView->restart();
         m_SpectrumPlotView->activateRightChannel();
     }
 }

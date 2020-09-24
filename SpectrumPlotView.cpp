@@ -66,6 +66,11 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   spectrumAveragerRight = new SpectrumAverager(initIIRorFIR, m_spectrumParameter, 100);
 }
 
+void SpectrumPlotView::restart()
+{
+  spectrumAveragerLeft->restart();
+  spectrumAveragerRight->restart();
+}
 
 void SpectrumPlotView::activateLeftChannel()
 {
