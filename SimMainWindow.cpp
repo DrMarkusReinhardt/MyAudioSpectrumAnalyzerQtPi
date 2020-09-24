@@ -322,7 +322,7 @@ void SimMainWindow::setupWidgetsAndLayouts()
     
     // copyright label
     m_copyrightLabel = new QLabel(this);
-    m_copyrightLabel->setText("Made by Dr. Markus Reinhardt");
+    m_copyrightLabel->setText("CR Dr. Markus Reinhardt");
     QRect RectCopyrightLabel(1260,940,240,30);
     m_copyrightLabel->setGeometry(RectCopyrightLabel);
     m_copyrightLabel->setFont(font);
