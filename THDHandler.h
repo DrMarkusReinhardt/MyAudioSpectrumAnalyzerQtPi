@@ -4,6 +4,8 @@
 #include "knob.h"
 #include <QTextEdit>
 #include <QLabel>
+#include <QPushButton>
+#include <QInputDialog>
 #include <qwt_slider.h>
 #include "THDCalculator.h"
 
@@ -13,15 +15,18 @@
 
 class THDHandler : public QWidget
 {
+  Q_OBJECT
+    
 public:
     THDHandler(QString initChannelString, double initBaseFrequency_kHz, uint16_t initNoOvertones,
                double initSampleFrequency, QWidget *parent = nullptr );
     void run(VectorXd inputSignal);
     virtual QSize sizeHint() const;
 
-private:
+private slots:
     void updateNoOvertones(double newNoOvertones);
     void updateBaseFrequency(double newBaseFrequency_kHz);
+    void dialogBaseFrequency();
 
 private:
     QString m_channelString;
@@ -34,7 +39,7 @@ private:
     QLabel *m_displayNoOvertones;
     QwtSlider *m_sliderBaseFrequency;
     QLabel *m_displayBaseFrequency;
-    QLabel *m_labelBaseFrequency;
+    QPushButton *m_buttonBaseFrequency;
     THDCalculator *m_THDCalc;
     QString m_THDResultLabelString;
     QLabel *m_THDResultLabel;

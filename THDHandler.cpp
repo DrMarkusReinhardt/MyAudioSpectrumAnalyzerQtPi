@@ -32,10 +32,11 @@ THDHandler::THDHandler(QString initChannelString, double initBaseFrequency_kHz,
     m_displayNoOvertones->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     m_displayNoOvertones->setFont(font);
 
-    m_labelBaseFrequency = new QLabel("Select THD base frequency/kHz:");
-    m_labelBaseFrequency->setAlignment(Qt::AlignHCenter | Qt::AlignBottom );
-    m_labelBaseFrequency->setFont(font);
-    m_labelBaseFrequency->setMinimumSize(200,30);
+    m_buttonBaseFrequency = new QPushButton(this);
+    m_buttonBaseFrequency->setStyleSheet("QPushButton { background-color : grey; }");
+    m_buttonBaseFrequency->setText("Set new THD base frequency");
+    m_buttonBaseFrequency->setFont(font);
+    m_buttonBaseFrequency->setMinimumSize(200,30);
     m_sliderBaseFrequency = new QwtSlider(Qt::Horizontal);
     m_sliderBaseFrequency->setScale(0.0,20.0);
     m_sliderBaseFrequency->setValue(m_baseFrequency_kHz);
@@ -75,7 +76,8 @@ THDHandler::THDHandler(QString initChannelString, double initBaseFrequency_kHz,
     vLayout1->addWidget(m_knobNoOvertones);
     vLayout1->addWidget(m_displayNoOvertones);
     // vLayout1->addLayout(hLayout1);
-    vLayout1->addWidget(m_labelBaseFrequency);
+    // vLayout1->addWidget(m_labelBaseFrequency);
+    vLayout1->addWidget(m_buttonBaseFrequency);
     vLayout1->addWidget(m_sliderBaseFrequency);
     vLayout1->addWidget(m_displayBaseFrequency);
     vLayout1->addWidget(m_THDResultLabel);
@@ -94,6 +96,9 @@ THDHandler::THDHandler(QString initChannelString, double initBaseFrequency_kHz,
     connect(m_sliderBaseFrequency,QOverload<double>::of(&QwtSlider::valueChanged),
             this, &THDHandler::updateBaseFrequency);
 
+    connect(m_buttonBaseFrequency,SIGNAL(released()),
+            this, SLOT(dialogBaseFrequency()));
+            
     // initialize the THD calculators
     newBaseFrequency_kHz = m_baseFrequency_kHz;
     m_THDCalc = new THDCalculator(m_baseFrequency_kHz*1000.0, m_noOvertones, m_sampleFrequency);
@@ -116,8 +121,18 @@ void THDHandler::updateBaseFrequency(double newBaseFrequency_kHz)
    if (newBaseFrequency_kHz > 20.0) newBaseFrequency_kHz = 20.0;
    m_baseFrequency_kHz = newBaseFrequency_kHz;
    m_displayBaseFrequency->setText(QString::number(newBaseFrequency_kHz,'f',3)+" kHz");
+   m_sliderBaseFrequency->setValue(m_baseFrequency_kHz);
    m_THDCalc->setBaseFrequency(newBaseFrequency_kHz*1000.0);
    m_THDCalc->initTHDCalculation();
+}
+
+void THDHandler::dialogBaseFrequency()
+{
+  bool ok;
+  double newBaseFrequency_kHz = QInputDialog::getDouble(this,"THD base frequency","Set new frequency/kHz:",
+                                                        m_baseFrequency_kHz,.0,20.0,3,&ok);
+  if (ok)
+    updateBaseFrequency(newBaseFrequency_kHz);
 }
 
 void THDHandler::run(VectorXd inputSignal)
@@ -132,7 +147,7 @@ QSize THDHandler::sizeHint() const
 {
   QSize sz1 = m_channelTitle->sizeHint();
   QSize sz2 = m_knobNoOvertones->sizeHint();
-  QSize sz3 = m_labelBaseFrequency->sizeHint();
+  QSize sz3 = m_buttonBaseFrequency->sizeHint();
   QSize sz4 = m_sliderBaseFrequency->sizeHint();
   QSize sz5 = m_THDResultDisplay->sizeHint();
 
