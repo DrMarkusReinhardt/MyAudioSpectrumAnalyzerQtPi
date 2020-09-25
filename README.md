@@ -23,7 +23,8 @@ Qt/Qwt based audio spectrum analyzer for RaspberryPi with Pisound board.
    
 ### Callouts:
   By moving the mouse within the spectrum plot next to curves the magnitude and frequency location is shown with a callout
-  and updated with the dynamic change of the plot. The location of the callout changes with the mouse movement.
+  and updated with the dynamic change of the plot. The location of the callout follows the mouse movement.
+  
   By clicking into the spectrum plot next to curves the magnitude and frequency location is shown with a permanent callout.
 
 ### Peak spectrum values:
@@ -38,6 +39,8 @@ Qt/Qwt based audio spectrum analyzer for RaspberryPi with Pisound board.
    The THD calculation can be parameterized (base frequency and number of overtones used in the calculation).
 
 ## ToDo:
-### Create separate threads for DTFT processing and GUI to make the GUI more reactive.
+### Thread based processing:
+   Create separate threads for DTFT processing (low priority) and GUI processing (high priority) to make the GUI more reactive.
 
-### Add a button to remove all existing callouts. Remove all existing callouts at a restart of the processing.
+### Callout removal: 
+   Add a button to remove all existing callouts. Remove all existing callouts at a restart of the processing.
