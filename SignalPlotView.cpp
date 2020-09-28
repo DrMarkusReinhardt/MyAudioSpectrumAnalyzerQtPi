@@ -64,6 +64,12 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   // std::cout << "SignalPlotView created" << std::endl;
 }
 
+SignalPlotView::~SignalPlotView()
+{
+  delete paHandler;
+  delete plotSignalChannelLeftRight;
+}
+
 void SignalPlotView::activateLeftChannel()
 {
     m_leftChannelActive = true;

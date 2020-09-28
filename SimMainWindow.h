@@ -16,6 +16,7 @@
 #include "THDHandler.h"
 #include "StoreSignalSpectrumData.h"
 #include <eigen3/Eigen/Dense>
+#include <memory>
 
 using namespace Eigen;
 

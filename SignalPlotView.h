@@ -31,6 +31,7 @@ class SignalPlotView : public QGraphicsView
 
 public:
   SignalPlotView(double initSampleFrequency,QWidget *parent = nullptr);
+  ~SignalPlotView();
   void createZeroData(VectorXd& x1,VectorXd& y1,
                       VectorXd& x2,VectorXd& y2);
   void createRandomData(VectorXd& x1,VectorXd& y1,

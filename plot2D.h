@@ -50,9 +50,9 @@ private:
 class plot2D : public QChartView
 {
 public:
-  plot2D(const VectorXd x1, const VectorXd y1);
+  plot2D(const VectorXd x1, const VectorXd y1, QChartView *parent=nullptr);
   plot2D(const VectorXd x1, const VectorXd y1,
-         const VectorXd x2, const VectorXd y2);
+         const VectorXd x2, const VectorXd y2, QChartView *parent=nullptr);
   void updateData(bool active1, const VectorXd x1, const VectorXd y1,
                   bool active2, const VectorXd x2, const VectorXd y2);
   void setTitle(QString str);

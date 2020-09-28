@@ -44,7 +44,7 @@ void plotData::calcMinMax(const VectorXd x, double* minVal, double* maxVal)
 }
 
 
-plot2D::plot2D(const VectorXd x1, const VectorXd y1) : m_x1(x1), m_y1(y1)
+plot2D::plot2D(const VectorXd x1, const VectorXd y1, QChartView *parent) : m_x1(x1), m_y1(y1), QChartView(parent)
 {
   if (x1.size() != y1.size())
   {
@@ -65,8 +65,8 @@ plot2D::plot2D(const VectorXd x1, const VectorXd y1) : m_x1(x1), m_y1(y1)
 }
 
 plot2D::plot2D(const VectorXd x1, const VectorXd y1,
-               const VectorXd x2, const VectorXd y2
-              ) : m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2)
+               const VectorXd x2, const VectorXd y2, QChartView *parent
+              ) : m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2), QChartView(parent)
 {
   if (x1.size() != y1.size())
   {
