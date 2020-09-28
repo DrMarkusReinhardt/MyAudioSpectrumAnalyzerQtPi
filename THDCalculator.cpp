@@ -27,6 +27,8 @@ void THDCalculator::calcTHD(double& THD_F, double& THD_R, VectorXd inputSignal)
     totalPower = distortionPower + basePower;
     THD_F = std::sqrt(distortionPower / basePower);
     THD_R = std::sqrt(distortionPower / totalPower);
+    THD_F= std::min(THD_F,1.0);
+    THD_R = std::min(THD_R,1.0);
 }
 
 void THDCalculator::setNoOvertones(double newNumberOvertones)

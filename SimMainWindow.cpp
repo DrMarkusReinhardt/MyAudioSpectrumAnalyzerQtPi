@@ -470,6 +470,7 @@ void SimMainWindow::minFrequencyDialChanged(int newIndex)
     m_minFrequencyDial->setCurrentIndex(newIndex);
     double newMinFrequency = m_minFrequencyDial->currentText().toDouble();
     m_SpectrumPlotView->updateMinFrequency(newMinFrequency);
+    m_SpectrumPlotView->restart();
 }
 
 void SimMainWindow::maxFrequencyDialChanged(int newIndex)
@@ -481,6 +482,7 @@ void SimMainWindow::maxFrequencyDialChanged(int newIndex)
     m_maxFrequencyDial->setCurrentIndex(newIndex);
     double newMaxFrequency = m_maxFrequencyDial->currentText().toDouble();
     m_SpectrumPlotView->updateMaxFrequency(newMaxFrequency);
+    m_SpectrumPlotView->restart();
 }
 
 void SimMainWindow::step()
