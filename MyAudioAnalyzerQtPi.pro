@@ -34,7 +34,9 @@ SOURCES += \
     THDHandler.cpp \
     StoreSignalSpectrumData.cpp \
     SpectrumAverager.cpp \
-    VectorIIRFilter.cpp
+    VectorIIRFilter.cpp \
+    SignalAcquisitionThread.cpp \
+    SpectrumCalculationThread.cpp
 
 HEADERS += \
     SimMainWindow.h \
@@ -53,7 +55,10 @@ HEADERS += \
     THDHandler.h \
     StoreSignalSpectrumData.h \
     SpectrumAverager.h \
-    VectorIIRFilter.h
+    VectorIIRFilter.h \
+    SignalAcquisitionThread.h \
+    ThreadCommon.h \
+    SpectrumCalculationThread.h
 
 # INCLUDEPATH += /usr/include/sigc++-2.0/
 # INCLUDEPATH += /usr/lib/x86_64-linux-gnu/sigc++-2.0/include

@@ -9,6 +9,7 @@
 #include <vector>
 #include "RandomGenerator.h"
 #include "PortaudioHandler.h"
+#include "SignalAcquisitionThread.h"
 #include "callout.h"
 #include <eigen3/Eigen/Dense>
 
@@ -58,6 +59,7 @@ public slots:
 
 private:
   PortaudioHandler *paHandler;
+  SignalAcquisitionThread signalAcquisitionThread;
   NormalRandomGenerator m_nrg{1.0,1.0};
   plot2D* plotSignalChannelLeftRight;      // signal plot for the left and right channel
   VectorXd signalTimeLeft;

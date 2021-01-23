@@ -282,6 +282,8 @@ public:
       _minLeftSignal = std::fmin(_minLeftSignal,signalLeft[k]);
       _maxLeftSignal = std::fmax(_maxLeftSignal,signalLeft[k]);
       signalRight[k] = _data.recordedSamples[2*k+1+2*dataOffset];
+      _minRightSignal = std::fmin(_minRightSignal,signalRight[k]);
+      _maxRightSignal = std::fmax(_maxRightSignal,signalRight[k]);
     }
     // std::cout << "min. left signal = " << _minLeftSignal << std::endl;
     // std::cout << "max. left signal = " << _maxLeftSignal << std::endl;

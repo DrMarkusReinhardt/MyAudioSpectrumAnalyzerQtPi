@@ -1,5 +1,4 @@
-#ifndef SIMMAINWINDOW_H
-#define SIMMAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QComboBox>
@@ -7,6 +6,8 @@
 #include <QString>
 #include <QLabel>
 #include <QPushButton>
+#include <QSemaphore>
+#include <QSemaphore>
 #include <vector>
 #include "SignalPlotView.h"
 #include "SpectrumPlotView.h"
@@ -17,6 +18,7 @@
 #include "StoreSignalSpectrumData.h"
 #include <eigen3/Eigen/Dense>
 #include <memory>
+#include "DefineDataSizes.h"
 
 using namespace Eigen;
 
@@ -37,6 +39,7 @@ class SimMainWindow : public QMainWindow
 public:
   SimMainWindow(QMainWindow *parent = nullptr);
   ~SimMainWindow();
+  void createBuffer();
   void createMenuAndActions();
   void save();
   void saveAs();
@@ -142,5 +145,3 @@ private:
 };
 
 } // namespace MR_Sim
-
-#endif // QCSIMMAINWINDOW_H

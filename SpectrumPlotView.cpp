@@ -5,6 +5,7 @@
 #include "SpectrumPlotView.h"
 #include "DefineDataSizes.h"
 #include "SpectrumParameter.h"
+#include "ThreadCommon.h"
 
 using namespace MR_SIM;
 

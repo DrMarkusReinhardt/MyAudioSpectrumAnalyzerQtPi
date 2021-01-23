@@ -61,11 +61,17 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
   else
     std::cout << "stream open failed" << std::endl;
 
+  // create the signal acquisition thread
+  signalAcquisitionThread = new SignalAcquisitionThread(paHandler);
+
   // std::cout << "SignalPlotView created" << std::endl;
 }
 
 SignalPlotView::~SignalPlotView()
 {
+  signalAcquisitionThreadv->quit();
+  signalAcquisitionThread->wait(1100);
+  delete signalAcquisitionThread;
   delete paHandler;
   delete plotSignalChannelLeftRight;
 }

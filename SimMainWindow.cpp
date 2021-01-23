@@ -8,18 +8,47 @@
 #include <QRect>
 #include <QtGlobal>
 #include <iostream>
+#include <chrono>
 #include "SimMainWindow.h"
 
 using namespace MR_SIM;
 
+const uint16_t signalBufferSize; // the signal buffer size
+const uint16_t spectrumBufferSize; // the spectrum buffer size
+QSemaphore SemSignalBuffer1;   // semaphore to access signal buffer 1, left and right
+QSemaphore SemSignalBuffer2;   // semaphore to access signal buffer 2, left and right
+QSemaphore SemSpectrumBuffer1; // semaphore to access spectrum buffer 1, left and right
+QSemaphore SemSpectrumBuffer2; // semaphore to access spectrum buffer 2, left and right
+VectorXd SignalTimeBuffer1Left; // the first buffer for time samples of the left signal
+VectorXd SignalTimeBuffer2Left; // the second buffer for time samples of the left signal
+VectorXd SignalTimeBuffer1Right; // the first buffer for time samples of the right signal
+VectorXd SignalTimeBuffer2Right; // the second buffer for time samples of the right signal
+VectorXcd SignalBuffer1Left;   // the first buffer for signal samples of the left channel
+VectorXcd SignalBuffer2Left;   // the second buffer for signal samples of the left channel
+VectorXcd SignalBuffer1Right;  // the first buffer for signal samples of the right channel
+VectorXcd SignalBuffer2Right;  // the second buffer for signal samples of the right channel
+VectorXcd SpectrumBuffer1Left; // the first buffer for magnitude spectrum samples of the left channel
+VectorXcd SpectrumBuffer2Left; // the second buffer for magnitude spectrum samples of the left channel
+VectorXcd SpectrumBuffer1Right; // the first buffer for magnitude spectrum samples of the right channel
+VectorXcd SpectrumBuffer2Right; // the second buffer for magnitude spectrum samples of the right channel
+bool signalBuffer1Filled;  // flag to signal when the signal buffer is filled for further processing
+bool signalBuffer2Filled;  // flag to signal when the signal buffer is filled for further processing
+bool spectrumBuffer1Filled;// flag to signal when the spectrum buffer is filled for further processing
+bool spectrumBuffer2Filled;// flag to signal when the spectrum buffer is filled for further processing
+
+
 SimMainWindow::SimMainWindow(QMainWindow *parent)
     : QMainWindow(parent)
 {
+
     // add menu bar with actions
     createMenuAndActions();
 
     // get and set the main calculation parameters
     setParameters();
+
+    // create buffer
+    createBuffer();
 
     // setup the widgets and the layouts
     setupWidgetsAndLayouts();
@@ -31,6 +60,25 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
     m_timer->start(delayTime_ms);
 
     std::cout << "Spectrum analyzer started" << std::endl;
+}
+
+// create buffer
+void SimMainWindow::createBuffer()
+{
+    signalBufferSize = sizeDataToPlot;
+    SignalTimeBuffer1Left.resize(signalBufferSize);
+    SignalTimeBuffer2Left.resize(signalBufferSize);
+    SignalTimeBuffer1Right.resize(signalBufferSize);
+    SignalTimeBuffer2Right.resize(signalBufferSize);
+    SignalBuffer1Left.resize(signalBufferSize);
+    SignalBuffer2Left.resize(signalBufferSize);
+    SignalBuffer1Right.resize(signalBufferSize);
+    SignalBuffer2Right.resize(signalBufferSize);
+    spectrumBufferSize = initNoSpectrumSamples;
+    SpectrumBuffer1Left.resize(spectrumBufferSize);
+    SpectrumBuffer2Left.resize(spectrumBufferSize);
+    SpectrumBuffer1Right.resize(spectrumBufferSize);
+    SpectrumBuffer2Right.resize(spectrumBufferSize);
 }
 
 void SimMainWindow::createMenuAndActions()
@@ -491,13 +539,24 @@ void SimMainWindow::step()
     m_discreteTime++;
     // std::cout << "SimMainWindow::step: m_discreteTime = " << m_discreteTime << std::endl;
 
+    // auto startSignals = std::chrono::system_clock::now();
+    
     m_SignalPlotView->updatePA();
     m_SignalPlotView->updateSignals();
+                                   
+    // auto endSignals = std::chrono::system_clock::now();
+    // std::chrono::duration<double> deltaSignals = endSignals - startSignals;
+    // std::cout << "delta get signals = " << deltaSignals.count() << "s" << std::endl;
+
     m_SpectrumPlotView->getSignals(m_SignalPlotView->returnTimeLeftSignal(),
                                    m_SignalPlotView->returnLeftSignal(),
                                    m_SignalPlotView->returnTimeRightSignal(),
                                    m_SignalPlotView->returnRightSignal());
     m_SpectrumPlotView->updateSpectra();
+    
+    // auto endSpectra = std::chrono::system_clock::now();
+    // std::chrono::duration<double> deltaSpectra = endSpectra - endSignals;
+    // std::cout << "delta calculate spectra = " << deltaSpectra.count() << "s" << std::endl;
 
     // THD calculations
     if (m_leftChannelActive)
