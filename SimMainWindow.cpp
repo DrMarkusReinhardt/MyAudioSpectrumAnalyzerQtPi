@@ -13,24 +13,27 @@
 
 using namespace MR_SIM;
 
-const uint16_t signalBufferSize; // the signal buffer size
-const uint16_t spectrumBufferSize; // the spectrum buffer size
+uint16_t signalBufferSize; // the signal buffer size
+uint16_t spectrumBufferSize; // the spectrum buffer size
 QSemaphore SemSignalBuffer1;   // semaphore to access signal buffer 1, left and right
 QSemaphore SemSignalBuffer2;   // semaphore to access signal buffer 2, left and right
 QSemaphore SemSpectrumBuffer1; // semaphore to access spectrum buffer 1, left and right
 QSemaphore SemSpectrumBuffer2; // semaphore to access spectrum buffer 2, left and right
+QSemaphore SemSpectrumParameter; // semaphore to exchange spectrum parameter between threads
+SpectrumParameter *spectrumParameter; // the pointer to spectrum parameter data structure to exchange
+bool resetSpectrumThreadFlag;  // flag to signal that the spectrum calculation thread shall reset
 VectorXd SignalTimeBuffer1Left; // the first buffer for time samples of the left signal
 VectorXd SignalTimeBuffer2Left; // the second buffer for time samples of the left signal
 VectorXd SignalTimeBuffer1Right; // the first buffer for time samples of the right signal
 VectorXd SignalTimeBuffer2Right; // the second buffer for time samples of the right signal
-VectorXcd SignalBuffer1Left;   // the first buffer for signal samples of the left channel
-VectorXcd SignalBuffer2Left;   // the second buffer for signal samples of the left channel
-VectorXcd SignalBuffer1Right;  // the first buffer for signal samples of the right channel
-VectorXcd SignalBuffer2Right;  // the second buffer for signal samples of the right channel
-VectorXcd SpectrumBuffer1Left; // the first buffer for magnitude spectrum samples of the left channel
-VectorXcd SpectrumBuffer2Left; // the second buffer for magnitude spectrum samples of the left channel
-VectorXcd SpectrumBuffer1Right; // the first buffer for magnitude spectrum samples of the right channel
-VectorXcd SpectrumBuffer2Right; // the second buffer for magnitude spectrum samples of the right channel
+VectorXd SignalBuffer1Left;   // the first buffer for signal samples of the left channel
+VectorXd SignalBuffer2Left;   // the second buffer for signal samples of the left channel
+VectorXd SignalBuffer1Right;  // the first buffer for signal samples of the right channel
+VectorXd SignalBuffer2Right;  // the second buffer for signal samples of the right channel
+VectorXd SpectrumBuffer1Left; // the first buffer for magnitude spectrum samples of the left channel
+VectorXd SpectrumBuffer2Left; // the second buffer for magnitude spectrum samples of the left channel
+VectorXd SpectrumBuffer1Right; // the first buffer for magnitude spectrum samples of the right channel
+VectorXd SpectrumBuffer2Right; // the second buffer for magnitude spectrum samples of the right channel
 bool signalBuffer1Filled;  // flag to signal when the signal buffer is filled for further processing
 bool signalBuffer2Filled;  // flag to signal when the signal buffer is filled for further processing
 bool spectrumBuffer1Filled;// flag to signal when the spectrum buffer is filled for further processing
@@ -58,6 +61,9 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
     connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
     const uint16_t delayTime_ms = 10;
     m_timer->start(delayTime_ms);
+
+    // spectrum calculation thread shall not restart for now
+    resetSpectrumThreadFlag = false;
 
     std::cout << "Spectrum analyzer started" << std::endl;
 }
@@ -99,15 +105,16 @@ void SimMainWindow::createMenuAndActions()
     QAction *saveAct = new QAction(saveIcon, tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the spectrum data to disk"));
-    connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
+    // connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
     fileMenu->addAction(saveAct);
     // fileToolBar->addAction(saveAct);
 
     const QIcon saveAsIcon = QIcon::fromTheme("document-save-as");
-    QAction *saveAsAct = fileMenu->addAction(saveAsIcon, tr("Save &As..."), this, &SimMainWindow::saveAs);
+    QAction *saveAsAct = new QAction(saveAsIcon, tr("Save &As..."), this);
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save the document under a new name"));
-
+    // connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
+    fileMenu->addAction(saveAsAct);
     fileMenu->addSeparator();
 
     const QIcon exitIcon = QIcon::fromTheme("application-exit");
@@ -116,6 +123,7 @@ void SimMainWindow::createMenuAndActions()
     exitAct->setStatusTip(tr("Exit the application"));
 }
 
+/*
 void SimMainWindow::getSignalSpectrumData()
 {
     m_t = m_SignalPlotView->returnTimeLeftSignal();
@@ -147,6 +155,7 @@ void SimMainWindow::saveAs()
     m_storeSignalSpectrumData->save();
     delete m_storeSignalSpectrumData;
 }
+*/ 
 
 void SimMainWindow::setParameters()
 {
@@ -541,17 +550,12 @@ void SimMainWindow::step()
 
     // auto startSignals = std::chrono::system_clock::now();
     
-    m_SignalPlotView->updatePA();
     m_SignalPlotView->updateSignals();
                                    
     // auto endSignals = std::chrono::system_clock::now();
     // std::chrono::duration<double> deltaSignals = endSignals - startSignals;
     // std::cout << "delta get signals = " << deltaSignals.count() << "s" << std::endl;
 
-    m_SpectrumPlotView->getSignals(m_SignalPlotView->returnTimeLeftSignal(),
-                                   m_SignalPlotView->returnLeftSignal(),
-                                   m_SignalPlotView->returnTimeRightSignal(),
-                                   m_SignalPlotView->returnRightSignal());
     m_SpectrumPlotView->updateSpectra();
     
     // auto endSpectra = std::chrono::system_clock::now();
@@ -573,15 +577,15 @@ void SimMainWindow::step()
           m_timer->stop();
           std::cout << "Simulation loop finished" << std::endl;
       }
-      */
+    */
 }
 
 void SimMainWindow::updatePeakSpectrumDisplays()
 {
     if (m_leftChannelActive)
     {
-        // get the values
-        m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
+        // get the values ToDo !!!
+        // m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
         // update the displays
         m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
         m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
@@ -589,8 +593,8 @@ void SimMainWindow::updatePeakSpectrumDisplays()
 
     if (m_rightChannelActive)
     {
-        // get the values
-        m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight);
+        // get the values  ToDo !!!
+        // m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight); 
         // update the displays
         m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
         m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));

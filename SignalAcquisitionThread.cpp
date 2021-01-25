@@ -1,12 +1,9 @@
 #include "SignalAcquisitionThread.h"
 
-SignalAcquisitionThread::SignalAcquisitionThread()
+SignalAcquisitionThread::SignalAcquisitionThread(PortaudioHandler *initPAHandler)
+ : paHandler(initPAHandler)
 {
-
-}
-SignalAcquisitionThread::~SignalAcquisitionThread()
-{
-
+  m_signalBufferIndex = 1;
 }
 
 void SignalAcquisitionThread::updatePA()

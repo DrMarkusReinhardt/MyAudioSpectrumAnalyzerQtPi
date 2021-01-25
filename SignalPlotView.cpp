@@ -63,13 +63,14 @@ SignalPlotView::SignalPlotView(double initSampleFrequency, QWidget *parent)
 
   // create the signal acquisition thread
   signalAcquisitionThread = new SignalAcquisitionThread(paHandler);
+  m_signalBufferIndex = 1;  // start to read from buffer 1, then toggle
 
   // std::cout << "SignalPlotView created" << std::endl;
 }
 
 SignalPlotView::~SignalPlotView()
 {
-  signalAcquisitionThreadv->quit();
+  signalAcquisitionThread->quit();
   signalAcquisitionThread->wait(1100);
   delete signalAcquisitionThread;
   delete paHandler;
@@ -96,31 +97,56 @@ void SignalPlotView::deactivateRightChannel()
   m_rightChannelActive = false;
 }
 
-void SignalPlotView::updatePA()
-{
-  // std::cout << "PA handler before start" << std::endl;
-  paHandler->start();                                          // start input stream processing
-  // std::cout << "PA handler started and waiting" << std::endl;
-  paHandler->wait();                      // wait until the Portaudio handler returns from sampling
-  // paHandler->write2screen();
-  // std::cout << "PA handler after wait" << std::endl;
-  paHandler->transferSampledData2Channels();
-  paHandler->stop();                                           // stop input stream processing
-  // std::cout << "PA handler stopped" << std::endl;
-}
-
 void SignalPlotView::updateSignals()
 {
   // std::cout << "Update left and right signal" << std::endl;
-  signalTimeLeft = paHandler->returnDiscreteTimeSamples(); // get the discrete time samples from the Portaudio handler
-  // std::cout << "size of time array from PA = " << signalTimeLeft.size() << std::endl;
-  signalTimeRight = signalTimeLeft;
-  signalLeft = paHandler->returnSignalLeft();              // get the data of the left channel from the Portaudio handler
-  signalRight = paHandler->returnSignalRight();            // get the data of the right channel from the Portaudio handler
-  plotSignalChannelLeftRight->updateData(m_leftChannelActive,signalTimeLeft,signalLeft,
-                                         m_rightChannelActive,signalTimeRight,signalRight);
-  QChart* pChart = plotSignalChannelLeftRight->getChart();
-  pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod*1000.0);
+
+  if (m_signalBufferIndex == 1)
+  {
+      // acquire the semaphore for signal buffer 1 (left and right channels)
+      SemSignalBuffer1.acquire(1);
+      if (signalBuffer1Filled)
+      {
+          // copy the signals
+          signalTimeLeft = SignalTimeBuffer1Left;
+          signalTimeRight = SignalTimeBuffer1Right;
+          signalLeft = SignalBuffer1Left;
+          signalRight = SignalBuffer1Right;
+
+          // update the signal plot
+          plotSignalChannelLeftRight->updateData(m_leftChannelActive,signalTimeLeft,signalLeft,
+                                                 m_rightChannelActive,signalTimeRight,signalRight);
+          QChart* pChart = plotSignalChannelLeftRight->getChart();
+          pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod*1000.0);
+          signalBuffer1Filled = false;
+          m_signalBufferIndex = 2;
+      }
+      // release the semaphore for signal buffer 1
+      SemSignalBuffer1.release(1);
+  }
+  else if (m_signalBufferIndex == 2)
+  {
+      // acquire the semaphore for signal buffer 2(left and right channels)
+      SemSignalBuffer2.acquire(1);
+      if (signalBuffer2Filled)
+      {
+          // copy the signals
+          signalTimeLeft = SignalTimeBuffer2Left;
+          signalTimeRight = SignalTimeBuffer2Right;
+          signalLeft = SignalBuffer2Left;
+          signalRight = SignalBuffer2Right;
+
+          // update the signal plot
+          plotSignalChannelLeftRight->updateData(m_leftChannelActive,signalTimeLeft,signalLeft,
+                                                 m_rightChannelActive,signalTimeRight,signalRight);
+          QChart* pChart = plotSignalChannelLeftRight->getChart();
+          pChart->axisX()->setRange(0.0,m_noSamplesToPlot*m_samplePeriod*1000.0);
+          signalBuffer2Filled = false;
+          m_signalBufferIndex = 1;
+      }
+      // release the semaphore for signal buffer 2
+      SemSignalBuffer2.release(1);
+  }
 
   // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
   // connect(plotSignalChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);

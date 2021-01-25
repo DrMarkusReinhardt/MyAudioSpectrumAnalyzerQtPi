@@ -8,11 +8,13 @@
 #include "plot2D.h"
 #include <vector>
 #include "RandomGenerator.h"
+#include "SpectrumCalculationThread.h"
 #include "SpectrumCalculator.h"
 #include "SpectrumAverager.h"
 #include "SpectrumParameter.h"
 #include "callout.h"
 #include <eigen3/Eigen/Dense>
+#include "ThreadCommon.h"
 
 using namespace Eigen;
 
@@ -44,17 +46,19 @@ public:
                   VectorXd x2,VectorXd y2);
   void updateMinFrequency(double newMinFrequency);
   void updateMaxFrequency(double newMaxFrequency);
+  /*
   VectorXd returnFrequencyRange();
   VectorXd returnMagnitudeSpectrumLeft();
   VectorXd returnMagnitudeSpectrumRight();
   void getMaxMagnitudeSpectrumLeft(double& maximumMagnitudeValue, double& maxFrequencyValue);
   void getMaxMagnitudeSpectrumRight(double& maximumMagnitudeValue, double& maxFrequencyValue);
+  */
   void activateLeftChannel();
   void activateRightChannel();
   void deactivateLeftChannel();
   void deactivateRightChannel();
   void setNormalizationMode(uint8_t newNormalizationMode);
-  void normalizeSpectra();
+  // void normalizeSpectra();
   void restart();
 
 protected:
@@ -74,11 +78,11 @@ private:
   VectorXd signalRight;
   double m_sampleFrequency;
   double m_samplePeriod;
+
+  // the spectrum calculation thread and result vectors
   SpectrumParameter *m_spectrumParameter;
-  SpectrumCalculator *spectrumCalculatorLeft;
-  SpectrumCalculator *spectrumCalculatorRight;
-  SpectrumAverager *spectrumAveragerLeft;
-  SpectrumAverager *spectrumAveragerRight;
+  SpectrumCalculationThread *m_spectrumCalculationThread;
+  int m_spectrumBufferIndex;
   VectorXd m_averageMagnitudeSpectrumLeft;
   VectorXd m_averageMagnitudeSpectrumRight;
 

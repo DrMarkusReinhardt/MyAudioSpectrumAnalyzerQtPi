@@ -12,6 +12,7 @@
 #include "SignalAcquisitionThread.h"
 #include "callout.h"
 #include <eigen3/Eigen/Dense>
+#include "ThreadCommon.h"
 
 using namespace Eigen;
 
@@ -38,7 +39,6 @@ public:
   void createRandomData(VectorXd& x1,VectorXd& y1,
                         VectorXd& x2,VectorXd& y2);
   void updateSignals();
-  void updatePA();
   VectorXd returnTimeLeftSignal();
   VectorXd returnTimeRightSignal();
   VectorXd returnLeftSignal();
@@ -59,7 +59,7 @@ public slots:
 
 private:
   PortaudioHandler *paHandler;
-  SignalAcquisitionThread signalAcquisitionThread;
+  SignalAcquisitionThread *signalAcquisitionThread;
   NormalRandomGenerator m_nrg{1.0,1.0};
   plot2D* plotSignalChannelLeftRight;      // signal plot for the left and right channel
   VectorXd signalTimeLeft;
@@ -78,6 +78,8 @@ private:
   bool m_leftChannelActive;
   bool m_rightChannelActive;
 
+  // toggle the signal buffers to read from
+  int m_signalBufferIndex;
 };
 
 }
