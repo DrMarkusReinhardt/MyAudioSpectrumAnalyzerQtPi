@@ -15,11 +15,11 @@ using namespace MR_SIM;
 
 uint16_t signalBufferSize; // the signal buffer size
 uint16_t spectrumBufferSize; // the spectrum buffer size
-QSemaphore SemSignalBuffer1;   // semaphore to access signal buffer 1, left and right
-QSemaphore SemSignalBuffer2;   // semaphore to access signal buffer 2, left and right
-QSemaphore SemSpectrumBuffer1; // semaphore to access spectrum buffer 1, left and right
-QSemaphore SemSpectrumBuffer2; // semaphore to access spectrum buffer 2, left and right
-QSemaphore SemSpectrumParameter; // semaphore to exchange spectrum parameter between threads
+QSemaphore SemSignalBuffer1(1);   // semaphore to access signal buffer 1, left and right
+QSemaphore SemSignalBuffer2(1);   // semaphore to access signal buffer 2, left and right
+QSemaphore SemSpectrumBuffer1(1); // semaphore to access spectrum buffer 1, left and right
+QSemaphore SemSpectrumBuffer2(1); // semaphore to access spectrum buffer 2, left and right
+QSemaphore SemSpectrumParameter(1); // semaphore to exchange spectrum parameter between threads
 SpectrumParameter *spectrumParameter; // the pointer to spectrum parameter data structure to exchange
 bool resetSpectrumThreadFlag;  // flag to signal that the spectrum calculation thread shall reset
 VectorXd SignalTimeBuffer1Left; // the first buffer for time samples of the left signal
@@ -61,6 +61,7 @@ SimMainWindow::SimMainWindow(QMainWindow *parent)
     connect(m_timer, &QTimer::timeout, this, QOverload<>::of(&SimMainWindow::step));
     const uint16_t delayTime_ms = 10;
     m_timer->start(delayTime_ms);
+    m_discreteSimulationSteps = 30;
 
     // spectrum calculation thread shall not restart for now
     resetSpectrumThreadFlag = false;
@@ -546,16 +547,17 @@ void SimMainWindow::step()
 {
     // run a simulation step ...
     m_discreteTime++;
-    // std::cout << "SimMainWindow::step: m_discreteTime = " << m_discreteTime << std::endl;
+    std::cout << "SimMainWindow::step: m_discreteTime = " << m_discreteTime << std::endl;
 
     // auto startSignals = std::chrono::system_clock::now();
-    
+    std::cout << " Update signals" << std::endl;
     m_SignalPlotView->updateSignals();
                                    
     // auto endSignals = std::chrono::system_clock::now();
     // std::chrono::duration<double> deltaSignals = endSignals - startSignals;
     // std::cout << "delta get signals = " << deltaSignals.count() << "s" << std::endl;
 
+    std::cout << " Update spectra" << std::endl;
     m_SpectrumPlotView->updateSpectra();
     
     // auto endSpectra = std::chrono::system_clock::now();
@@ -570,13 +572,17 @@ void SimMainWindow::step()
 
     // update the peak spectrum value and frequency displays
     updatePeakSpectrumDisplays();
-
+    
     /*
-      if (m_discreteTime >= m_discreteSimulationSteps)
-      {
+    // stop the processing after a given number of steps
+    if (m_discreteTime >= m_discreteSimulationSteps)
+    {
           m_timer->stop();
+          m_SignalPlotView->stop();
+          m_SpectrumPlotView->stop();
           std::cout << "Simulation loop finished" << std::endl;
-      }
+          close();
+    }
     */
 }
 

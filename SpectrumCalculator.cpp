@@ -34,6 +34,12 @@ void SpectrumCalculator::getMaxMagnitudeSpectrum(double& maximumMagnitudeValue, 
     }
 }
 
+void SpectrumCalculator::lowerLimitMagnitudeSpectrum(double minValue)
+{
+  for(uint16_t k = 0; k < m_magnitudeSpectrum.size(); k++)
+    m_magnitudeSpectrum[k] = std::max(minValue,m_magnitudeSpectrum[k]);
+}
+
 // normalize the spectrum
 void SpectrumCalculator::normalizeMagnitudeSpectrum()
 {

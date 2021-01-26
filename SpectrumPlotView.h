@@ -59,6 +59,7 @@ public:
   void deactivateRightChannel();
   void setNormalizationMode(uint8_t newNormalizationMode);
   // void normalizeSpectra();
+  void stop();
   void restart();
 
 protected:

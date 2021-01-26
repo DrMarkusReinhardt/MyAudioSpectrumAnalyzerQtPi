@@ -25,10 +25,11 @@ void SignalAcquisitionThread::run()
     {
         if (m_signalBufferIndex == 1)
         {
-            std::cout << "signal generator run(): buffer index = " << m_signalBufferIndex << std::endl;
+            std::cout << "SignalAcquisitionThread: run(): buffer index = " << m_signalBufferIndex << std::endl;
 
             // acquire the semaphore for signal buffer 1 (left and right channels)
             SemSignalBuffer1.acquire(1);
+            std::cout << "SignalAcquisitionThread: acquired the semaphore for signal buffer 1" << std::endl;
 
             if (signalBuffer1Filled == false)
             {
@@ -46,14 +47,15 @@ void SignalAcquisitionThread::run()
 
             // release the semaphore for signal buffer 1
             SemSignalBuffer1.release(1);
-
+            std::cout << "SignalAcquisitionThread: released the semaphore for signal buffer 1" << std::endl;
         }
         else if (m_signalBufferIndex == 2)
         {
-            std::cout << "signal generator run(): buffer index = " << m_signalBufferIndex << std::endl;
+            std::cout << "SignalAcquisitionThread: run(): buffer index = " << m_signalBufferIndex << std::endl;
 
             // acquire the semaphore for signal buffer 2
             SemSignalBuffer2.acquire(1);
+            std::cout << "SignalAcquisitionThread: acquired the semaphore for signal buffer 1" << std::endl;
 
             if (signalBuffer2Filled == false)
             {
@@ -70,7 +72,9 @@ void SignalAcquisitionThread::run()
 
             // release the semaphore for signal buffer 2
             SemSignalBuffer2.release(1);
+            std::cout << "SignalAcquisitionThread: released the semaphore for signal buffer 2" << std::endl;
         }
+        msleep(100);
     }
 }
 
@@ -78,7 +82,7 @@ void SignalAcquisitionThread::fillSignalBuffer()
 {
     if (m_signalBufferIndex == 1)
     {
-        std::cout << "fill signal buffer 1" << std::endl;
+        std::cout << "SignalAcquisitionThread: fill signal buffer 1" << std::endl;
         updatePA();
         SignalTimeBuffer1Left = paHandler->returnDiscreteTimeSamples(); // get the discrete time samples from the Portaudio handler
         SignalTimeBuffer1Right = SignalTimeBuffer1Left;      // time samples for left and right channel are equal
@@ -87,7 +91,7 @@ void SignalAcquisitionThread::fillSignalBuffer()
     }
     else if (m_signalBufferIndex == 2)
     {
-        std::cout << "fill signal buffer 2" << std::endl;
+        std::cout << "SignalAcquisitionThread: fill signal buffer 2" << std::endl;
         updatePA();
         SignalTimeBuffer2Left = paHandler->returnDiscreteTimeSamples(); // get the discrete time samples from the Portaudio handler
         SignalTimeBuffer2Right = SignalTimeBuffer2Left;      // time samples for left and right channel are equal

@@ -24,11 +24,13 @@ void SpectrumCalculationThread::run()
         // check if a spectrum parameter update and reset is requested
         checkParameterUpdate();
 
+        std::cout << "SpectrumCalculationThread: spectrum buffer index = " << m_spectrumBufferIndex << std::endl;
         if (m_spectrumBufferIndex == 1)
         {
-            std::cout << "spectrum calculator run(): buffer index = " << m_spectrumBufferIndex << std::endl;
+            std::cout << "SpectrumCalculationThread: run(): buffer index = " << m_spectrumBufferIndex << std::endl;
 
             // acquire the semaphore for signal buffer 1, signal and spectrum buffer indices are aligned
+            std::cout << "SpectrumCalculationThread: acquire the semaphore for signal buffer 1" << std::endl;
             SemSignalBuffer1.acquire(1);
 
             if (signalBuffer1Filled)
@@ -43,12 +45,14 @@ void SpectrumCalculationThread::run()
 
             // release the semaphore for signal buffer 1
             SemSignalBuffer1.release(1);
+            std::cout << "SpectrumCalculationThread: released the semaphore for signal buffer 1" << std::endl;
         }
         else if (m_spectrumBufferIndex == 2)
         {
-            std::cout << "spectrum calculator run(): buffer index = " << m_spectrumBufferIndex << std::endl;
+            std::cout << "SpectrumCalculationThread: run(): buffer index = " << m_spectrumBufferIndex << std::endl;
 
             // acquire the semaphore for signal buffer 2, signal and spectrum buffer indices are aligned
+            std::cout << "SpectrumCalculationThread: acquire the semaphore for signal buffer 2" << std::endl;
             SemSignalBuffer2.acquire(1);
 
             if (signalBuffer2Filled)
@@ -63,7 +67,9 @@ void SpectrumCalculationThread::run()
 
             // release the semaphore for signal buffer 2
             SemSignalBuffer2.release(1);
+            std::cout << "SpectrumCalculationThread: released the semaphore for signal buffer 2" << std::endl;
         }
+        msleep(100);
     }
 }
 
@@ -95,32 +101,51 @@ void SpectrumCalculationThread::fillSpectrumBuffer(int bufferIndex)
 {
     if (bufferIndex == 1)  // signal and spectrum buffer indices are aligned
     {
+        std::cout << "SpectrumCalculationThread: acquire the semaphore for spectrum buffer 1" << std::endl;
         SemSpectrumBuffer1.acquire(1);
-        std::cout << "fill spectrum buffer 1" << std::endl;
+        std::cout << "SpectrumCalculationThread: fill spectrum buffer 1" << std::endl;
         spectrumBuffer1Filled = false;
 
         // VectorXd frequencyRange = spectrumCalculator->returnFrequencyRange();
+        std::cout << "SpectrumCalculationThread: calc spectrum of signal buffer 1" << std::endl;
         spectrumCalculatorLeft->calculateSpectrum(SignalBuffer1Left);
         spectrumCalculatorLeft->getMaxMagnitudeSpectrum(m_maxMagnitudeLeft, m_maxFrequencyValueLeft);
-        // std::cout << "maxMagnitudeLeft = " << maxMagnitudeLeft << std::endl;
+        std::cout << "SpectrumCalculationThread: maxMagnitudeLeft = " << m_maxMagnitudeLeft << std::endl;
 
         spectrumCalculatorRight->calculateSpectrum(SignalBuffer1Right);
         spectrumCalculatorRight->getMaxMagnitudeSpectrum(m_maxMagnitudeRight, m_maxFrequencyValueRight);
-        // std::cout << "maxMagnitudeRight = " << maxMagnitudeRight << std::endl;
+        std::cout << "SpectrumCalculationThread: maxMagnitudeRight = " << m_maxMagnitudeRight << std::endl;
 
         // normalize spectra
+        std::cout << "SpectrumCalculationThread: normalize spectrum of spectrum buffer 1" << std::endl;
         normalizeSpectra();
+        
+        // lower limit the spectra
+        spectrumCalculatorLeft->lowerLimitMagnitudeSpectrum(-120.0);
+        spectrumCalculatorRight->lowerLimitMagnitudeSpectrum(-120.0);
+        
+        spectrumCalculatorLeft->getMaxMagnitudeSpectrum(m_maxMagnitudeLeft, m_maxFrequencyValueLeft);
+        std::cout << "SpectrumCalculationThread: maxMagnitudeLeft = " << m_maxMagnitudeLeft << std::endl;
+        spectrumCalculatorRight->getMaxMagnitudeSpectrum(m_maxMagnitudeRight, m_maxFrequencyValueRight);
+        std::cout << "SpectrumCalculationThread: maxMagnitudeRight = " << m_maxMagnitudeRight << std::endl;
 
+        std::cout << "SpectrumCalculationThread: average spectrum of spectrum buffer 1" << std::endl;
         VectorXd magnitudeSpectrumLeft = spectrumCalculatorLeft->returnMagnitudeSpectrum();
         VectorXd magnitudeSpectrumRight = spectrumCalculatorRight->returnMagnitudeSpectrum();
+        std::cout << "SpectrumCalculationThread: max of magnitude spectrum buffer 1 left = "  << magnitudeSpectrumLeft.maxCoeff() << std::endl;
+        std::cout << "SpectrumCalculationThread: max of magnitude spectrum buffer 1 right = " << magnitudeSpectrumRight.maxCoeff() << std::endl;
 
         // update average magnitude spectra
         m_averageMagnitudeSpectrum1Left = spectrumAveragerLeft->updateAverageMagnitudeSpectrum(magnitudeSpectrumLeft);
         m_averageMagnitudeSpectrum1Right = spectrumAveragerRight->updateAverageMagnitudeSpectrum(magnitudeSpectrumRight);
+        std::cout << "SpectrumCalculationThread: max of average magnitude spectrum buffer 1 left = "  << m_averageMagnitudeSpectrum1Left.maxCoeff() << std::endl;
+        std::cout << "SpectrumCalculationThread: max of average magnitude spectrum buffer 1 right = " << m_averageMagnitudeSpectrum1Right.maxCoeff() << std::endl;
         
         // store in the spectrum buffers
         SpectrumBuffer1Left = m_averageMagnitudeSpectrum1Left;
         SpectrumBuffer1Right = m_averageMagnitudeSpectrum1Right;
+        std::cout << "SpectrumCalculationThread: max of spectrum buffer 1 left = "  << SpectrumBuffer1Left.maxCoeff() << std::endl;
+        std::cout << "SpectrumCalculationThread: max of spectrum buffer 1 right = " << SpectrumBuffer1Right.maxCoeff() << std::endl;
 
         // set the filled flag and toggle the buffer
         spectrumBuffer1Filled = true;
@@ -128,35 +153,51 @@ void SpectrumCalculationThread::fillSpectrumBuffer(int bufferIndex)
 
         // release the semaphore for buffer 1
         SemSpectrumBuffer1.release(1);
+        std::cout << "SpectrumCalculationThread: released the semaphore for spectrum buffer 1" << std::endl;
     }
     else if (bufferIndex == 2)
     {
+        std::cout << "SpectrumCalculationThread: acquire the semaphore for spectrum buffer 2" << std::endl;
         SemSpectrumBuffer2.acquire(1);
-        std::cout << "fill spectrum buffer 2" << std::endl;
+        std::cout << "SpectrumCalculationThread: fill spectrum buffer 2" << std::endl;
         spectrumBuffer2Filled = false;
 
         // VectorXd frequencyRange = spectrumCalculator->returnFrequencyRange();
+        std::cout << "SpectrumCalculationThread: calc spectrum of signal buffer 2" << std::endl;
         spectrumCalculatorLeft->calculateSpectrum(SignalBuffer2Left);
         spectrumCalculatorLeft->getMaxMagnitudeSpectrum(m_maxMagnitudeLeft, m_maxFrequencyValueLeft);
-        // std::cout << "maxMagnitudeLeft = " << maxMagnitudeLeft << std::endl;
+        std::cout << "SpectrumCalculationThread: maxMagnitudeLeft = " << m_maxMagnitudeLeft << std::endl;
 
         spectrumCalculatorRight->calculateSpectrum(SignalBuffer2Right);
         spectrumCalculatorRight->getMaxMagnitudeSpectrum(m_maxMagnitudeRight, m_maxFrequencyValueRight);
-        // std::cout << "maxMagnitudeRight = " << maxMagnitudeRight << std::endl;
+        std::cout << "SpectrumCalculationThread: maxMagnitudeRight = " << m_maxMagnitudeRight << std::endl;
 
         // normalize spectra
+        std::cout << "SpectrumCalculationThread: normalize spectrum of spectrum buffer 2" << std::endl;
         normalizeSpectra();
 
+        spectrumCalculatorLeft->getMaxMagnitudeSpectrum(m_maxMagnitudeLeft, m_maxFrequencyValueLeft);
+        std::cout << "SpectrumCalculationThread: maxMagnitudeLeft = " << m_maxMagnitudeLeft << std::endl;
+        spectrumCalculatorRight->getMaxMagnitudeSpectrum(m_maxMagnitudeRight, m_maxFrequencyValueRight);
+        std::cout << "SpectrumCalculationThread: maxMagnitudeRight = " << m_maxMagnitudeRight << std::endl;
+        std::cout << "SpectrumCalculationThread: average spectrum of spectrum buffer 2" << std::endl;
+        
         VectorXd magnitudeSpectrumLeft = spectrumCalculatorLeft->returnMagnitudeSpectrum();
         VectorXd magnitudeSpectrumRight = spectrumCalculatorRight->returnMagnitudeSpectrum();
-
+        std::cout << "SpectrumCalculationThread: max of magnitude spectrum buffer 2 left = "  << magnitudeSpectrumLeft.maxCoeff() << std::endl;
+        std::cout << "SpectrumCalculationThread: max of magnitude spectrum buffer 2 right = " << magnitudeSpectrumRight.maxCoeff() << std::endl;
+        
         // update average magnitude spectra
         m_averageMagnitudeSpectrum2Left = spectrumAveragerLeft->updateAverageMagnitudeSpectrum(magnitudeSpectrumLeft);
         m_averageMagnitudeSpectrum2Right = spectrumAveragerRight->updateAverageMagnitudeSpectrum(magnitudeSpectrumRight);
+        std::cout << "SpectrumCalculationThread: max of average magnitude spectrum buffer 2 left = "  << m_averageMagnitudeSpectrum1Left.maxCoeff() << std::endl;
+        std::cout << "SpectrumCalculationThread: max of average magnitude spectrum buffer 2 right = " << m_averageMagnitudeSpectrum1Right.maxCoeff() << std::endl;
 
         // store in the spectrum buffers
         SpectrumBuffer2Left = m_averageMagnitudeSpectrum2Left;
         SpectrumBuffer2Right = m_averageMagnitudeSpectrum2Right;
+        std::cout << "SpectrumCalculationThread: max of spectrum buffer 2 left = "  << SpectrumBuffer2Left.maxCoeff() << std::endl;
+        std::cout << "SpectrumCalculationThread: max of spectrum buffer 2 right = " << SpectrumBuffer2Right.maxCoeff() << std::endl;
         
         // set the filled flag and toggle the buffer
         spectrumBuffer2Filled = true;
@@ -164,6 +205,7 @@ void SpectrumCalculationThread::fillSpectrumBuffer(int bufferIndex)
 
         // release the semaphore for buffer 2
         SemSpectrumBuffer2.release(1);
+        std::cout << "SpectrumCalculationThread: released the semaphore for spectrum buffer 2" << std::endl;
     }
 }
 
@@ -208,7 +250,9 @@ void SpectrumCalculationThread::normalizeSpectra()
       newMagnitudeNormalizationValueRight = overallMaxMagnitude;
     }
   }
-
+  std::cout << "SpectrumCalculationThread: normalize() newMagnitudeNormalizationValueLeft =  " << newMagnitudeNormalizationValueLeft << std::endl;
+  std::cout << "SpectrumCalculationThread: normalize() newMagnitudeNormalizationValueRight =  " << newMagnitudeNormalizationValueRight << std::endl;
+  
   // do the normalization of both channel spectra
   spectrumCalculatorLeft->normalizeMagnitudeSpectrumVal(newMagnitudeNormalizationValueLeft);
   spectrumCalculatorRight->normalizeMagnitudeSpectrumVal(newMagnitudeNormalizationValueRight);

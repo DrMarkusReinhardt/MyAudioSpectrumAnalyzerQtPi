@@ -19,6 +19,7 @@ public:
   void getMaxMagnitudeSpectrum(double& maximumMagnitudeValue, double& maxFrequencyValue);
   void normalizeMagnitudeSpectrum();
   void normalizeMagnitudeSpectrumVal(double maxValue);
+  void lowerLimitMagnitudeSpectrum(double minValue);
   VectorXd returnMagnitudeSpectrum();
   VectorXcd returnFourierTransform();
 

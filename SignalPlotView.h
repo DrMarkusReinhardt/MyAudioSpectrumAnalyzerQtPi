@@ -47,6 +47,7 @@ public:
   void activateRightChannel();
   void deactivateLeftChannel();
   void deactivateRightChannel();
+  void stop();
 
 protected:
   void resizeEvent(QResizeEvent *event);

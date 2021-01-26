@@ -61,15 +61,22 @@ SpectrumPlotView::SpectrumPlotView(double initSampleFrequency, SpectrumParameter
   m_spectrumCalculationThread = new SpectrumCalculationThread(initSampleFrequency, initSpectrumParameter);
   m_spectrumCalculationThread->start();
   m_spectrumBufferIndex = 1;
-
 }
 
 SpectrumPlotView::~SpectrumPlotView()
 {
     m_spectrumCalculationThread->quit();
+    m_spectrumCalculationThread->terminate();
     m_spectrumCalculationThread->wait(1100);
     delete m_spectrumCalculationThread;
     delete plotSpectrumChannelLeftRight;
+}
+
+void SpectrumPlotView::stop()
+{
+    m_spectrumCalculationThread->quit();
+    m_spectrumCalculationThread->terminate();
+    m_spectrumCalculationThread->wait(1100);
 }
 
 void SpectrumPlotView::restart()
@@ -108,54 +115,71 @@ void SpectrumPlotView::getSignals(VectorXd x1,VectorXd y1,
 
 void SpectrumPlotView::updateSpectra()
 {
-
+  std::cout << "SpectrumPlotView: updateSpectra" << std::endl;
   // get the average spectra
+  bool gotSpectra;
   if (m_spectrumBufferIndex == 1)
   {
+      std::cout << "SpectrumPlotView: acquire the semaphore for spectrum buffer 1" << std::endl;
       SemSpectrumBuffer1.acquire(1);
+      gotSpectra = false;
       if (spectrumBuffer1Filled)
       {
+          std::cout << "SpectrumPlotView: copy spectrum buffer 1" << std::endl;
           m_averageMagnitudeSpectrumLeft = SpectrumBuffer1Left;
           m_averageMagnitudeSpectrumRight = SpectrumBuffer1Right;
           m_spectrumBufferIndex = 2;
           spectrumBuffer1Filled = false;
+          gotSpectra = true;
       }
       SemSpectrumBuffer1.release(1);
+      std::cout << "SpectrumPlotView: release the semaphore for spectrum buffer 1" << std::endl;
   }
   else if (m_spectrumBufferIndex == 2)
   {
+      std::cout << "SpectrumPlotView: acquire the semaphore for spectrum buffer 2" << std::endl;
       SemSpectrumBuffer2.acquire(1);
+      gotSpectra = false;
       if (spectrumBuffer2Filled)
       {
+          std::cout << "SpectrumPlotView: copy spectrum buffer 2" << std::endl;
           m_averageMagnitudeSpectrumLeft = SpectrumBuffer2Left;
           m_averageMagnitudeSpectrumRight = SpectrumBuffer2Right;
           m_spectrumBufferIndex = 1;
           spectrumBuffer2Filled = false;
+          gotSpectra = true;
       }
       SemSpectrumBuffer2.release(1);
+      std::cout << "SpectrumPlotView: release the semaphore for spectrum buffer 2" << std::endl;
   }
+  std::cout << "SpectrumPlotView: got spectra = " << gotSpectra << std::endl;
 
-  VectorXd frequencyRange = m_spectrumParameter->getFrequencyRange();
-  plotSpectrumChannelLeftRight->updateData(m_leftChannelActive, frequencyRange, m_averageMagnitudeSpectrumLeft,
-                                           m_rightChannelActive, frequencyRange, m_averageMagnitudeSpectrumRight);
-  QChart* pChart = plotSpectrumChannelLeftRight->getChart();
-  pChart->axisY()->setRange(-100.0,0.0);
-  pChart->axisX()->setRange(m_spectrumParameter->getMinFrequency(),
-                            m_spectrumParameter->getMaxFrequency());
-
-  // with new series added to the chart, it is necessary to update the signal connections for the hovering mouse
-  // connect the hovering over the first data series of the spectrum chart with the tooltip display
-  if (m_leftChannelActive)
-    connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
-  // connect the hovering over the second data series of the spectrum chart with the tooltip display
-  if (m_rightChannelActive)
-    connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
-  // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
-  if (m_leftChannelActive)
-    connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
-  // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
-  if (m_rightChannelActive)
-    connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+  if (gotSpectra)
+  {
+    std::cout << "SpectrumPlotView: got spectra to display" << std::endl;
+    VectorXd frequencyRange = m_spectrumParameter->getFrequencyRange();
+    
+    plotSpectrumChannelLeftRight->updateData(m_leftChannelActive, frequencyRange, m_averageMagnitudeSpectrumLeft,
+                                             m_rightChannelActive, frequencyRange, m_averageMagnitudeSpectrumRight);
+    QChart* pChart = plotSpectrumChannelLeftRight->getChart();
+    pChart->axisY()->setRange(-100.0,0.0);
+    pChart->axisX()->setRange(m_spectrumParameter->getMinFrequency(),
+                              m_spectrumParameter->getMaxFrequency());
+  
+    // with new series added to the chart, it is necessary to update the signal connections for the hovering mouse
+    // connect the hovering over the first data series of the spectrum chart with the tooltip display
+    if (m_leftChannelActive)
+      connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+    // connect the hovering over the second data series of the spectrum chart with the tooltip display
+    if (m_rightChannelActive)
+      connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::hovered, this, &SpectrumPlotView::tooltip);
+    // connect the clicking on the first data series of the spectrum chart with the routine to keep the callout
+    if (m_leftChannelActive)
+      connect(plotSpectrumChannelLeftRight->returnSeries1(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+    // connect the clicking on the second data series of the spectrum chart with the routine to keep the callout
+    if (m_rightChannelActive)
+      connect(plotSpectrumChannelLeftRight->returnSeries2(), &QLineSeries::clicked, this, &SpectrumPlotView::keepCallout);
+  }
 }
 
 void SpectrumPlotView::setNormalizationMode(uint8_t newNormalizationMode)
