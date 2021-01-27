@@ -90,12 +90,12 @@ The input amplitude can be controlled by a potentiometer as well as the output v
 on figure \ref{fig:PisoundBoard}.
 
 \subsection{Casing}
-The audio spectrum analyzer is housed in an aluminium case.
+The audio spectrum analyzer is housed in the dedicated Pisound case.
 
 \newpage
 \section{Software Description}
 \subsection{Analyzer GUI}
-Figure \ref{fig:SpectrumAnalyzerGUI} shows the GUI for the audio spectrum analyzer that is realized as a C++  program using the Qt/Qwt libraries. In this case both channels are activated.
+Figure \ref{fig:SpectrumAnalyzerGUI} shows the GUI for the audio spectrum analyzer that is realized as a C++ program using the Qt/Qwt libraries. In this case both channels are activated.
 \begin{figure}[tbph]
 	\centering
 	\includegraphics[width=\linewidth]{MyAudioSpectrumAnalyzerGUI.png}
@@ -103,8 +103,11 @@ Figure \ref{fig:SpectrumAnalyzerGUI} shows the GUI for the audio spectrum analyz
 	\label{fig:SpectrumAnalyzerGUI}
 \end{figure}
 
+The software is realized with three threads based on the QThread class.
+The first thread realizes the acquisition of the input signals from the left and right channel via the Portaudio library. The second thread realizes the calculation of the spectra for both channels via a DTFT routine. The third thread realizes the handling of the GUI with several widgets and the display of the signals, spectra and calculated signal and spectrum characteristics.  
+
 The upper left part of the GUI shows the sampled signals for the left and right channel. A dial right to the signal display allows to change the no. of samples shown in the signal display.\\
-The lower left part shows the corresponding calculated spectra of the left and right channel. In the lower right corner of the GUI there are two combo boxex that allow to change the upper and lower frequency range limits of the spectrum display.\\
+The lower left part shows the corresponding calculated spectra of the left and right channel. In the lower right corner of the GUI there are two combo boxes that allow to change the upper and lower frequency range limits of the spectrum display.\\
 In the middle of the right part of the GUI the control and display for the calculation of the THD of the left and right channel are shown. For each channel the number of overtones used in THD calculations are controlled by a knob and a related display. The base frequency of THD calculations can be controlled with a slider and the related display of the base frequency. The continuously calculated $THD_F$ and $THD_R$ values are shown below the controls. \\
 The lower part of the GUI shows the control buttons and measurements.\\
 
@@ -117,7 +120,7 @@ The label next to the start/stop-button displayes the status, either "Running" o
  
 Hitting the button "Stop" will stop the spectrum calculation process.\\
 
-With the buttons "Left Channel On/Off" or "Right Channel On/Off" the processing and display of the relevant channel(s) is activated or deactivated.\\
+With the buttons "Left channel start/stop" or "Right channel start/stop" the processing and display of the relevant channel(s) is activated or deactivated.\\
 
 With the selector right to the text "Select normalization mode" the mode how to do the normalization of the
 calculated signal spectra can be chosen. There are four modes:
@@ -154,7 +157,7 @@ Figure \ref{fig:TestLoadSpectraCSVDisplays} shows the figures that are created b
 
 \appendix{\textbf{ToDo}}
 \begin{itemize}
-	\item Convert to thread based processing, MMI thread with higher priority, DTFT processing with lower priority
+	\item Improve the postprocessing tools.
 \end{itemize}
 
 
