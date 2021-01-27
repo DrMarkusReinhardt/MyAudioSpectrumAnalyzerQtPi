@@ -20,6 +20,20 @@ void SpectrumCalculator::calculateSpectrum(const VectorXd& inputSignal)
   // std::cout << "Magnitude spectrum = " << std::endl << magnitudeSpectrum << std::endl;
 }
 
+// check the validity of the calculated spectrum, if the maximum value is below a given threshold the spectrum is invalid
+bool SpectrumCalculator::checkMagnitudeSpectrumValidity(double validityThreshold)
+{
+  bool valid;
+  double maximumMagnitudeValue;
+  double maxFrequencyValue;
+  getMaxMagnitudeSpectrum(maximumMagnitudeValue, maxFrequencyValue);
+  if (maximumMagnitudeValue < validityThreshold)
+      valid = false;
+  else 
+      valid = true;
+  return valid;         
+}
+
 void SpectrumCalculator::getMaxMagnitudeSpectrum(double& maximumMagnitudeValue, double& maxFrequencyValue)
 {
     maximumMagnitudeValue = -160.0;

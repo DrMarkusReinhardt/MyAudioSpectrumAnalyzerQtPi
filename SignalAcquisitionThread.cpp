@@ -55,7 +55,7 @@ void SignalAcquisitionThread::run()
 
             // acquire the semaphore for signal buffer 2
             SemSignalBuffer2.acquire(1);
-            std::cout << "SignalAcquisitionThread: acquired the semaphore for signal buffer 1" << std::endl;
+            std::cout << "SignalAcquisitionThread: acquired the semaphore for signal buffer 2" << std::endl;
 
             if (signalBuffer2Filled == false)
             {

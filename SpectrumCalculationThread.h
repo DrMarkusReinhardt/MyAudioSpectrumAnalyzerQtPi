@@ -44,6 +44,8 @@ private:
     VectorXd m_averageMagnitudeSpectrum1Right;
     VectorXd m_averageMagnitudeSpectrum2Left;
     VectorXd m_averageMagnitudeSpectrum2Right;
+    bool m_spectrumValid;
+    const double spectrumValidityThreshold = -120.0; // a spectrum is considered valid if its maximum is above the threshold
 
     // peak spectrum values
     double m_maxMagnitudeLeft;

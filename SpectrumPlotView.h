@@ -46,19 +46,13 @@ public:
                   VectorXd x2,VectorXd y2);
   void updateMinFrequency(double newMinFrequency);
   void updateMaxFrequency(double newMaxFrequency);
-  /*
-  VectorXd returnFrequencyRange();
-  VectorXd returnMagnitudeSpectrumLeft();
-  VectorXd returnMagnitudeSpectrumRight();
   void getMaxMagnitudeSpectrumLeft(double& maximumMagnitudeValue, double& maxFrequencyValue);
   void getMaxMagnitudeSpectrumRight(double& maximumMagnitudeValue, double& maxFrequencyValue);
-  */
   void activateLeftChannel();
   void activateRightChannel();
   void deactivateLeftChannel();
   void deactivateRightChannel();
   void setNormalizationMode(uint8_t newNormalizationMode);
-  // void normalizeSpectra();
   void stop();
   void restart();
 
@@ -86,6 +80,7 @@ private:
   int m_spectrumBufferIndex;
   VectorXd m_averageMagnitudeSpectrumLeft;
   VectorXd m_averageMagnitudeSpectrumRight;
+  VectorXd m_frequencyRange;
 
   QGraphicsSimpleTextItem *m_coordX;
   QGraphicsSimpleTextItem *m_coordY;

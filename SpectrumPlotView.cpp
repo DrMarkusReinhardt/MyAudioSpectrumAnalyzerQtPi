@@ -117,7 +117,7 @@ void SpectrumPlotView::updateSpectra()
 {
   std::cout << "SpectrumPlotView: updateSpectra" << std::endl;
   // get the average spectra
-  bool gotSpectra;
+  bool gotSpectra = false;
   if (m_spectrumBufferIndex == 1)
   {
       std::cout << "SpectrumPlotView: acquire the semaphore for spectrum buffer 1" << std::endl;
@@ -187,54 +187,6 @@ void SpectrumPlotView::setNormalizationMode(uint8_t newNormalizationMode)
   m_normalizationMode = newNormalizationMode;
 }
 
-/*
-void SpectrumPlotView::normalizeSpectra()
-{
-  double newMagnitudeNormalizationValueLeft;
-  double newMagnitudeNormalizationValueRight;
-  
-  // determine the normalization values for both channels depending on the normalization mode
-  switch (m_normalizationMode)
-  {
-    case 0: // with max of both channels
-    {
-      double overallMaxMagnitude = max(m_maxMagnitudeLeft,m_maxMagnitudeRight);
-      newMagnitudeNormalizationValueLeft = overallMaxMagnitude;
-      newMagnitudeNormalizationValueRight = overallMaxMagnitude;
-      break;
-    }
-    case 1:  // with max of left channel
-    {
-      newMagnitudeNormalizationValueLeft = m_maxMagnitudeLeft;
-      newMagnitudeNormalizationValueRight = m_maxMagnitudeLeft;
-      break;
-    }  
-    case 2:  // with max of right channel
-    {
-      newMagnitudeNormalizationValueLeft = m_maxMagnitudeRight;
-      newMagnitudeNormalizationValueRight = m_maxMagnitudeRight;
-      break;
-    }  
-    case 3:  // with max of each channel separately
-    {
-      newMagnitudeNormalizationValueLeft = m_maxMagnitudeLeft;
-      newMagnitudeNormalizationValueRight = m_maxMagnitudeRight;
-      break;
-    }
-    default:
-    {
-      double overallMaxMagnitude = max(m_maxMagnitudeLeft,m_maxMagnitudeRight);
-      newMagnitudeNormalizationValueLeft = overallMaxMagnitude;
-      newMagnitudeNormalizationValueRight = overallMaxMagnitude;
-    }
-  }
-  
-  // do the normalization of both channel spectra
-  spectrumCalculatorLeft->normalizeMagnitudeSpectrumVal(newMagnitudeNormalizationValueLeft);
-  spectrumCalculatorRight->normalizeMagnitudeSpectrumVal(newMagnitudeNormalizationValueRight);
-}
-*/
-
 void SpectrumPlotView::updateMinFrequency(double newMinFrequency)
 {
    // std::cout << " new min. frequency = " << newMinFrequency << std::endl;
@@ -287,32 +239,35 @@ void SpectrumPlotView::createRandomData(VectorXd& x1,VectorXd& y1,
       y2[k] = y2_tmp[k];
 }
 
-/*
-VectorXd SpectrumPlotView::returnFrequencyRange()
-{
-   return spectrumCalculatorLeft->returnFrequencyRange();
-}
-
-VectorXd SpectrumPlotView::returnMagnitudeSpectrumLeft()
-{
-   return spectrumCalculatorLeft->returnMagnitudeSpectrum();
-}
-
-VectorXd SpectrumPlotView::returnMagnitudeSpectrumRight()
-{
-    return spectrumCalculatorRight->returnMagnitudeSpectrum();
-}
-
 void SpectrumPlotView::getMaxMagnitudeSpectrumLeft(double& maximumMagnitudeValue, double& maxFrequencyValue)
 {
-  spectrumCalculatorLeft->getMaxMagnitudeSpectrum(maximumMagnitudeValue, maxFrequencyValue);
+    maximumMagnitudeValue = -160.0;
+    maxFrequencyValue = 0.0;
+    m_frequencyRange = m_spectrumParameter->getFrequencyRange();
+    for(uint16_t k = 0; k < m_averageMagnitudeSpectrumLeft.size(); k++)
+    {
+      if (m_averageMagnitudeSpectrumLeft[k] > maximumMagnitudeValue)
+      {
+        maximumMagnitudeValue = m_averageMagnitudeSpectrumLeft[k];
+        maxFrequencyValue = m_frequencyRange[k];
+      }
+    }
 }
 
 void SpectrumPlotView::getMaxMagnitudeSpectrumRight(double& maximumMagnitudeValue, double& maxFrequencyValue)
 {
-  spectrumCalculatorRight->getMaxMagnitudeSpectrum(maximumMagnitudeValue, maxFrequencyValue);
+    maximumMagnitudeValue = -160.0;
+    maxFrequencyValue = 0.0;
+    m_frequencyRange = m_spectrumParameter->getFrequencyRange();
+    for(uint16_t k = 0; k < m_averageMagnitudeSpectrumRight.size(); k++)
+    {
+      if (m_averageMagnitudeSpectrumRight[k] > maximumMagnitudeValue)
+      {
+        maximumMagnitudeValue = m_averageMagnitudeSpectrumRight[k];
+        maxFrequencyValue = m_frequencyRange[k];
+      }
+    }
 }
-*/
 
 void SpectrumPlotView::resizeEvent(QResizeEvent *event)
 {

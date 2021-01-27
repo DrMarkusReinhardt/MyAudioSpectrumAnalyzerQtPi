@@ -17,6 +17,7 @@ public:
   void calculateSpectrum(const VectorXd& inputSignal);
   VectorXd returnFrequencyRange();
   void getMaxMagnitudeSpectrum(double& maximumMagnitudeValue, double& maxFrequencyValue);
+  bool checkMagnitudeSpectrumValidity(double validityThreshold);
   void normalizeMagnitudeSpectrum();
   void normalizeMagnitudeSpectrumVal(double maxValue);
   void lowerLimitMagnitudeSpectrum(double minValue);

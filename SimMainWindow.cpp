@@ -590,8 +590,9 @@ void SimMainWindow::updatePeakSpectrumDisplays()
 {
     if (m_leftChannelActive)
     {
-        // get the values ToDo !!!
-        // m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
+        // get the values
+        m_SpectrumPlotView->getMaxMagnitudeSpectrumLeft(m_peakSpectrumValueLeft, m_peakSpectrumFrequencyLeft);
+        
         // update the displays
         m_leftChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueLeft,'f',3));
         m_leftChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyLeft,'f',3));
@@ -599,8 +600,9 @@ void SimMainWindow::updatePeakSpectrumDisplays()
 
     if (m_rightChannelActive)
     {
-        // get the values  ToDo !!!
-        // m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight); 
+        // get the values
+        m_SpectrumPlotView->getMaxMagnitudeSpectrumRight(m_peakSpectrumValueRight, m_peakSpectrumFrequencyRight); 
+        
         // update the displays
         m_rightChannelPeakSpectrumValueDisplay->setText(QString::number(m_peakSpectrumValueRight,'f',3));
         m_rightChannelPeakSpectrumFrequencyDisplay->setText(QString::number(m_peakSpectrumFrequencyRight,'f',3));

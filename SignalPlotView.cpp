@@ -100,16 +100,16 @@ void SignalPlotView::deactivateRightChannel()
 
 void SignalPlotView::updateSignals()
 {
-  std::cout << "Update left and right signal" << std::endl;
+  std::cout << "SignalPlotView: Update left and right signal" << std::endl;
 
   if (m_signalBufferIndex == 1)
   {
       // acquire the semaphore for signal buffer 1 (left and right channels)
       SemSignalBuffer1.acquire(1);
-      std::cout << "acquired the semaphore for signal buffer 1" << std::endl;
+      std::cout << "SignalPlotView: acquired the semaphore for signal buffer 1" << std::endl;
       if (signalBuffer1Filled)
       {
-          std::cout << "signal buffer 1 filled, copy signals" << std::endl;
+          std::cout << "SignalPlotView: signal buffer 1 filled, copy signals" << std::endl;
           // copy the signals
           signalTimeLeft = SignalTimeBuffer1Left;
           signalTimeRight = SignalTimeBuffer1Right;
@@ -117,7 +117,7 @@ void SignalPlotView::updateSignals()
           signalRight = SignalBuffer1Right;
 
           // update the signal plot
-          std::cout << "update signal plot, signal buffer 1" << std::endl;
+          std::cout << "SignalPlotView: update signal plot, signal buffer 1" << std::endl;
           plotSignalChannelLeftRight->updateData(m_leftChannelActive,signalTimeLeft,signalLeft,
                                                  m_rightChannelActive,signalTimeRight,signalRight);
           QChart* pChart = plotSignalChannelLeftRight->getChart();
@@ -127,13 +127,13 @@ void SignalPlotView::updateSignals()
       }
       // release the semaphore for signal buffer 1
       SemSignalBuffer1.release(1);
-      std::cout << "released the semaphore for signal buffer 1" << std::endl;
+      std::cout << "SignalPlotView: released the semaphore for signal buffer 1" << std::endl;
   }
   else if (m_signalBufferIndex == 2)
   {
       // acquire the semaphore for signal buffer 2(left and right channels)
       SemSignalBuffer2.acquire(1);
-      std::cout << "acquired the semaphore for signal buffer 2" << std::endl;
+      std::cout << "SignalPlotView: acquired the semaphore for signal buffer 2" << std::endl;
       if (signalBuffer2Filled)
       {
           // copy the signals
@@ -143,7 +143,7 @@ void SignalPlotView::updateSignals()
           signalRight = SignalBuffer2Right;
 
           // update the signal plot
-          std::cout << "update signal plot, signal buffer 2" << std::endl;
+          std::cout << "SignalPlotView: update signal plot, signal buffer 2" << std::endl;
           plotSignalChannelLeftRight->updateData(m_leftChannelActive,signalTimeLeft,signalLeft,
                                                  m_rightChannelActive,signalTimeRight,signalRight);
           QChart* pChart = plotSignalChannelLeftRight->getChart();
@@ -153,7 +153,7 @@ void SignalPlotView::updateSignals()
       }
       // release the semaphore for signal buffer 2
       SemSignalBuffer2.release(1);
-      std::cout << "released the semaphore for signal buffer 2" << std::endl;
+      std::cout << "SignalPlotView: released the semaphore for signal buffer 2" << std::endl;
   }
 
   // connect(plotSignalChannelLeftRight->returnSeries1(), &QLineSeries::hovered, this, &SignalPlotView::tooltip);
