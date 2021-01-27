@@ -244,10 +244,10 @@ void SimMainWindow::setupWidgetsAndLayouts()
 
     // activation button for left and right channel
     m_leftChannelActivationButton = new QPushButton(this);
-    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+    m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
     m_leftChannelActivationButton->setText("Left channel on");
     m_rightChannelActivationButton = new QPushButton(this);
-    m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+    m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
     m_rightChannelActivationButton->setText("Right channel on");
     m_processingOnOff = new QPushButton(this);
     m_processingOnOff->setStyleSheet("QPushButton { background-color : red; }");
@@ -478,7 +478,7 @@ void SimMainWindow::toggleLeftChannel()
     if (m_leftChannelActive)
     {
         m_leftChannelActive = false;
-        m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
+        m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
         m_leftChannelActivationButton->setText("Left channel off");
         m_leftChannelPeakSpectrumValueDisplay->setText(" ");
         m_leftChannelPeakSpectrumFrequencyDisplay->setText(" ");
@@ -488,7 +488,7 @@ void SimMainWindow::toggleLeftChannel()
     else
     {
         m_leftChannelActive = true;
-        m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+        m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
         m_leftChannelActivationButton->setText("Left channel on");
         m_SignalPlotView->activateLeftChannel();
         m_SpectrumPlotView->restart();
@@ -501,7 +501,7 @@ void SimMainWindow::toggleRightChannel()
     if (m_rightChannelActive)
     {
         m_rightChannelActive = false;
-        m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
+        m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
         m_rightChannelActivationButton->setText("Right channel off");
         m_rightChannelPeakSpectrumValueDisplay->setText(" ");
         m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
@@ -511,7 +511,7 @@ void SimMainWindow::toggleRightChannel()
     else
     {
         m_rightChannelActive = true;
-        m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
+        m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
         m_rightChannelActivationButton->setText("Right channel on");
         m_SignalPlotView->activateRightChannel();
         m_SpectrumPlotView->restart();
