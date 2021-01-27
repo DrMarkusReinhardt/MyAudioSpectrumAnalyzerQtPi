@@ -257,6 +257,7 @@ void SpectrumCalculationThread::normalizeSpectra()
 {
   double newMagnitudeNormalizationValueLeft;
   double newMagnitudeNormalizationValueRight;
+  m_normalizationMode = normalizationMode;
 
   // determine the normalization values for both channels depending on the normalization mode
   switch (m_normalizationMode)

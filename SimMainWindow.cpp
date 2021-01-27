@@ -38,7 +38,7 @@ bool signalBuffer1Filled;  // flag to signal when the signal buffer is filled fo
 bool signalBuffer2Filled;  // flag to signal when the signal buffer is filled for further processing
 bool spectrumBuffer1Filled;// flag to signal when the spectrum buffer is filled for further processing
 bool spectrumBuffer2Filled;// flag to signal when the spectrum buffer is filled for further processing
-
+uint8_t normalizationMode;  // normalization mode
 
 SimMainWindow::SimMainWindow(QMainWindow *parent)
     : QMainWindow(parent)
@@ -245,10 +245,10 @@ void SimMainWindow::setupWidgetsAndLayouts()
     // activation button for left and right channel
     m_leftChannelActivationButton = new QPushButton(this);
     m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
-    m_leftChannelActivationButton->setText("Left channel on");
+    m_leftChannelActivationButton->setText("Left channel stop");
     m_rightChannelActivationButton = new QPushButton(this);
     m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
-    m_rightChannelActivationButton->setText("Right channel on");
+    m_rightChannelActivationButton->setText("Right channel stop");
     m_processingOnOff = new QPushButton(this);
     m_processingOnOff->setStyleSheet("QPushButton { background-color : red; }");
     m_processingOnOff->setText("Stop");
@@ -336,16 +336,16 @@ void SimMainWindow::setupWidgetsAndLayouts()
     m_frequencyAxisLabel->setStyleSheet("QLabel { color : white; }");
 
     // left and right channel activation buttons
-    QRect RectLeftChannelActivationButton(10,890,120,20);
+    QRect RectLeftChannelActivationButton(10,890,130,20);
     m_leftChannelActivationButton->setGeometry(RectLeftChannelActivationButton);
     m_leftChannelActivationButton->setVisible(true);
-    QRect RectRightChannelActivationButton(150,890,120,20);
+    QRect RectRightChannelActivationButton(150,890,130,20);
     m_rightChannelActivationButton->setGeometry(RectRightChannelActivationButton);
     m_rightChannelActivationButton->setVisible(true);
-    QRect ProcessingActivationButton(10,920,120,20);
+    QRect ProcessingActivationButton(10,920,130,20);
     m_processingOnOff->setGeometry(ProcessingActivationButton);
     m_processingOnOff->setVisible(true);
-    QRect RectProcessingStatus(150,920,120,20);
+    QRect RectProcessingStatus(150,920,130,20);
     m_processingStatus->setGeometry(RectProcessingStatus);
     m_processingStatus->setVisible(true);
 
@@ -447,6 +447,7 @@ void SimMainWindow::changeNormalizationMode(uint8_t newNormalizationModeIndex)
 {
     // std::cout << "normalization mode changed: newNormalizationModeIndex = " << newNormalizationModeIndex << std::endl;
     m_SpectrumPlotView->setNormalizationMode(newNormalizationModeIndex);
+    normalizationMode = newNormalizationModeIndex;
 }
 
 void SimMainWindow::toggleOnOff()
@@ -479,7 +480,7 @@ void SimMainWindow::toggleLeftChannel()
     {
         m_leftChannelActive = false;
         m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
-        m_leftChannelActivationButton->setText("Left channel off");
+        m_leftChannelActivationButton->setText("Left channel start");
         m_leftChannelPeakSpectrumValueDisplay->setText(" ");
         m_leftChannelPeakSpectrumFrequencyDisplay->setText(" ");
         m_SignalPlotView->deactivateLeftChannel();
@@ -489,7 +490,7 @@ void SimMainWindow::toggleLeftChannel()
     {
         m_leftChannelActive = true;
         m_leftChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
-        m_leftChannelActivationButton->setText("Left channel on");
+        m_leftChannelActivationButton->setText("Left channel stop");
         m_SignalPlotView->activateLeftChannel();
         m_SpectrumPlotView->restart();
         m_SpectrumPlotView->activateLeftChannel();
@@ -502,7 +503,7 @@ void SimMainWindow::toggleRightChannel()
     {
         m_rightChannelActive = false;
         m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : green; }");
-        m_rightChannelActivationButton->setText("Right channel off");
+        m_rightChannelActivationButton->setText("Right channel start");
         m_rightChannelPeakSpectrumValueDisplay->setText(" ");
         m_rightChannelPeakSpectrumFrequencyDisplay->setText(" ");
         m_SignalPlotView->deactivateRightChannel();
@@ -512,7 +513,7 @@ void SimMainWindow::toggleRightChannel()
     {
         m_rightChannelActive = true;
         m_rightChannelActivationButton->setStyleSheet("QPushButton { background-color : red; }");
-        m_rightChannelActivationButton->setText("Right channel on");
+        m_rightChannelActivationButton->setText("Right channel stop");
         m_SignalPlotView->activateRightChannel();
         m_SpectrumPlotView->restart();
         m_SpectrumPlotView->activateRightChannel();

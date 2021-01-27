@@ -35,3 +35,4 @@ extern bool signalBuffer1Filled;  // flag to signal when the buffer is filled fo
 extern bool signalBuffer2Filled;  // flag to signal when the buffer is filled for further processing
 extern bool spectrumBuffer1Filled;// flag to signal when the buffer is filled for further processing
 extern bool spectrumBuffer2Filled;// flag to signal when the buffer is filled for further processing
+extern uint8_t normalizationMode;  // normalization mode
