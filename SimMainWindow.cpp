@@ -91,22 +91,12 @@ void SimMainWindow::createBuffer()
 void SimMainWindow::createMenuAndActions()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    // QToolBar *fileToolBar = addToolBar(tr("File"));
-    /*
-    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
-    QAction *newAct = new QAction(newIcon, tr("&New"), this);
-    newAct->setShortcuts(QKeySequence::New);
-    newAct->setStatusTip(tr("Create a new file"));
-    connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
-    fileMenu->addAction(newAct);
-    fileToolBar->addAction(newAct);
-    */
 
     const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
     QAction *saveAct = new QAction(saveIcon, tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the spectrum data to disk"));
-    // connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
+    connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
     fileMenu->addAction(saveAct);
     // fileToolBar->addAction(saveAct);
 
@@ -114,7 +104,7 @@ void SimMainWindow::createMenuAndActions()
     QAction *saveAsAct = new QAction(saveAsIcon, tr("Save &As..."), this);
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save the document under a new name"));
-    // connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
+    connect(saveAct, &QAction::triggered, this, &SimMainWindow::save);
     fileMenu->addAction(saveAsAct);
     fileMenu->addSeparator();
 
@@ -124,7 +114,6 @@ void SimMainWindow::createMenuAndActions()
     exitAct->setStatusTip(tr("Exit the application"));
 }
 
-/*
 void SimMainWindow::getSignalSpectrumData()
 {
     m_t = m_SignalPlotView->returnTimeLeftSignal();
@@ -156,7 +145,6 @@ void SimMainWindow::saveAs()
     m_storeSignalSpectrumData->save();
     delete m_storeSignalSpectrumData;
 }
-*/ 
 
 void SimMainWindow::setParameters()
 {

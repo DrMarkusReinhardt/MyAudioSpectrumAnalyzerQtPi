@@ -41,8 +41,8 @@ public:
   ~SimMainWindow();
   void createBuffer();
   void createMenuAndActions();
-  // void save();
-  // void saveAs();
+  void save();
+  void saveAs();
   void setParameters();
   void readParametersFromFile();
   void step();
@@ -50,7 +50,7 @@ public:
 
 private:
   void setupWidgetsAndLayouts();
-  // void getSignalSpectrumData();
+  void getSignalSpectrumData();
 
 private Q_SLOTS:
   void minFrequencyDialChanged(int newIndex);

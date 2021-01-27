@@ -319,3 +319,18 @@ void SpectrumPlotView::tooltip(QPointF point, bool state)
       m_tooltip->hide();
   }
 }
+
+VectorXd SpectrumPlotView::returnFrequencyRange()
+{
+  return m_frequencyRange;
+}
+
+VectorXd SpectrumPlotView::returnMagnitudeSpectrumLeft()
+{
+  return m_averageMagnitudeSpectrumLeft;
+}
+
+VectorXd SpectrumPlotView::returnMagnitudeSpectrumRight()
+{
+  return m_averageMagnitudeSpectrumRight;
+}

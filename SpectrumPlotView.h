@@ -55,6 +55,9 @@ public:
   void setNormalizationMode(uint8_t newNormalizationMode);
   void stop();
   void restart();
+  VectorXd returnFrequencyRange();
+  VectorXd returnMagnitudeSpectrumLeft();
+  VectorXd returnMagnitudeSpectrumRight();
 
 protected:
   void resizeEvent(QResizeEvent *event);
