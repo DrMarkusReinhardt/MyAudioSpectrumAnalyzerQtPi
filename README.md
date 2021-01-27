@@ -39,8 +39,6 @@ Qt/Qwt based audio spectrum analyzer for RaspberryPi with Pisound board.
    The THD calculation can be parameterized (base frequency and number of overtones used in the calculation).
 
 ## ToDo:
-### Thread based processing:
-   Create separate threads for DTFT processing (low priority) and GUI processing (high priority) to make the GUI more reactive.
 
 ### Callout removal: 
    Add a button to remove all existing callouts. Remove all existing callouts at a restart of the processing.
