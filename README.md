@@ -1,3 +1,5 @@
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
+
 # MyAudioSpectrumAnalyserQtPi
 
 Qt/Qwt based audio spectrum analyzer for RaspberryPi with Pisound board.
